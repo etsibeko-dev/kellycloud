@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Get Started - Pricing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #111 0%, #fff 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .pricing-section {
+            padding: 60px 0;
+            text-align: center;
+        }
+        .pricing-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #111;
+            margin-bottom: 40px;
+        }
+        .card {
+            border: 2px solid #111;
+            border-radius: 18px;
+            background: #fff;
+            color: #111;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-8px) scale(1.03);
+            border-color: #444;
+        }
+        .card-header {
+            background: #111;
+            color: #fff;
+            font-size: 1.3rem;
+            border-radius: 16px 16px 0 0;
+        }
+        .price {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .storage {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+        .btn-select {
+            background: #111;
+            color: #fff;
+            border-radius: 30px;
+            padding: 10px 30px;
+            border: none;
+            transition: background 0.3s, color 0.3s;
+        }
+        .btn-select:hover {
+            background: #fff;
+            color: #111;
+            border: 1px solid #111;
+        }
+    </style>
+</head>
+<body>
+    <section class="pricing-section">
+        <div class="container">
+            <div class="pricing-title">Choose Your Plan</div>
+            <div class="row justify-content-center">
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-header">Free</div>
+                        <div class="card-body">
+                            <div class="price">R0<span class="fs-6">/mo</span></div>
+                            <div class="storage">56 GB Storage</div>
+                            <button class="btn btn-select">Select</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+        <div class="card">
+            <div class="card-header">Medium</div>
+            <div class="card-body">
+                <div class="price">R120<span class="fs-6">/mo</span></div>
+                <div class="storage">100 GB Storage</div>
+                <button class="btn btn-select">Select</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card">
+            <div class="card-header">Pro</div>
+            <div class="card-body">
+                <div class="price">R220<span class="fs-6">/mo</span></div>
+                <div class="storage">4 TB Storage</div>
+                <button class="btn btn-select">Select</button>
+            </div>
+        </div>
+    </div>
+</div>
