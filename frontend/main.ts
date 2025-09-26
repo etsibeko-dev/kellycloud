@@ -1,5 +1,18 @@
 // Main TypeScript code will go here
 
+function displayMessage(containerId: string, message: string, type: 'success' | 'danger') {
+    const container = document.getElementById(containerId);
+    if (container) {
+        container.textContent = message;
+        container.classList.remove('d-none', 'alert-success', 'alert-danger');
+        container.classList.add(`alert-${type}`);
+        setTimeout(() => {
+            container.classList.add('d-none');
+            container.textContent = '';
+        }, 5000); // Hide message after 5 seconds
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     if (window.location.pathname.endsWith('login.html')) {
         const loginForm = document.querySelector('form');
@@ -29,11 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         localStorage.setItem('username', data.user.username);
                         window.location.href = 'dashboard.html';
                     } else {
-                        alert(data.error || 'Login failed');
+                        displayMessage('messageContainer', data.error || 'Login failed', 'danger');
                     }
                 } catch (error) {
                     console.error('Error during login:', error);
-                    alert('An error occurred during login.');
+                    displayMessage('messageContainer', 'An error occurred during login.', 'danger');
                 }
             });
         }
@@ -54,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const confirmPassword = confirmPasswordInput.value;
 
                 if (password !== confirmPassword) {
-                    alert('Passwords do not match!');
+                    displayMessage('messageContainer', 'Passwords do not match!', 'danger');
                     return;
                 }
 
@@ -70,14 +83,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     const data = await response.json();
 
                     if (response.ok) {
-                        alert('Registration successful! Please log in.');
+                        displayMessage('messageContainer', 'Registration successful! Please log in.', 'success');
                         window.location.href = 'login.html';
                     } else {
-                        alert(data.error || 'Registration failed');
+                        displayMessage('messageContainer', data.error || 'Registration failed', 'danger');
                     }
                 } catch (error) {
                     console.error('Error during registration:', error);
-                    alert('An error occurred during registration.');
+                    displayMessage('messageContainer', 'An error occurred during registration.', 'danger');
                 }
             });
         }
@@ -132,48 +145,4 @@ document.addEventListener('DOMContentLoaded', () => {
                 const name = fileNameInput.value;
                 const file_type = fileTypeInput.value;
 
-                try {
-                    const response = await fetch('http://127.0.0.1:8000/api/files/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Token ${token}`,
-                        },
-                        body: JSON.stringify({ name, file_type }),
-                    });
-
-                    if (response.ok) {
-                        fileNameInput.value = '';
-                        fileTypeInput.value = '';
-                        fetchFiles(); // Refresh file list
-                    } else {
-                        alert('File upload failed');
-                    }
-                } catch (error) {
-                    console.error('Error uploading file:', error);
-                    alert('An error occurred during file upload.');
-                }
-            });
-        }
-
-        const logoutLink = document.querySelector('a[href="index.html"]');
-        if (logoutLink) {
-            logoutLink.addEventListener('click', async (event) => {
-                event.preventDefault();
-                try {
-                    await fetch('http://127.0.0.1:8000/api/logout/', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Token ${token}`,
-                        },
-                    });
-                } catch (error) {
-                    console.error('Error during logout:', error);
-                } finally {
-                    localStorage.removeItem('token');
-                    window.location.href = 'index.html';
-                }
-            });
-        }
-    }
-});
+                displayMessage('messageContainer', 'Error fetching files.', 'danger');
