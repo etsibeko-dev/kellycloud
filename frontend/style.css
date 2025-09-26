@@ -2,8 +2,8 @@
 body {
     font-family: 'Inter', sans-serif; /* Apply Inter to body text */
     line-height: 1.6;
-    color: #333;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    color: #334155; /* Updated text color */
+    background: linear-gradient(135deg, #F0F4F8 0%, #D9E2EC 100%); /* Lighter, cloud-like gradient */
     min-height: 100vh;
     margin: 0;
     padding: 0;
@@ -20,7 +20,7 @@ body {
 
 /* Header/Navbar Styles */
 .navbar {
-    background-color: #2c3e50 !important; /* Dark blue-gray */
+    background-color: #2F3E46 !important; /* Dark blue-gray */
     padding: 1rem 0;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
@@ -40,7 +40,7 @@ body {
 }
 
 .navbar-nav .nav-link:hover {
-    color: #3498db !important; /* Bright blue */
+    color: #60A5FA !important; /* Primary Blue */
 }
 
 /* Global Heading Styles */
@@ -82,7 +82,7 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 1.3rem;
     padding: 15px 40px;
     border-radius: 50px;
-    background: #3498db; /* Bright blue */
+    background: #60A5FA; /* Primary Blue */
     color: #fff;
     border: none;
     transition: background 0.3s ease, transform 0.2s ease;
@@ -91,7 +91,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .cta-btn:hover {
-    background: #2980b9; /* Darker blue */
+    background: #4A89F0; /* Darker Primary Blue */
     transform: translateY(-3px);
     color: #fff;
 }
@@ -107,7 +107,7 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 50px;
-    color: #2c3e50;
+    color: #2F3E46; /* Dark blue-gray */
 }
 
 .feature-card {
@@ -129,14 +129,14 @@ h1, h2, h3, h4, h5, h6 {
 
 .feature-icon {
     font-size: 3.5rem;
-    color: #3498db;
+    color: #60A5FA; /* Primary Blue */
     margin-bottom: 20px;
 }
 
 .feature-card h5 {
     font-size: 1.5rem;
     font-weight: 700; /* Make it bolder */
-    color: #2c3e50;
+    color: #2F3E46; /* Dark blue-gray */
     margin-bottom: 20px; /* Increased space below title */
 }
 
@@ -171,7 +171,7 @@ h1, h2, h3, h4, h5, h6 {
     border-bottom: none;
     font-size: 2rem;
     font-weight: 700;
-    color: #2c3e50;
+    color: #2F3E46; /* Dark blue-gray */
     text-align: center;
     margin-bottom: 25px;
     padding: 0;
@@ -189,12 +189,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .auth-card .form-control:focus {
-    border-color: #3498db;
-    box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+    border-color: #60A5FA;
+    box-shadow: 0 0 0 0.25rem rgba(96, 165, 250, 0.25);
 }
 
 .btn-auth {
-    background: #3498db; /* Bright blue */
+    background: #60A5FA; /* Primary Blue */
     color: #fff;
     border-radius: 50px;
     padding: 12px 30px;
@@ -206,13 +206,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-auth:hover {
-    background: #2980b9; /* Darker blue */
+    background: #4A89F0; /* Darker Primary Blue */
     transform: translateY(-2px);
     color: #fff;
 }
 
 .auth-card p a {
-    color: #3498db;
+    color: #60A5FA; /* Primary Blue */
     text-decoration: none;
     font-weight: 500;
 }
@@ -223,7 +223,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Dashboard Styles */
 .dashboard-header {
-    background-color: #34495e; /* Darker blue-gray */
+    background-color: #2F3E46; /* Dark blue-gray */
     color: #fff;
     padding: 40px 0;
     text-align: center;
@@ -243,7 +243,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .dashboard-content .card-header {
-    background-color: #3498db; /* Bright blue */
+    background-color: #60A5FA; /* Primary Blue */
     color: #fff;
     font-size: 1.4rem;
     font-weight: 600;
@@ -256,8 +256,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .dashboard-content .table th {
-    background-color: #ecf0f1;
-    color: #2c3e50;
+    background-color: #E0E7FF; /* Light blue-gray */
+    color: #2F3E46; /* Dark blue-gray */
     font-weight: 600;
 }
 
@@ -266,8 +266,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-primary {
-    background-color: #3498db !important;
-    border-color: #3498db !important;
+    background-color: #60A5FA !important; /* Primary Blue */
+    border-color: #60A5FA !important; /* Primary Blue */
     border-radius: 50px;
     padding: 10px 25px;
     font-weight: 600;
@@ -275,15 +275,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-primary:hover {
-    background-color: #2980b9 !important;
-    border-color: #2980b9 !important;
+    background-color: #4A89F0 !important; /* Darker Primary Blue */
+    border-color: #4A89F0 !important; /* Darker Primary Blue */
     transform: translateY(-2px);
 }
 
 /* Footer Styles */
 footer {
-    background-color: #2c3e50;
-    color: #ecf0f1;
+    background-color: #2F3E46; /* Dark blue-gray */
+    color: #F8FAFC; /* Light text color */
     text-align: center;
     padding: 25px 0;
     margin-top: auto; /* Pushes footer to the bottom */
@@ -356,7 +356,7 @@ footer {
 .pricing-card .card-title {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #2c3e50;
+    color: #2F3E46; /* Dark blue-gray */
     margin-bottom: 20px;
 }
 
@@ -403,11 +403,11 @@ footer {
 
 /* Specific Plan Card Styles - Final Colors */
 .pricing-card.plan-basic {
-    border: 1px solid #4A90E2; /* Sky Blue border */
+    border: 1px solid #60A5FA; /* Primary Blue border */
 }
 
 .pricing-card.plan-basic .card-header {
-    background-color: #4A90E2; /* Sky Blue header */
+    background-color: #60A5FA; /* Primary Blue header */
     color: #fff;
 }
 
