@@ -480,100 +480,55 @@ async function loadUserSubscription() {
 }
 
 function updateStorageDisplay(storageInfo) {
-    // Create or update storage info display
-    let storageDisplay = document.querySelector('#storageInfo');
-    if (!storageDisplay) {
-        storageDisplay = document.createElement('div');
-        storageDisplay.id = 'storageInfo';
-        storageDisplay.className = 'card mb-4';
-        storageDisplay.innerHTML = `
-            <div class="card-header">
-                <h5>Storage Usage</h5>
-            </div>
-            <div class="card-body">
-                <div class="progress mb-2" style="height: 8px; border-radius: 4px; background-color: #f0f0f0;">
-                    <div class="progress-bar" role="progressbar" style="width: 0%; border-radius: 4px; transition: all 0.3s ease;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-                <small class="text-muted">
-                    <span id="storageUsed">0 MB</span> of <span id="storageLimit">${storageInfo.limit_gb} GB</span> used
-                </small>
-            </div>
-        `;
+    // Update dashboard storage display
+    const progressBar = document.getElementById('storageProgressBar');
+    const storageText = document.getElementById('storageText');
+    const storagePercentage = document.getElementById('storagePercentage');
+    
+    if (progressBar && storageText && storagePercentage) {
+        const usedBytes = storageInfo.current_usage_bytes;
+        const limitBytes = storageInfo.limit_bytes;
+        const percentage = Math.min((usedBytes / limitBytes) * 100, 100);
         
-        // Insert before the upload form
-        const uploadForm = document.querySelector('form');
-        if (uploadForm) {
-            uploadForm.parentNode.insertBefore(storageDisplay, uploadForm);
+        // Ensure minimum width for very low percentages
+        const minWidth = percentage < 0.001 ? 0.1 : percentage;
+        progressBar.style.width = `${minWidth}%`;
+        
+        // iCloud-style color coding based on usage
+        if (percentage > 90) {
+            progressBar.style.setProperty('background-color', '#ff3b30', 'important'); // Red for critical usage
+        } else if (percentage > 80) {
+            progressBar.style.setProperty('background-color', '#ff9500', 'important'); // Orange for high usage
+        } else if (percentage > 60) {
+            progressBar.style.setProperty('background-color', '#ffcc00', 'important'); // Yellow for moderate usage
+        } else if (percentage > 30) {
+            progressBar.style.setProperty('background-color', '#34c759', 'important'); // Green for normal usage
+        } else {
+            progressBar.style.setProperty('background-color', '#007aff', 'important'); // Blue for low usage (iCloud style)
         }
+        
+        // Format storage display with appropriate units
+        let usedDisplay, limitDisplay;
+        
+        if (usedBytes >= 1024 * 1024 * 1024) { // GB or more
+            usedDisplay = `${Math.round(usedBytes / (1024 * 1024 * 1024) * 100) / 100} GB`;
+        } else if (usedBytes >= 1024 * 1024) { // MB
+            usedDisplay = `${Math.round(usedBytes / (1024 * 1024) * 100) / 100} MB`;
+        } else if (usedBytes >= 1024) { // KB
+            usedDisplay = `${Math.round(usedBytes / 1024 * 100) / 100} KB`;
+        } else { // Bytes
+            usedDisplay = `${usedBytes} bytes`;
+        }
+        
+        if (storageInfo.limit_gb >= 1024) { // TB
+            limitDisplay = `${Math.round(storageInfo.limit_gb / 1024 * 100) / 100} TB`;
+        } else { // GB
+            limitDisplay = `${storageInfo.limit_gb} GB`;
+        }
+        
+        storageText.textContent = `${usedDisplay} of ${limitDisplay} used`;
+        storagePercentage.textContent = `${Math.round(percentage * 100) / 100}%`;
     }
-    
-    // Update progress bar and text
-    const progressBar = storageDisplay.querySelector('.progress-bar');
-    const storageUsed = storageDisplay.querySelector('#storageUsed');
-    const storageLimit = storageDisplay.querySelector('#storageLimit');
-    
-    const usedBytes = storageInfo.current_usage_bytes;
-    const limitBytes = storageInfo.limit_bytes;
-    const percentage = Math.min((usedBytes / limitBytes) * 100, 100);
-    
-    // Ensure minimum width for very low percentages
-    const minWidth = percentage < 0.001 ? 0.1 : percentage;
-    progressBar.style.width = `${minWidth}%`;
-    progressBar.setAttribute('aria-valuenow', percentage);
-    progressBar.textContent = `${Math.round(percentage * 100) / 100}%`;
-    
-    // iCloud-style color coding based on usage
-    console.log('Storage percentage:', percentage); // Debug log
-    console.log('Progress bar element:', progressBar); // Debug log
-    
-    // Remove any existing color classes first
-    progressBar.className = 'progress-bar';
-    
-    if (percentage > 90) {
-        progressBar.style.setProperty('background-color', '#ff3b30', 'important'); // Red for critical usage
-        console.log('Applied RED color for critical usage');
-    } else if (percentage > 80) {
-        progressBar.style.setProperty('background-color', '#ff9500', 'important'); // Orange for high usage
-        console.log('Applied ORANGE color for high usage');
-    } else if (percentage > 60) {
-        progressBar.style.setProperty('background-color', '#ffcc00', 'important'); // Yellow for moderate usage
-        console.log('Applied YELLOW color for moderate usage');
-    } else if (percentage > 30) {
-        progressBar.style.setProperty('background-color', '#34c759', 'important'); // Green for normal usage
-        console.log('Applied GREEN color for normal usage');
-    } else {
-        progressBar.style.setProperty('background-color', '#007aff', 'important'); // Blue for low usage (iCloud style)
-        console.log('Applied BLUE color for low usage');
-    }
-    
-    // Force a style refresh
-    progressBar.style.display = 'none';
-    progressBar.offsetHeight; // Trigger reflow
-    progressBar.style.display = '';
-    
-    console.log('Final applied color:', progressBar.style.backgroundColor); // Debug log
-    
-    // Format storage display with appropriate units
-    let usedDisplay, limitDisplay;
-    
-    if (usedBytes >= 1024 * 1024 * 1024) { // GB or more
-        usedDisplay = `${Math.round(usedBytes / (1024 * 1024 * 1024) * 100) / 100} GB`;
-    } else if (usedBytes >= 1024 * 1024) { // MB
-        usedDisplay = `${Math.round(usedBytes / (1024 * 1024) * 100) / 100} MB`;
-    } else if (usedBytes >= 1024) { // KB
-        usedDisplay = `${Math.round(usedBytes / 1024 * 100) / 100} KB`;
-    } else { // Bytes
-        usedDisplay = `${usedBytes} bytes`;
-    }
-    
-    if (storageInfo.limit_gb >= 1024) { // TB
-        limitDisplay = `${Math.round(storageInfo.limit_gb / 1024 * 100) / 100} TB`;
-    } else { // GB
-        limitDisplay = `${storageInfo.limit_gb} GB`;
-    }
-    
-    storageUsed.textContent = usedDisplay;
-    storageLimit.textContent = limitDisplay;
     
     // Also update upload section storage display
     updateUploadStorageDisplay(storageInfo);
