@@ -23,6 +23,9 @@ body {
     background-color: #2F3E46 !important; /* Dark blue-gray */
     padding: 1rem 0;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: sticky; /* Make the navbar sticky */
+    top: 0; /* Stick to the top of the viewport */
+    z-index: 1020; /* Ensure it stays above other content */
 }
 
 .navbar-brand {
