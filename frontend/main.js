@@ -169,25 +169,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 event.preventDefault();
                 showLoadingIndicator(); // Show loading indicator
                 try {
-                    const response = await fetch('http://127.0.0.1:8000/api/logout/', {
+                    const response = await fetch('http://0.0.0.0:8000/api/logout/', {
                         method: 'POST',
                         headers: {
                             'Authorization': `Token ${token}`,
                         },
                     });
-                    if (response.ok) {
-                        localStorage.removeItem('token');
-                        localStorage.removeItem('username');
-                        window.location.href = 'index.html';
-                    }
-                    else {
-                        const errorData = await response.json();
-                        displayMessage(errorData.error || 'Logout failed.', 'danger');
-                    }
+                    // Always clear local storage and redirect, regardless of API response
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('username');
+                    window.location.href = 'index.html';
                 }
                 catch (error) {
                     console.error('Error during logout:', error);
-                    displayMessage('An error occurred during logout.', 'danger');
+                    // Even if API fails, clear local storage and redirect
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('username');
+                    window.location.href = 'index.html';
                 }
                 finally {
                     hideLoadingIndicator(); // Hide loading indicator
@@ -228,11 +226,21 @@ document.addEventListener('DOMContentLoaded', () => {
                         'Authorization': `Token ${token}`,
                     },
                 });
+                
+                if (response.status === 401) {
+                    // Token is invalid, redirect to login
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('username');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
                 const files = await response.json();
                 const filesTableBody = document.querySelector('#filesTableBody');
                 if (filesTableBody) {
                     filesTableBody.innerHTML = ''; // Clear existing rows
-                    files.forEach((file) => {
+                    if (Array.isArray(files)) {
+                        files.forEach((file) => {
                         const row = filesTableBody.insertRow();
                         row.insertCell().textContent = file.name;
                         row.insertCell().textContent = file.file_type;
@@ -253,6 +261,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         });
                     });
+                    } else {
+                        console.error('Files response is not an array:', files);
+                    }
                 }
             }
             catch (error) {
@@ -374,6 +385,14 @@ async function loadUserSubscription() {
                 'Authorization': `Token ${token}`,
             },
         });
+        
+        if (response.status === 401) {
+            // Token is invalid, redirect to login
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
+            window.location.href = 'login.html';
+            return;
+        }
         
         if (response.ok) {
             const data = await response.json();
