@@ -113,17 +113,18 @@ h1, h2, h3, h4, h5, h6 {
 .feature-card {
     background: #fff;
     border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    border: 1px solid #e0e0e0; /* Subtle light gray border */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1); /* Increased shadow for more pop */
     padding: 35px 25px;
     margin-bottom: 30px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     text-align: center;
 }
 
 .feature-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2); /* More pronounced shadow on hover */
+    border-color: #c0c0c0; /* Slightly darker border on hover */
 }
 
 .feature-icon {
