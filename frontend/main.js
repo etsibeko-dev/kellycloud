@@ -213,6 +213,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     displayMessage('File deleted successfully!', 'success');
                     fetchFiles(); // Refresh the file list
+                    loadUserSubscription(); // Refresh storage usage
+                    // Also refresh dashboard data if we're in the files section
+                    const currentSection = document.querySelector('.content-section.active');
+                    if (currentSection && currentSection.id === 'files-section') {
+                        loadFilesSection();
+                    }
                 }
                 else {
                     const errorData = await response.json();
@@ -354,6 +360,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Refresh the file list and storage usage
                     fetchFiles();
                     loadUserSubscription();
+                    
+                    // Also refresh files section if it's currently active
+                    const currentSection = document.querySelector('.content-section.active');
+                    if (currentSection && currentSection.id === 'files-section') {
+                        loadFilesSection();
+                    }
                 }
                 catch (error) {
                     console.error('Error during file upload:', error);
@@ -786,8 +798,102 @@ function updateRecentFiles(files) {
 }
 
 async function loadFilesSection() {
-    // This will be called when files section is shown
-    // The existing fetchFiles function will handle the loading
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    
+    try {
+        const response = await fetch('http://0.0.0.0:8000/api/files/', {
+            headers: {
+                'Authorization': `Token ${token}`,
+            },
+        });
+        
+        if (response.status === 401) {
+            // Token is invalid, redirect to login
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
+            window.location.href = 'login.html';
+            return;
+        }
+        
+        const files = await response.json();
+        const filesTableBody = document.querySelector('#filesTableBody');
+        if (filesTableBody) {
+            filesTableBody.innerHTML = ''; // Clear existing content
+            
+            if (Array.isArray(files) && files.length > 0) {
+                // Create table structure
+                filesTableBody.innerHTML = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Size</th>
+                                <th>Uploaded On</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="filesTableRows">
+                        </tbody>
+                    </table>
+                `;
+                
+                const filesTableRows = document.getElementById('filesTableRows');
+                files.forEach((file) => {
+                    const row = filesTableRows.insertRow();
+                    row.innerHTML = `
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-file me-2 text-muted"></i>
+                                <span>${file.name}</span>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-secondary">${file.file_type}</span></td>
+                        <td>${file.size_mb} MB</td>
+                        <td>${new Date(file.upload_date).toLocaleDateString()}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" data-file-id="${file.id}">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    `;
+                });
+                
+                // Add event listeners to delete buttons
+                filesTableRows.querySelectorAll('.btn-danger').forEach(button => {
+                    button.addEventListener('click', async (event) => {
+                        const fileId = event.target.closest('button').dataset.fileId;
+                        if (fileId) {
+                            await deleteFile(fileId);
+                        }
+                    });
+                });
+            } else {
+                filesTableBody.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-folder-open fs-1 text-muted mb-3"></i>
+                        <h5 class="text-muted">No files uploaded yet</h5>
+                        <p class="text-muted">Upload your first file to get started</p>
+                        <button class="btn btn-primary" data-section="upload">
+                            <i class="fas fa-upload me-2"></i>Upload Files
+                        </button>
+                    </div>
+                `;
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching files:', error);
+        const filesTableBody = document.querySelector('#filesTableBody');
+        if (filesTableBody) {
+            filesTableBody.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Error loading files. Please try again.
+                </div>
+            `;
+        }
+    }
 }
 
 async function loadPlansSection() {
@@ -886,5 +992,39 @@ function updateProfileInfo(subscriptionData) {
     
     if (profileMemberSince) {
         profileMemberSince.textContent = new Date(subscriptionData.start_date).getFullYear();
+    }
+}
+
+// Global deleteFile function for use in new dashboard sections
+async function deleteFile(fileId) {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    
+    try {
+        const response = await fetch(`http://0.0.0.0:8000/api/files/${fileId}/`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Token ${token}`,
+            },
+        });
+        
+        if (response.ok) {
+            displayMessage('File deleted successfully!', 'success');
+            
+            // Refresh dashboard data
+            loadDashboardData();
+            
+            // Refresh files section if it's currently active
+            const currentSection = document.querySelector('.content-section.active');
+            if (currentSection && currentSection.id === 'files-section') {
+                loadFilesSection();
+            }
+        } else {
+            const errorData = await response.json();
+            displayMessage(errorData.error || 'File deletion failed.', 'danger');
+        }
+    } catch (error) {
+        console.error('Error during file deletion:', error);
+        displayMessage('An error occurred during file deletion.', 'danger');
     }
 }
