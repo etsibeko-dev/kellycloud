@@ -368,20 +368,20 @@ footer {
 }
 
 /* Specific Plan Card Styles - Final Colors */
-.pricing-card.plan-free {
+.pricing-card.plan-basic {
     border: 1px solid #4A90E2; /* Sky Blue border */
 }
 
-.pricing-card.plan-free .card-header {
+.pricing-card.plan-basic .card-header {
     background-color: #4A90E2; /* Sky Blue header */
     color: #fff;
 }
 
-.pricing-card.plan-basic {
+.pricing-card.plan-standard {
     border: 1px solid #6A5ACD; /* Indigo border */
 }
 
-.pricing-card.plan-basic .card-header {
+.pricing-card.plan-standard .card-header {
     background-color: #6A5ACD; /* Indigo header */
     color: #fff;
 }
