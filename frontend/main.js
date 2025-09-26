@@ -463,14 +463,5 @@ function updateStorageDisplay(storageInfo) {
     }
     
     storageUsed.textContent = `${usedMB} MB`;
-    
-    // Format storage limit display - show TB for large values
-    let limitText;
-    if (storageInfo.limit_gb >= 1024) {
-        const tb = storageInfo.limit_gb / 1024;
-        limitText = `${tb} TB`;
-    } else {
-        limitText = `${storageInfo.limit_gb} GB`;
-    }
-    storageLimit.textContent = limitText;
+    storageLimit.textContent = `${storageInfo.limit_gb} GB`;
 }
