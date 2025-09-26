@@ -23,7 +23,17 @@ class File(models.Model):
         return round(self.file_size / (1024 * 1024), 2)
     
     def save(self, *args, **kwargs):
-        # Update file_size when file is saved
+        # Update file_size and file_type when file is saved
         if self.file:
             self.file_size = self.file.size
+            # Extract file type from filename if not provided
+            if not self.file_type:
+                try:
+                    ext = os.path.splitext(self.file.name)[1]
+                    if ext:
+                        self.file_type = ext[1:].lower()  # Remove the dot and convert to lowercase
+                    else:
+                        self.file_type = 'unknown'
+                except:
+                    self.file_type = 'unknown'
         super().save(*args, **kwargs)
