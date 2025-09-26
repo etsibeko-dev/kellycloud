@@ -367,30 +367,30 @@ footer {
     margin-top: 20px;
 }
 
-/* Specific Plan Card Styles - Revised Colors */
+/* Specific Plan Card Styles - Final Colors */
 .pricing-card.plan-free {
-    border: 1px solid #d1d1d1; /* Light gray border */
+    border: 1px solid #4A90E2; /* Sky Blue border */
 }
 
 .pricing-card.plan-free .card-header {
-    background-color: #f0f0f0; /* Very light gray header */
-    color: #333;
+    background-color: #4A90E2; /* Sky Blue header */
+    color: #fff;
 }
 
 .pricing-card.plan-basic {
-    border: 1px solid #3498db; /* Primary blue border */
+    border: 1px solid #6A5ACD; /* Indigo border */
 }
 
 .pricing-card.plan-basic .card-header {
-    background-color: #3498db; /* Primary blue header */
+    background-color: #6A5ACD; /* Indigo header */
     color: #fff;
 }
 
 .pricing-card.plan-premium {
-    border: 1px solid #e74c3c; /* Reddish border for premium */
+    border: 1px solid #FFD700; /* Gold border */
 }
 
 .pricing-card.plan-premium .card-header {
-    background-color: #e74c3c; /* Reddish header */
-    color: #fff;
+    background-color: #FFD700; /* Gold header */
+    color: #333; /* Darker text for gold background */
 }
