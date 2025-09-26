@@ -464,29 +464,42 @@ function updateStorageDisplay(storageInfo) {
     const limitBytes = storageInfo.limit_bytes;
     const percentage = Math.min((usedBytes / limitBytes) * 100, 100);
     
-    progressBar.style.width = `${percentage}%`;
+    // Ensure minimum width for very low percentages
+    const minWidth = percentage < 0.001 ? 0.1 : percentage;
+    progressBar.style.width = `${minWidth}%`;
     progressBar.setAttribute('aria-valuenow', percentage);
     progressBar.textContent = `${Math.round(percentage * 100) / 100}%`;
     
     // iCloud-style color coding based on usage
     console.log('Storage percentage:', percentage); // Debug log
+    console.log('Progress bar element:', progressBar); // Debug log
+    
+    // Remove any existing color classes first
+    progressBar.className = 'progress-bar';
+    
     if (percentage > 90) {
-        progressBar.className = 'progress-bar';
         progressBar.style.setProperty('background-color', '#ff3b30', 'important'); // Red for critical usage
+        console.log('Applied RED color for critical usage');
     } else if (percentage > 80) {
-        progressBar.className = 'progress-bar';
         progressBar.style.setProperty('background-color', '#ff9500', 'important'); // Orange for high usage
+        console.log('Applied ORANGE color for high usage');
     } else if (percentage > 60) {
-        progressBar.className = 'progress-bar';
         progressBar.style.setProperty('background-color', '#ffcc00', 'important'); // Yellow for moderate usage
+        console.log('Applied YELLOW color for moderate usage');
     } else if (percentage > 30) {
-        progressBar.className = 'progress-bar';
         progressBar.style.setProperty('background-color', '#34c759', 'important'); // Green for normal usage
+        console.log('Applied GREEN color for normal usage');
     } else {
-        progressBar.className = 'progress-bar';
         progressBar.style.setProperty('background-color', '#007aff', 'important'); // Blue for low usage (iCloud style)
+        console.log('Applied BLUE color for low usage');
     }
-    console.log('Applied color:', progressBar.style.backgroundColor); // Debug log
+    
+    // Force a style refresh
+    progressBar.style.display = 'none';
+    progressBar.offsetHeight; // Trigger reflow
+    progressBar.style.display = '';
+    
+    console.log('Final applied color:', progressBar.style.backgroundColor); // Debug log
     
     // Format storage display with appropriate units
     let usedDisplay, limitDisplay;
