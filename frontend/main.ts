@@ -1,15 +1,45 @@
 // Main TypeScript code will go here
 
-function displayMessage(containerId: string, message: string, type: 'success' | 'danger') {
-    const container = document.getElementById(containerId);
-    if (container) {
-        container.textContent = message;
-        container.classList.remove('d-none', 'alert-success', 'alert-danger');
-        container.classList.add(`alert-${type}`);
+// Function to display a message to the user
+function displayMessage(message: string, type: 'success' | 'error') {
+    const messageContainer = document.getElementById('messageContainer');
+    if (messageContainer) {
+        messageContainer.innerHTML = `<div class="alert alert-${type}" role="alert">${message}</div>`;
         setTimeout(() => {
-            container.classList.add('d-none');
-            container.textContent = '';
-        }, 5000); // Hide message after 5 seconds
+            messageContainer.innerHTML = '';
+        }, 5000);
+    }
+}
+
+// Function to show loading indicator
+function showLoadingIndicator() {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    if (loadingIndicator) {
+        loadingIndicator.classList.remove('d-none');
+    }
+}
+
+// Function to hide loading indicator
+function hideLoadingIndicator() {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    if (loadingIndicator) {
+        loadingIndicator.classList.add('d-none');
+    }
+}
+
+function toggleLoadingSpinner(buttonId: string, show: boolean) {
+    const button = document.getElementById(buttonId) as HTMLButtonElement;
+    if (button) {
+        const spinner = button.querySelector('.spinner-border') as HTMLSpanElement;
+        if (spinner) {
+            if (show) {
+                spinner.classList.remove('d-none');
+                button.disabled = true;
+            } else {
+                spinner.classList.add('d-none');
+                button.disabled = false;
+            }
+        }
     }
 }
 
@@ -25,6 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const username = usernameInput.value;
                 const password = passwordInput.value;
+
+                toggleLoadingSpinner('loginButton', true); // Show loading spinner
 
                 try {
                     const response = await fetch('http://127.0.0.1:8000/api/login/', {
@@ -42,11 +74,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         localStorage.setItem('username', data.user.username);
                         window.location.href = 'dashboard.html';
                     } else {
-                        displayMessage('messageContainer', data.error || 'Login failed', 'danger');
+                        displayMessage(data.error || 'Login failed', 'danger');
                     }
                 } catch (error) {
                     console.error('Error during login:', error);
-                    displayMessage('messageContainer', 'An error occurred during login.', 'danger');
+                    displayMessage('An error occurred during login.', 'danger');
+                } finally {
+                    toggleLoadingSpinner('loginButton', false); // Hide loading spinner
                 }
             });
         }
@@ -71,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
+                toggleLoadingSpinner('registerButton', true); // Show loading spinner
                 try {
                     const response = await fetch('http://127.0.0.1:8000/api/register/', {
                         method: 'POST',
@@ -83,14 +118,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     const data = await response.json();
 
                     if (response.ok) {
-                        displayMessage('messageContainer', 'Registration successful! Please log in.', 'success');
+                        displayMessage('Registration successful! Please log in.', 'success');
                         window.location.href = 'login.html';
                     } else {
-                        displayMessage('messageContainer', data.error || 'Registration failed', 'danger');
+                        displayMessage(data.error || 'Registration failed', 'danger');
                     }
                 } catch (error) {
                     console.error('Error during registration:', error);
-                    displayMessage('messageContainer', 'An error occurred during registration.', 'danger');
+                    displayMessage('An error occurred during registration.', 'danger');
+                } finally {
+                    toggleLoadingSpinner('registerButton', false); // Hide loading spinner
                 }
             });
         }
@@ -108,7 +145,63 @@ document.addEventListener('DOMContentLoaded', () => {
             usernameDisplay.textContent = username;
         }
 
+        const logoutButton = document.querySelector('#logoutButton');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', async (event) => {
+                event.preventDefault();
+                showLoadingIndicator(); // Show loading indicator
+                try {
+                    const response = await fetch('http://127.0.0.1:8000/api/logout/', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Token ${token}`,
+                        },
+                    });
+
+                    if (response.ok) {
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('username');
+                        window.location.href = 'index.html';
+                    } else {
+                        const errorData = await response.json();
+                        displayMessage(errorData.error || 'Logout failed.', 'danger');
+                    }
+                } catch (error) {
+                    console.error('Error during logout:', error);
+                    displayMessage('An error occurred during logout.', 'danger');
+                } finally {
+                    hideLoadingIndicator(); // Hide loading indicator
+                }
+            });
+        }
+
+        const deleteFile = async (fileId: string) => {
+            showLoadingIndicator(); // Show loading indicator
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/api/files/${fileId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Token ${token}`,
+                    },
+                });
+
+                if (response.ok) {
+                    displayMessage('File deleted successfully!', 'success');
+                    fetchFiles(); // Refresh the file list
+                } else {
+                    const errorData = await response.json();
+                    displayMessage(errorData.error || 'File deletion failed.', 'danger');
+                }
+            } catch (error) {
+                console.error('Error during file deletion:', error);
+                displayMessage('An error occurred during file deletion.', 'danger');
+            } finally {
+                hideLoadingIndicator(); // Hide loading indicator
+            }
+        };
+
         const fetchFiles = async () => {
+            showLoadingIndicator(); // Show loading indicator
             try {
                 const response = await fetch('http://127.0.0.1:8000/api/files/', {
                     headers: {
@@ -125,10 +218,28 @@ document.addEventListener('DOMContentLoaded', () => {
                         row.insertCell().textContent = file.name;
                         row.insertCell().textContent = file.file_type;
                         row.insertCell().textContent = new Date(file.upload_date).toLocaleDateString();
+                        const actionsCell = row.insertCell();
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = 'Delete';
+                        deleteButton.classList.add('btn', 'btn-danger', 'btn-sm');
+                        deleteButton.dataset.fileId = file.id; // Assuming file has an 'id' property
+                        actionsCell.appendChild(deleteButton);
+                    });
+
+                    // Add event listeners to delete buttons
+                    filesTableBody.querySelectorAll('.btn-danger').forEach(button => {
+                        button.addEventListener('click', async (event) => {
+                            const fileId = (event.target as HTMLButtonElement).dataset.fileId;
+                            if (fileId) {
+                                await deleteFile(fileId);
+                            }
+                        });
                     });
                 }
             } catch (error) {
                 console.error('Error fetching files:', error);
+            } finally {
+                hideLoadingIndicator(); // Hide loading indicator
             }
         };
 
@@ -145,4 +256,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 const name = fileNameInput.value;
                 const file_type = fileTypeInput.value;
 
-                displayMessage('messageContainer', 'Error fetching files.', 'danger');
+                toggleLoadingSpinner('uploadButton', true); // Show loading spinner
+                try {
+                    const response = await fetch('http://127.0.0.1:8000/api/files/upload/', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Token ${token}`,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ name, file_type }),
+                    });
+
+                    if (response.ok) {
+                        displayMessage('File uploaded successfully!', 'success');
+                        fetchFiles(); // Refresh the file list
+                    } else {
+                        const errorData = await response.json();
+                        displayMessage(errorData.error || 'File upload failed.', 'danger');
+                    }
+                } catch (error) {
+                    console.error('Error during file upload:', error);
+                    displayMessage('An error occurred during file upload.', 'danger');
+                } finally {
+                    toggleLoadingSpinner('uploadButton', false); // Hide loading spinner
+                }

@@ -21,7 +21,7 @@
                         <a class="nav-link" href="#">Welcome, <span id="usernameDisplay"></span>!</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.html">Logout</a>
+                        <a class="nav-link" href="#" id="logoutButton">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -36,6 +36,11 @@
                         My Files
                     </div>
                     <div id="messageContainer" class="alert d-none" role="alert"></div>
+                    <div id="loadingIndicator" class="text-center d-none">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
                     <div class="card-body">
                         <h5>Upload a new file</h5>
                         <form class="mb-4">
@@ -47,7 +52,9 @@
                                 <label for="fileType" class="form-label">File Type</label>
                                 <input type="text" class="form-control" id="fileType" name="fileType">
                             </div>
-                            <button type="submit" class="btn btn-primary">Upload</button>
+                            <button type="submit" class="btn btn-primary" id="uploadButton">Upload
+                                <span id="loadingSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                            </button>
                         </form>
 
                         <h5>Your files</h5>
@@ -57,6 +64,7 @@
                                     <th>Name</th>
                                     <th>Type</th>
                                     <th>Uploaded On</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="filesTableBody">
