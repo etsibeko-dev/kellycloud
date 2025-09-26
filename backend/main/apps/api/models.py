@@ -64,6 +64,7 @@ class UserSubscription(models.Model):
     plan_type = models.CharField(max_length=20, choices=Subscription.PLAN_CHOICES, default='basic')
     start_date = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
+    current_usage_bytes = models.BigIntegerField(default=0)  # Track actual storage usage
     
     def __str__(self):
         return f"{self.user.username} - {self.get_plan_type_display()}"
@@ -73,16 +74,6 @@ class UserSubscription(models.Model):
         """Get storage limit in bytes"""
         plan = Subscription.get_plan(self.plan_type)
         return plan['storage_limit_gb'] * 1024 * 1024 * 1024  # Convert GB to bytes
-    
-    @property
-    def current_usage_bytes(self):
-        """Get current storage usage in bytes"""
-        from apps.storage.models import File
-        # For now, we'll estimate based on number of files
-        # In a real app, you'd track actual file sizes
-        file_count = File.objects.filter(owner=self.user).count()
-        # Estimate 1MB per file for demo purposes
-        return file_count * 1024 * 1024
     
     @property
     def usage_percentage(self):
