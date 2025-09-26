@@ -367,6 +367,27 @@ footer {
     margin-top: 20px;
 }
 
+.pricing-card.plan-basic .btn-primary {
+    background-color: #4A90E2 !important;
+    border-color: #4A90E2 !important;
+}
+
+.pricing-card.plan-standard .btn-primary {
+    background-color: #6A5ACD !important;
+    border-color: #6A5ACD !important;
+}
+
+.pricing-card.plan-premium .btn-primary {
+    background-color: #FFD700 !important;
+    border-color: #FFD700 !important;
+    color: #333 !important; /* Ensure text is readable on gold */
+}
+
+.pricing-card.plan-premium .btn-primary:hover {
+    background-color: #e6c200 !important; /* Slightly darker gold on hover */
+    border-color: #e6c200 !important;
+}
+
 /* Specific Plan Card Styles - Final Colors */
 .pricing-card.plan-basic {
     border: 1px solid #4A90E2; /* Sky Blue border */
