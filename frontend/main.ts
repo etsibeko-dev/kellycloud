@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (response.ok) {
                         localStorage.setItem('token', data.token);
+                        localStorage.setItem('username', data.user.username);
                         window.location.href = 'dashboard.html';
                     } else {
                         alert(data.error || 'Login failed');
@@ -82,9 +83,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     } else if (window.location.pathname.endsWith('dashboard.html')) {
         const token = localStorage.getItem('token');
-        if (!token) {
+        const username = localStorage.getItem('username');
+
+        if (!token || !username) {
             window.location.href = 'login.html';
             return;
+        }
+
+        const usernameDisplay = document.querySelector('#usernameDisplay');
+        if (usernameDisplay) {
+            usernameDisplay.textContent = username;
         }
 
         const fetchFiles = async () => {
