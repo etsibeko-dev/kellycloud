@@ -469,22 +469,24 @@ function updateStorageDisplay(storageInfo) {
     progressBar.textContent = `${Math.round(percentage * 100) / 100}%`;
     
     // iCloud-style color coding based on usage
+    console.log('Storage percentage:', percentage); // Debug log
     if (percentage > 90) {
         progressBar.className = 'progress-bar';
-        progressBar.style.backgroundColor = '#ff3b30'; // Red for critical usage
+        progressBar.style.setProperty('background-color', '#ff3b30', 'important'); // Red for critical usage
     } else if (percentage > 80) {
         progressBar.className = 'progress-bar';
-        progressBar.style.backgroundColor = '#ff9500'; // Orange for high usage
+        progressBar.style.setProperty('background-color', '#ff9500', 'important'); // Orange for high usage
     } else if (percentage > 60) {
         progressBar.className = 'progress-bar';
-        progressBar.style.backgroundColor = '#ffcc00'; // Yellow for moderate usage
+        progressBar.style.setProperty('background-color', '#ffcc00', 'important'); // Yellow for moderate usage
     } else if (percentage > 30) {
         progressBar.className = 'progress-bar';
-        progressBar.style.backgroundColor = '#34c759'; // Green for normal usage
+        progressBar.style.setProperty('background-color', '#34c759', 'important'); // Green for normal usage
     } else {
         progressBar.className = 'progress-bar';
-        progressBar.style.backgroundColor = '#007aff'; // Blue for low usage (iCloud style)
+        progressBar.style.setProperty('background-color', '#007aff', 'important'); // Blue for low usage (iCloud style)
     }
+    console.log('Applied color:', progressBar.style.backgroundColor); // Debug log
     
     // Format storage display with appropriate units
     let usedDisplay, limitDisplay;
