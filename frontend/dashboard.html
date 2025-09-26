@@ -398,16 +398,20 @@
 
                 <!-- Charts Row -->
                 <div class="row mb-4">
-                    <div class="col-md-8">
-                        <div class="stats-card">
-                            <h5 class="mb-3">Storage Usage Over Time</h5>
-                            <canvas id="storageChart" width="400" height="200"></canvas>
-                        </div>
-                    </div>
+                            <div class="col-md-8">
+                                <div class="stats-card">
+                                    <h5 class="mb-3">Storage Usage Over Time</h5>
+                                    <div style="position: relative; height: 300px; width: 100%;">
+                                        <canvas id="storageChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
                     <div class="col-md-4">
                         <div class="stats-card">
                             <h5 class="mb-3">File Types Distribution</h5>
-                            <canvas id="fileTypesChart" width="300" height="200"></canvas>
+                            <div style="position: relative; height: 300px; width: 100%;">
+                                <canvas id="fileTypesChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
