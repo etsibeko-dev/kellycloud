@@ -2,94 +2,478 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard - Kelly CLOUD</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Bootstrap 5 CDN -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - KellyCloud</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+        .sidebar.collapsed {
+            width: 70px;
+        }
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 4px 12px;
+            transition: all 0.3s;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+        .sidebar .nav-link i {
+            width: 20px;
+            margin-right: 12px;
+        }
+        .main-content {
+            margin-left: 250px;
+            transition: all 0.3s;
+            min-height: 100vh;
+            background: #f8f9fa;
+        }
+        .main-content.expanded {
+            margin-left: 70px;
+        }
+        .top-navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+        }
+        .stats-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: none;
+            transition: transform 0.3s;
+        }
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .file-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+        .file-card:hover {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .progress-container {
+            background: #f8f9fa;
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+        }
+        .progress-bar-custom {
+            height: 100%;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">☁️ KellyCloud</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Welcome, <span id="usernameDisplay"></span>!</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" id="logoutButton">Logout</a>
-                    </li>
-                </ul>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="p-3">
+            <div class="d-flex align-items-center mb-4">
+                <i class="fas fa-cloud text-white fs-3 me-2"></i>
+                <span class="text-white fw-bold fs-5" id="sidebar-brand">KellyCloud</span>
             </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" data-section="dashboard">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-section="files">
+                        <i class="fas fa-folder"></i>
+                        <span>My Files</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-section="upload">
+                        <i class="fas fa-upload"></i>
+                        <span>Upload</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-section="analytics">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-section="plans">
+                        <i class="fas fa-crown"></i>
+                        <span>Plans</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-section="profile">
+                        <i class="fas fa-user"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
         </div>
     </nav>
 
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        My Files
-                    </div>
-                    <div id="messageContainer" class="alert d-none" role="alert"></div>
-                    <div id="loadingIndicator" class="text-center d-none">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Navbar -->
+        <div class="top-navbar d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-outline-secondary me-3 d-md-none" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h4 class="mb-0" id="pageTitle">Dashboard</h4>
+            </div>
+            <div class="d-flex align-items-center">
+                <div class="dropdown me-3">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge bg-danger rounded-pill ms-1">3</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">New file uploaded</a></li>
+                        <li><a class="dropdown-item" href="#">Storage 80% full</a></li>
+                        <li><a class="dropdown-item" href="#">Plan expires soon</a></li>
+                    </ul>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle me-2"></i>
+                        <span id="userDisplayName">User</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" data-section="profile"><i class="fas fa-user me-2"></i>Profile</a></li>
+                        <li><a class="dropdown-item" href="#" data-section="settings"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" id="logoutLink"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid px-4">
+            <!-- Dashboard Section -->
+            <div class="content-section active" id="dashboard-section">
+                <!-- Stats Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="stats-card">
+                            <div class="d-flex align-items-center">
+                                <div class="stats-icon bg-primary me-3">
+                                    <i class="fas fa-hdd"></i>
+                                </div>
+                                <div>
+                                    <h6 class="text-muted mb-1">Storage Used</h6>
+                                    <h4 class="mb-0" id="storageUsedDisplay">0 MB</h4>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <h5>Upload a new file</h5>
-                        <form class="mb-4" id="uploadForm" enctype="multipart/form-data">
-        <div class="mb-3">
-            <label for="fileInput" class="form-label">Choose Files (up to 100 files)</label>
-            <input type="file" class="form-control" id="fileInput" name="file" multiple required>
-            <div class="form-text">Hold Shift or Ctrl to select multiple files</div>
-        </div>
-                            <div class="mb-3">
-                                <label for="fileName" class="form-label">File Name (optional)</label>
-                                <input type="text" class="form-control" id="fileName" name="fileName" placeholder="Leave empty to use original filename">
+                    <div class="col-md-3 mb-3">
+                        <div class="stats-card">
+                            <div class="d-flex align-items-center">
+                                <div class="stats-icon bg-success me-3">
+                                    <i class="fas fa-file"></i>
+                                </div>
+                                <div>
+                                    <h6 class="text-muted mb-1">Total Files</h6>
+                                    <h4 class="mb-0" id="totalFilesDisplay">0</h4>
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-primary" id="uploadButton">Upload Files
-                                <span id="loadingSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                            </button>
-                        </form>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="stats-card">
+                            <div class="d-flex align-items-center">
+                                <div class="stats-icon bg-warning me-3">
+                                    <i class="fas fa-crown"></i>
+                                </div>
+                                <div>
+                                    <h6 class="text-muted mb-1">Current Plan</h6>
+                                    <h4 class="mb-0" id="currentPlanDisplay">Basic</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="stats-card">
+                            <div class="d-flex align-items-center">
+                                <div class="stats-icon bg-info me-3">
+                                    <i class="fas fa-calendar"></i>
+                                </div>
+                                <div>
+                                    <h6 class="text-muted mb-1">Member Since</h6>
+                                    <h4 class="mb-0" id="memberSinceDisplay">2025</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                        <h5>Your files</h5>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Type</th>
-                                    <th>Uploaded On</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="filesTableBody">
-                                <tr>
-                                    <td>document.pdf</td>
-                                    <td>pdf</td>
-                                    <td>2025-09-26</td>
-                                </tr>
-                                <tr>
-                                    <td>image.jpg</td>
-                                    <td>jpg</td>
-                                    <td>2025-09-25</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <!-- Storage Usage -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="stats-card">
+                            <h5 class="mb-3">Storage Usage</h5>
+                            <div class="progress-container mb-2">
+                                <div class="progress-bar-custom" id="storageProgressBar" style="width: 0%; background: #007aff;"></div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <small class="text-muted" id="storageText">0 MB of 2 TB used</small>
+                                <small class="text-muted" id="storagePercentage">0%</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Files -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="stats-card">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">Recent Files</h5>
+                                <a href="#" class="btn btn-outline-primary btn-sm" data-section="files">View All</a>
+                            </div>
+                            <div id="recentFilesList">
+                                <p class="text-muted text-center py-4">No files uploaded yet</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Files Section -->
+            <div class="content-section" id="files-section">
+                <div class="stats-card">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="mb-0">My Files</h5>
+                        <div class="d-flex gap-2">
+                            <input type="text" class="form-control" placeholder="Search files..." id="fileSearch" style="width: 200px;">
+                            <button class="btn btn-outline-primary" data-section="upload">
+                                <i class="fas fa-plus me-1"></i>Upload
+                            </button>
+                        </div>
+                    </div>
+                    <div id="filesTableBody">
+                        <!-- Files will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload Section -->
+            <div class="content-section" id="upload-section">
+                <div class="stats-card">
+                    <h5 class="mb-4">Upload Files</h5>
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="fileInput" class="form-label">Choose Files (up to 100 files)</label>
+                            <input type="file" class="form-control" id="fileInput" name="file" multiple required>
+                            <div class="form-text">Hold Shift or Ctrl to select multiple files</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fileName" class="form-label">File Name (optional)</label>
+                            <input type="text" class="form-control" id="fileName" name="fileName" placeholder="Leave empty to use original filename">
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="uploadButton">
+                            <i class="fas fa-upload me-2"></i>Upload Files
+                            <span id="loadingSpinner" class="spinner-border spinner-border-sm d-none ms-2" role="status" aria-hidden="true"></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Analytics Section -->
+            <div class="content-section" id="analytics-section">
+                <div class="stats-card">
+                    <h5 class="mb-4">Analytics</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Storage Usage Over Time</h6>
+                            <div class="text-center py-5 text-muted">
+                                <i class="fas fa-chart-line fs-1 mb-3"></i>
+                                <p>Analytics coming soon</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>File Types Distribution</h6>
+                            <div class="text-center py-5 text-muted">
+                                <i class="fas fa-chart-pie fs-1 mb-3"></i>
+                                <p>Analytics coming soon</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Plans Section -->
+            <div class="content-section" id="plans-section">
+                <div class="stats-card">
+                    <h5 class="mb-4">Subscription Plans</h5>
+                    <div class="row" id="plansContainer">
+                        <!-- Plans will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Section -->
+            <div class="content-section" id="profile-section">
+                <div class="stats-card">
+                    <h5 class="mb-4">Profile Settings</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <form id="profileForm">
+                                <div class="mb-3">
+                                    <label for="profileUsername" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="profileUsername" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="profileEmail" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="profileEmail">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="profileFirstName" class="form-label">First Name</label>
+                                    <input type="text" class="form-control" id="profileFirstName">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="profileLastName" class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" id="profileLastName">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update Profile</button>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Account Information</h6>
+                            <div class="list-group">
+                                <div class="list-group-item d-flex justify-content-between">
+                                    <span>Member Since</span>
+                                    <span id="profileMemberSince">-</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between">
+                                    <span>Current Plan</span>
+                                    <span id="profileCurrentPlan">-</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between">
+                                    <span>Storage Used</span>
+                                    <span id="profileStorageUsed">-</span>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between">
+                                    <span>Total Files</span>
+                                    <span id="profileTotalFiles">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Section -->
+            <div class="content-section" id="settings-section">
+                <div class="stats-card">
+                    <h5 class="mb-4">Account Settings</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Security</h6>
+                            <form id="passwordForm">
+                                <div class="mb-3">
+                                    <label for="currentPassword" class="form-label">Current Password</label>
+                                    <input type="password" class="form-control" id="currentPassword">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="newPassword" class="form-label">New Password</label>
+                                    <input type="password" class="form-control" id="newPassword">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                    <input type="password" class="form-control" id="confirmPassword">
+                                </div>
+                                <button type="submit" class="btn btn-warning">Change Password</button>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Preferences</h6>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="emailNotifications">
+                                <label class="form-check-label" for="emailNotifications">
+                                    Email Notifications
+                                </label>
+                            </div>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="autoBackup">
+                                <label class="form-check-label" for="autoBackup">
+                                    Auto Backup
+                                </label>
+                            </div>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="darkMode">
+                                <label class="form-check-label" for="darkMode">
+                                    Dark Mode
+                                </label>
+                            </div>
+                            <button class="btn btn-secondary">Save Preferences</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <div id="messageContainer"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="main.js"></script>
