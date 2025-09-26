@@ -80,5 +80,92 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
+    } else if (window.location.pathname.endsWith('dashboard.html')) {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const fetchFiles = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/files/', {
+                    headers: {
+                        'Authorization': `Token ${token}`,
+                    },
+                });
+                const files = await response.json();
+
+                const filesTableBody = document.querySelector('#filesTableBody');
+                if (filesTableBody) {
+                    filesTableBody.innerHTML = ''; // Clear existing rows
+                    files.forEach((file: any) => {
+                        const row = filesTableBody.insertRow();
+                        row.insertCell().textContent = file.name;
+                        row.insertCell().textContent = file.file_type;
+                        row.insertCell().textContent = new Date(file.upload_date).toLocaleDateString();
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching files:', error);
+            }
+        };
+
+        fetchFiles();
+
+        const uploadForm = document.querySelector('form');
+        if (uploadForm) {
+            uploadForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                const fileNameInput = uploadForm.querySelector('#fileName') as HTMLInputElement;
+                const fileTypeInput = uploadForm.querySelector('#fileType') as HTMLInputElement;
+
+                const name = fileNameInput.value;
+                const file_type = fileTypeInput.value;
+
+                try {
+                    const response = await fetch('http://127.0.0.1:8000/api/files/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Token ${token}`,
+                        },
+                        body: JSON.stringify({ name, file_type }),
+                    });
+
+                    if (response.ok) {
+                        fileNameInput.value = '';
+                        fileTypeInput.value = '';
+                        fetchFiles(); // Refresh file list
+                    } else {
+                        alert('File upload failed');
+                    }
+                } catch (error) {
+                    console.error('Error uploading file:', error);
+                    alert('An error occurred during file upload.');
+                }
+            });
+        }
+
+        const logoutLink = document.querySelector('a[href="index.html"]');
+        if (logoutLink) {
+            logoutLink.addEventListener('click', async (event) => {
+                event.preventDefault();
+                try {
+                    await fetch('http://127.0.0.1:8000/api/logout/', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Token ${token}`,
+                        },
+                    });
+                } catch (error) {
+                    console.error('Error during logout:', error);
+                } finally {
+                    localStorage.removeItem('token');
+                    window.location.href = 'index.html';
+                }
+            });
+        }
     }
 });
