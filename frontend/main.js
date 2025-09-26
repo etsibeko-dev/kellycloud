@@ -176,9 +176,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         },
                     });
                     // Always clear local storage and redirect, regardless of API response
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('username');
-                    window.location.href = 'index.html';
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('username');
+                        window.location.href = 'index.html';
                 }
                 catch (error) {
                     console.error('Error during logout:', error);
@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (filesTableBody) {
                     filesTableBody.innerHTML = ''; // Clear existing rows
                     if (Array.isArray(files)) {
-                        files.forEach((file) => {
+                    files.forEach((file) => {
                         const row = filesTableBody.insertRow();
                         row.insertCell().textContent = file.name;
                         row.insertCell().textContent = file.file_type;
@@ -460,13 +460,13 @@ function updateStorageDisplay(storageInfo) {
     const storageUsed = storageDisplay.querySelector('#storageUsed');
     const storageLimit = storageDisplay.querySelector('#storageLimit');
     
-    const usedMB = Math.round(storageInfo.current_usage_bytes / (1024 * 1024));
-    const limitMB = storageInfo.limit_gb * 1024;
-    const percentage = Math.min((usedMB / limitMB) * 100, 100);
+    const usedBytes = storageInfo.current_usage_bytes;
+    const limitBytes = storageInfo.limit_bytes;
+    const percentage = Math.min((usedBytes / limitBytes) * 100, 100);
     
     progressBar.style.width = `${percentage}%`;
     progressBar.setAttribute('aria-valuenow', percentage);
-    progressBar.textContent = `${Math.round(percentage)}%`;
+    progressBar.textContent = `${Math.round(percentage * 100) / 100}%`;
     
     // Color coding based on usage
     if (percentage > 90) {
@@ -477,6 +477,25 @@ function updateStorageDisplay(storageInfo) {
         progressBar.className = 'progress-bar bg-success';
     }
     
-    storageUsed.textContent = `${usedMB} MB`;
-    storageLimit.textContent = `${storageInfo.limit_gb} GB`;
+    // Format storage display with appropriate units
+    let usedDisplay, limitDisplay;
+    
+    if (usedBytes >= 1024 * 1024 * 1024) { // GB or more
+        usedDisplay = `${Math.round(usedBytes / (1024 * 1024 * 1024) * 100) / 100} GB`;
+    } else if (usedBytes >= 1024 * 1024) { // MB
+        usedDisplay = `${Math.round(usedBytes / (1024 * 1024) * 100) / 100} MB`;
+    } else if (usedBytes >= 1024) { // KB
+        usedDisplay = `${Math.round(usedBytes / 1024 * 100) / 100} KB`;
+    } else { // Bytes
+        usedDisplay = `${usedBytes} bytes`;
+    }
+    
+    if (storageInfo.limit_gb >= 1024) { // TB
+        limitDisplay = `${Math.round(storageInfo.limit_gb / 1024 * 100) / 100} TB`;
+    } else { // GB
+        limitDisplay = `${storageInfo.limit_gb} GB`;
+    }
+    
+    storageUsed.textContent = usedDisplay;
+    storageLimit.textContent = limitDisplay;
 }
