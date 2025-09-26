@@ -931,9 +931,9 @@ function displayPlans(plans) {
     
     plansContainer.innerHTML = plans.map(plan => `
         <div class="col-md-4 mb-4">
-            <div class="card h-100">
+            <div class="card h-100 pricing-card plan-${plan.plan_type}">
                 <div class="card-header text-center">
-                    <h5>${plan.plan_display}</h5>
+                    <h3>${plan.plan_display}</h3>
                 </div>
                 <div class="card-body text-center">
                     <h4 class="card-title">R${plan.price_monthly} / month</h4>
