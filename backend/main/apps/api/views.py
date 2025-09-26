@@ -138,3 +138,31 @@ class UserSubscriptionView(APIView):
         
         serializer = UserSubscriptionSerializer(user_sub)
         return Response(serializer.data)
+
+class ProfileView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get(self, request):
+        """Get current user profile data"""
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
+    
+    def put(self, request):
+        """Update user profile data"""
+        user = request.user
+        data = request.data
+        
+        # Update user fields
+        if 'email' in data:
+            user.email = data['email']
+        if 'first_name' in data:
+            user.first_name = data['first_name']
+        if 'last_name' in data:
+            user.last_name = data['last_name']
+        
+        try:
+            user.save()
+            serializer = UserSerializer(user)
+            return Response(serializer.data)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

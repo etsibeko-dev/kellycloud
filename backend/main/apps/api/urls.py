@@ -9,4 +9,5 @@ urlpatterns = [
     path('files/<int:pk>/', views.FileDetailView.as_view(), name='file-detail'),
     path('subscriptions/', views.SubscriptionListView.as_view(), name='subscription-list'),
     path('user-subscription/', views.UserSubscriptionView.as_view(), name='user-subscription'),
+    path('profile/', views.ProfileView.as_view(), name='profile'),
 ]

@@ -612,6 +612,12 @@ function initializeNavigation() {
     
     // Initialize dashboard data
     loadDashboardData();
+    
+    // Profile form submission
+    const profileForm = document.getElementById('profileForm');
+    if (profileForm) {
+        profileForm.addEventListener('submit', updateProfile);
+    }
 }
 
 function showSection(sectionName) {
@@ -983,6 +989,10 @@ async function loadProfileSection() {
             const filesData = await filesResponse.json();
             updateProfileInfo(subscriptionData, filesData);
         }
+        
+        // Load current user data for form
+        await loadCurrentUserData();
+        
     } catch (error) {
         console.error('Error loading profile:', error);
     }
@@ -1020,6 +1030,82 @@ function updateProfileInfo(subscriptionData, filesData) {
     if (profileTotalFiles && filesData) {
         const totalFiles = Array.isArray(filesData) ? filesData.length : 0;
         profileTotalFiles.textContent = totalFiles;
+    }
+}
+
+async function loadCurrentUserData() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    
+    try {
+        const response = await fetch('http://0.0.0.0:8000/api/profile/', {
+            headers: {
+                'Authorization': `Token ${token}`,
+            },
+        });
+        
+        if (response.ok) {
+            const userData = await response.json();
+            populateProfileForm(userData);
+        }
+    } catch (error) {
+        console.error('Error loading user data:', error);
+    }
+}
+
+function populateProfileForm(userData) {
+    const profileEmail = document.getElementById('profileEmail');
+    const profileFirstName = document.getElementById('profileFirstName');
+    const profileLastName = document.getElementById('profileLastName');
+    
+    if (profileEmail) {
+        profileEmail.value = userData.email || '';
+    }
+    if (profileFirstName) {
+        profileFirstName.value = userData.first_name || '';
+    }
+    if (profileLastName) {
+        profileLastName.value = userData.last_name || '';
+    }
+}
+
+async function updateProfile(event) {
+    event.preventDefault();
+    
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    
+    const profileEmail = document.getElementById('profileEmail');
+    const profileFirstName = document.getElementById('profileFirstName');
+    const profileLastName = document.getElementById('profileLastName');
+    
+    const updateData = {
+        email: profileEmail.value,
+        first_name: profileFirstName.value,
+        last_name: profileLastName.value
+    };
+    
+    try {
+        const response = await fetch('http://0.0.0.0:8000/api/profile/', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token}`,
+            },
+            body: JSON.stringify(updateData)
+        });
+        
+        if (response.ok) {
+            alert('Profile updated successfully!');
+            // Reload profile data to show updated information
+            await loadCurrentUserData();
+        } else {
+            const errorData = await response.json();
+            alert('Error updating profile: ' + (errorData.error || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        alert('Error updating profile. Please try again.');
     }
 }
 

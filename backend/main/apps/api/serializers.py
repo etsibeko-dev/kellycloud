@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'subscription_info']
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'subscription_info']
     
     def get_subscription_info(self, obj):
         try:
