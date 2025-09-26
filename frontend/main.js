@@ -651,6 +651,9 @@ function showSection(sectionName) {
         case 'plans':
             loadPlansSection();
             break;
+        case 'analytics':
+            loadAnalyticsSection();
+            break;
         case 'profile':
             loadProfileSection();
             break;
@@ -1026,5 +1029,330 @@ async function deleteFile(fileId) {
     } catch (error) {
         console.error('Error during file deletion:', error);
         displayMessage('An error occurred during file deletion.', 'danger');
+    }
+}
+
+// Analytics functionality
+async function loadAnalyticsSection() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    
+    try {
+        // Load files data for analytics
+        const filesResponse = await fetch('http://0.0.0.0:8000/api/files/', {
+            headers: {
+                'Authorization': `Token ${token}`,
+            },
+        });
+        
+        if (filesResponse.ok) {
+            const files = await filesResponse.json();
+            updateAnalyticsData(files);
+            createAnalyticsCharts(files);
+        }
+    } catch (error) {
+        console.error('Error loading analytics:', error);
+    }
+}
+
+function updateAnalyticsData(files) {
+    // Update analytics overview cards
+    const analyticsFilesUploaded = document.getElementById('analyticsFilesUploaded');
+    const analyticsFilesDownloaded = document.getElementById('analyticsFilesDownloaded');
+    const analyticsFilesDeleted = document.getElementById('analyticsFilesDeleted');
+    const analyticsActiveDays = document.getElementById('analyticsActiveDays');
+    
+    if (analyticsFilesUploaded) {
+        analyticsFilesUploaded.textContent = files.length;
+    }
+    
+    // For demo purposes, simulate some data
+    if (analyticsFilesDownloaded) {
+        analyticsFilesDownloaded.textContent = Math.floor(files.length * 0.3); // 30% of uploads
+    }
+    
+    if (analyticsFilesDeleted) {
+        analyticsFilesDeleted.textContent = Math.floor(files.length * 0.1); // 10% deleted
+    }
+    
+    if (analyticsActiveDays) {
+        // Calculate unique days from file upload dates
+        const uniqueDays = new Set(files.map(file => 
+            new Date(file.upload_date).toDateString()
+        )).size;
+        analyticsActiveDays.textContent = uniqueDays;
+    }
+    
+    // Update recent activity
+    updateRecentActivity(files);
+    
+    // Update storage breakdown
+    updateStorageBreakdown(files);
+}
+
+function updateRecentActivity(files) {
+    const recentActivityList = document.getElementById('recentActivityList');
+    if (!recentActivityList) return;
+    
+    if (files.length === 0) {
+        recentActivityList.innerHTML = `
+            <div class="text-center py-4 text-muted">
+                <i class="fas fa-history fs-1 mb-3"></i>
+                <p>No recent activity</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Sort files by upload date (most recent first)
+    const sortedFiles = files.sort((a, b) => new Date(b.upload_date) - new Date(a.upload_date));
+    
+    // Show last 5 activities
+    const recentFiles = sortedFiles.slice(0, 5);
+    
+    recentActivityList.innerHTML = recentFiles.map(file => {
+        const timeAgo = getTimeAgo(new Date(file.upload_date));
+        return `
+            <div class="d-flex align-items-center justify-content-between py-2 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                        <i class="fas fa-upload text-white"></i>
+                    </div>
+                    <div>
+                        <div class="fw-medium">Uploaded ${file.name}</div>
+                        <small class="text-muted">${file.size_mb} MB • ${file.file_type}</small>
+                    </div>
+                </div>
+                <small class="text-muted">${timeAgo}</small>
+            </div>
+        `;
+    }).join('');
+}
+
+function updateStorageBreakdown(files) {
+    const storageBreakdown = document.getElementById('storageBreakdown');
+    if (!storageBreakdown) return;
+    
+    if (files.length === 0) {
+        storageBreakdown.innerHTML = `
+            <div class="text-center py-4 text-muted">
+                <i class="fas fa-hdd fs-1 mb-3"></i>
+                <p>No files to analyze</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Calculate storage by file type
+    const storageByType = {};
+    let totalSize = 0;
+    
+    files.forEach(file => {
+        const type = file.file_type || 'unknown';
+        const size = file.file_size || 0;
+        
+        if (!storageByType[type]) {
+            storageByType[type] = 0;
+        }
+        storageByType[type] += size;
+        totalSize += size;
+    });
+    
+    // Sort by size (largest first)
+    const sortedTypes = Object.entries(storageByType)
+        .sort(([,a], [,b]) => b - a)
+        .slice(0, 5); // Show top 5 file types
+    
+    if (sortedTypes.length === 0) {
+        storageBreakdown.innerHTML = `
+            <div class="text-center py-4 text-muted">
+                <i class="fas fa-hdd fs-1 mb-3"></i>
+                <p>No storage data available</p>
+            </div>
+        `;
+        return;
+    }
+    
+    storageBreakdown.innerHTML = sortedTypes.map(([type, size]) => {
+        const percentage = totalSize > 0 ? (size / totalSize * 100) : 0;
+        const sizeMB = (size / (1024 * 1024)).toFixed(2);
+        
+        return `
+            <div class="d-flex align-items-center justify-content-between py-2 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px;">
+                        <i class="fas fa-file text-white" style="font-size: 12px;"></i>
+                    </div>
+                    <div>
+                        <div class="fw-medium">${type.toUpperCase()}</div>
+                        <small class="text-muted">${sizeMB} MB</small>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <div class="fw-medium">${percentage.toFixed(1)}%</div>
+                    <div class="progress" style="width: 60px; height: 4px;">
+                        <div class="progress-bar bg-primary" style="width: ${percentage}%"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function createAnalyticsCharts(files) {
+    // Create storage usage over time chart
+    createStorageChart(files);
+    
+    // Create file types distribution chart
+    createFileTypesChart(files);
+}
+
+function createStorageChart(files) {
+    const ctx = document.getElementById('storageChart');
+    if (!ctx) return;
+    
+    // Destroy existing chart if it exists
+    if (window.storageChartInstance) {
+        window.storageChartInstance.destroy();
+    }
+    
+    // Generate mock data for storage over time (last 7 days)
+    const last7Days = [];
+    const storageData = [];
+    const today = new Date();
+    
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        last7Days.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+        
+        // Calculate cumulative storage for this day
+        const dayFiles = files.filter(file => {
+            const fileDate = new Date(file.upload_date);
+            return fileDate <= date;
+        });
+        
+        const dayStorage = dayFiles.reduce((total, file) => total + (file.file_size || 0), 0);
+        storageData.push(dayStorage / (1024 * 1024)); // Convert to MB
+    }
+    
+    window.storageChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: last7Days,
+            datasets: [{
+                label: 'Storage Used (MB)',
+                data: storageData,
+                borderColor: '#007aff',
+                backgroundColor: 'rgba(0, 122, 255, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#007aff',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0,0,0,0.1)'
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value + ' MB';
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+}
+
+function createFileTypesChart(files) {
+    const ctx = document.getElementById('fileTypesChart');
+    if (!ctx) return;
+    
+    // Destroy existing chart if it exists
+    if (window.fileTypesChartInstance) {
+        window.fileTypesChartInstance.destroy();
+    }
+    
+    // Calculate file types distribution
+    const typeCount = {};
+    files.forEach(file => {
+        const type = file.file_type || 'unknown';
+        typeCount[type] = (typeCount[type] || 0) + 1;
+    });
+    
+    const labels = Object.keys(typeCount);
+    const data = Object.values(typeCount);
+    const colors = [
+        '#007aff', '#34c759', '#ff9500', '#ff3b30', '#af52de',
+        '#ff2d92', '#5ac8fa', '#ffcc00', '#8e8e93', '#30d158'
+    ];
+    
+    window.fileTypesChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels.map(label => label.toUpperCase()),
+            datasets: [{
+                data: data,
+                backgroundColor: colors.slice(0, labels.length),
+                borderWidth: 0,
+                cutout: '60%'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true,
+                        font: {
+                            size: 12
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function getTimeAgo(date) {
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - date) / 1000);
+    
+    if (diffInSeconds < 60) {
+        return 'Just now';
+    } else if (diffInSeconds < 3600) {
+        const minutes = Math.floor(diffInSeconds / 60);
+        return `${minutes}m ago`;
+    } else if (diffInSeconds < 86400) {
+        const hours = Math.floor(diffInSeconds / 3600);
+        return `${hours}h ago`;
+    } else if (diffInSeconds < 2592000) {
+        const days = Math.floor(diffInSeconds / 86400);
+        return `${days}d ago`;
+    } else {
+        return date.toLocaleDateString();
     }
 }
