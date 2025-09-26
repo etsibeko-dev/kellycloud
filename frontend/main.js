@@ -144,9 +144,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Handle plan selection
         document.querySelectorAll('.pricing-card .btn').forEach(button => {
             button.addEventListener('click', async (event) => {
+                console.log('Plan button clicked');
                 const card = event.target.closest('.pricing-card');
+                console.log('Card classes:', card.className);
                 const planType = card.classList.contains('plan-basic') ? 'basic' : 
                                card.classList.contains('plan-standard') ? 'standard' : 'premium';
+                console.log('Detected plan type:', planType);
                 
                 await selectPlan(planType);
             });
@@ -341,7 +344,10 @@ async function loadSubscriptionPlans() {
 }
 
 async function selectPlan(planType) {
+    console.log('selectPlan called with:', planType);
     const token = localStorage.getItem('token');
+    console.log('Token found:', !!token);
+    
     if (!token) {
         displayMessage('Please log in to select a plan', 'danger');
         window.location.href = 'login.html';
@@ -349,6 +355,7 @@ async function selectPlan(planType) {
     }
     
     try {
+        console.log('Making API call to upgrade plan...');
         const response = await fetch('http://0.0.0.0:8000/api/user-subscription/', {
             method: 'POST',
             headers: {
@@ -358,8 +365,11 @@ async function selectPlan(planType) {
             body: JSON.stringify({ plan_type: planType }),
         });
         
+        console.log('Response status:', response.status);
+        
         if (response.ok) {
             const data = await response.json();
+            console.log('Plan upgrade successful:', data);
             displayMessage(`Successfully upgraded to ${data.plan_type} plan!`, 'success');
             // Redirect to dashboard after 2 seconds
             setTimeout(() => {
@@ -367,6 +377,7 @@ async function selectPlan(planType) {
             }, 2000);
         } else {
             const errorData = await response.json();
+            console.error('Plan upgrade failed:', errorData);
             displayMessage(errorData.error || 'Failed to upgrade plan', 'danger');
         }
     } catch (error) {
