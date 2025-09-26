@@ -103,7 +103,7 @@ class SubscriptionListView(APIView):
             plan_info = Subscription.get_plan(plan)
             subscription_data.append({
                 'plan_type': plan,
-                'plan_display': plan_info['features']['storage'].split()[0],  # Basic, Standard, Premium
+                'plan_display': plan.title(),  # Basic, Standard, Premium
                 'storage_limit_gb': plan_info['storage_limit_gb'],
                 'price_monthly': plan_info['price_monthly'],
                 'features': plan_info['features']
