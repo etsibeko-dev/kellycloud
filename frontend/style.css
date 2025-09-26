@@ -366,3 +366,31 @@ footer {
 .pricing-card .btn {
     margin-top: 20px;
 }
+
+/* Specific Plan Card Styles */
+.pricing-card.plan-free {
+    border: 1px solid #cccccc; /* Light gray border */
+}
+
+.pricing-card.plan-free .card-header {
+    background-color: #e0e0e0; /* Slightly darker gray header */
+    color: #333;
+}
+
+.pricing-card.plan-basic {
+    border: 1px solid #3498db; /* Primary blue border */
+}
+
+.pricing-card.plan-basic .card-header {
+    background-color: #3498db; /* Primary blue header */
+    color: #fff;
+}
+
+.pricing-card.plan-premium {
+    border: 1px solid #2ecc71; /* Green border */
+}
+
+.pricing-card.plan-premium .card-header {
+    background-color: #2ecc71; /* Green header */
+    color: #fff;
+}
