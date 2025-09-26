@@ -42,8 +42,32 @@
                         My Files
                     </div>
                     <div class="card-body">
-                        <p>Here you can manage your files.</p>
-                        <!-- File management content will go here -->
+                        <h5>Upload a new file</h5>
+                        <form method="post" class="mb-4">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <button type="submit" class="btn btn-primary">Upload</button>
+                        </form>
+
+                        <h5>Your files</h5>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Uploaded On</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for file in files %}
+                                <tr>
+                                    <td>{{ file.name }}</td>
+                                    <td>{{ file.file_type }}</td>
+                                    <td>{{ file.upload_date }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
