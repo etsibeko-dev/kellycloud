@@ -160,7 +160,7 @@ h1, h2, h3, h4, h5, h6 {
     border: none;
     border-radius: 15px;
     background: #fff;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1); /* More pronounced shadow */
     width: 100%;
     max-width: 450px;
     padding: 30px;
@@ -179,12 +179,12 @@ h1, h2, h3, h4, h5, h6 {
 
 .auth-card .form-label {
     font-weight: 500;
-    color: #555;
+    color: #334155; /* New dark text color */
 }
 
 .auth-card .form-control {
     border-radius: 8px;
-    border: 1px solid #ddd;
+    border: 1px solid #D9E2EC; /* Lighter gray border from new palette */
     padding: 10px 15px;
 }
 
