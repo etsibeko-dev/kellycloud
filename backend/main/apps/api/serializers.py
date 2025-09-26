@@ -51,8 +51,8 @@ class FileSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = File
-        fields = ['id', 'name', 'upload_date', 'file_type', 'file_size', 'size_mb']
-        read_only_fields = ['owner', 'upload_date', 'file_size']
+        fields = ['id', 'name', 'upload_date', 'file_type', 'file_size', 'size_mb', 'file']
+        read_only_fields = ['owner', 'upload_date', 'file_size', 'file_type']
 
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:

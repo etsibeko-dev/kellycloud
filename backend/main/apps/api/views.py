@@ -54,15 +54,27 @@ class FileListCreateView(generics.ListCreateAPIView):
         # Check storage limits before creating file
         try:
             user_sub = self.request.user.subscription
-            # For demo, estimate file size as 1MB
-            estimated_size = 1024 * 1024  # 1MB
+            # Get actual file size from uploaded file
+            uploaded_file = self.request.FILES.get('file')
+            if uploaded_file:
+                estimated_size = uploaded_file.size
+            else:
+                # Fallback for demo files without actual upload
+                estimated_size = 1024 * 1024  # 1MB
+                
             if user_sub.current_usage_bytes + estimated_size > user_sub.storage_limit_bytes:
                 raise Exception("Storage limit exceeded. Please upgrade your plan.")
         except UserSubscription.DoesNotExist:
             # Create basic subscription if none exists
-            UserSubscription.objects.create(user=self.request.user, plan_type='basic')
+            user_sub = UserSubscription.objects.create(user=self.request.user, plan_type='basic')
         
-        serializer.save(owner=self.request.user, file_size=1024*1024)  # Demo: 1MB per file
+        # Save the file with owner
+        file_instance = serializer.save(owner=self.request.user)
+        
+        # Update user's storage usage
+        if file_instance.file_size > 0:
+            user_sub.current_usage_bytes += file_instance.file_size
+            user_sub.save()
 
 class FileDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = FileSerializer
