@@ -439,8 +439,8 @@ function updateStorageDisplay(storageInfo) {
                 <h5>Storage Usage</h5>
             </div>
             <div class="card-body">
-                <div class="progress mb-2">
-                    <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress mb-2" style="height: 8px; border-radius: 4px; background-color: #f0f0f0;">
+                    <div class="progress-bar" role="progressbar" style="width: 0%; border-radius: 4px; transition: all 0.3s ease;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
                 <small class="text-muted">
                     <span id="storageUsed">0 MB</span> of <span id="storageLimit">${storageInfo.limit_gb} GB</span> used
@@ -468,13 +468,22 @@ function updateStorageDisplay(storageInfo) {
     progressBar.setAttribute('aria-valuenow', percentage);
     progressBar.textContent = `${Math.round(percentage * 100) / 100}%`;
     
-    // Color coding based on usage
+    // iCloud-style color coding based on usage
     if (percentage > 90) {
-        progressBar.className = 'progress-bar bg-danger';
-    } else if (percentage > 70) {
-        progressBar.className = 'progress-bar bg-warning';
+        progressBar.className = 'progress-bar';
+        progressBar.style.backgroundColor = '#ff3b30'; // Red for critical usage
+    } else if (percentage > 80) {
+        progressBar.className = 'progress-bar';
+        progressBar.style.backgroundColor = '#ff9500'; // Orange for high usage
+    } else if (percentage > 60) {
+        progressBar.className = 'progress-bar';
+        progressBar.style.backgroundColor = '#ffcc00'; // Yellow for moderate usage
+    } else if (percentage > 30) {
+        progressBar.className = 'progress-bar';
+        progressBar.style.backgroundColor = '#34c759'; // Green for normal usage
     } else {
-        progressBar.className = 'progress-bar bg-success';
+        progressBar.className = 'progress-bar';
+        progressBar.style.backgroundColor = '#007aff'; // Blue for low usage (iCloud style)
     }
     
     // Format storage display with appropriate units
