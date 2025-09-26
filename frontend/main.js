@@ -331,7 +331,15 @@ async function loadSubscriptionPlans() {
                     priceElement.textContent = `R${plan.price_monthly} / month`;
                 }
                 if (storageElement) {
-                    storageElement.textContent = `${plan.storage_limit_gb} GB Storage`;
+                    // Format storage display - show TB for large values
+                    let storageText;
+                    if (plan.storage_limit_gb >= 1024) {
+                        const tb = plan.storage_limit_gb / 1024;
+                        storageText = `${tb} TB Storage`;
+                    } else {
+                        storageText = `${plan.storage_limit_gb} GB Storage`;
+                    }
+                    storageElement.textContent = storageText;
                 }
             }
         });
@@ -455,5 +463,14 @@ function updateStorageDisplay(storageInfo) {
     }
     
     storageUsed.textContent = `${usedMB} MB`;
-    storageLimit.textContent = `${storageInfo.limit_gb} GB`;
+    
+    // Format storage limit display - show TB for large values
+    let limitText;
+    if (storageInfo.limit_gb >= 1024) {
+        const tb = storageInfo.limit_gb / 1024;
+        limitText = `${tb} TB`;
+    } else {
+        limitText = `${storageInfo.limit_gb} GB`;
+    }
+    storageLimit.textContent = limitText;
 }
