@@ -1,6 +1,6 @@
 /* General Body Styles */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', sans-serif; /* Apply Inter to body text */
     line-height: 1.6;
     color: #333;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -26,6 +26,7 @@ body {
 }
 
 .navbar-brand {
+    font-family: 'Montserrat', sans-serif; /* Apply Montserrat to navbar brand */
     font-weight: 700;
     font-size: 1.8rem;
     color: #ecf0f1 !important; /* Light gray */
@@ -40,6 +41,12 @@ body {
 
 .navbar-nav .nav-link:hover {
     color: #3498db !important; /* Bright blue */
+}
+
+/* Global Heading Styles */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
 }
 
 /* Hero Section */
