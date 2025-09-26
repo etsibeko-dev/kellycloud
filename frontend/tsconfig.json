@@ -1,10 +1,15 @@
 {
   "compilerOptions": {
-    "target": "es2016",
-    "module": "commonjs",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "target": "ES2017",
+    "module": "ESNext",
     "strict": true,
-    "skipLibCheck": true
-  }
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./",
+    "rootDir": "./",
+    "lib": ["ES2017", "DOM"]
+  },
+  "include": ["main.ts"],
+  "exclude": []
 }
