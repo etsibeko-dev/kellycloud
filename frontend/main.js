@@ -281,39 +281,70 @@ document.addEventListener('DOMContentLoaded', () => {
                 event.preventDefault();
                 const fileInput = uploadForm.querySelector('#fileInput');
                 const fileNameInput = uploadForm.querySelector('#fileName');
-                const file = fileInput.files[0];
+                const files = fileInput.files;
                 
-                if (!file) {
-                    displayMessage('Please select a file to upload.', 'danger');
+                if (!files || files.length === 0) {
+                    displayMessage('Please select at least one file to upload.', 'danger');
                     return;
                 }
                 
-                // Use custom name if provided, otherwise use original filename
-                const name = fileNameInput.value.trim() || file.name;
+                if (files.length > 100) {
+                    displayMessage('Maximum 100 files allowed per upload.', 'danger');
+                    return;
+                }
                 
                 toggleLoadingSpinner('uploadButton', true); // Show loading spinner
+                
+                let successCount = 0;
+                let errorCount = 0;
+                const errors = [];
+                
                 try {
-                    const formData = new FormData();
-                    formData.append('file', file);
-                    formData.append('name', name);
-                    
-                    const response = await fetch('http://0.0.0.0:8000/api/files/', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Token ${token}`,
-                        },
-                        body: formData,
-                    });
-                    
-                    if (response.ok) {
-                        displayMessage('File uploaded successfully!', 'success');
-                        fetchFiles(); // Refresh the file list
-                        loadUserSubscription(); // Refresh storage usage
+                    // Upload files one by one
+                    for (let i = 0; i < files.length; i++) {
+                        const file = files[i];
+                        const name = fileNameInput.value.trim() || file.name;
+                        
+                        try {
+                            const formData = new FormData();
+                            formData.append('file', file);
+                            formData.append('name', name);
+                            
+                            const response = await fetch('http://0.0.0.0:8000/api/files/', {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Token ${token}`,
+                                },
+                                body: formData,
+                            });
+                            
+                            if (response.ok) {
+                                successCount++;
+                            } else {
+                                const errorData = await response.json();
+                                errors.push(`${file.name}: ${errorData.error || 'Upload failed'}`);
+                                errorCount++;
+                            }
+                        } catch (error) {
+                            errors.push(`${file.name}: ${error.message}`);
+                            errorCount++;
+                        }
                     }
-                    else {
-                        const errorData = await response.json();
-                        displayMessage(errorData.error || 'File upload failed.', 'danger');
+                    
+                    // Show results
+                    if (successCount > 0 && errorCount === 0) {
+                        displayMessage(`Successfully uploaded ${successCount} file(s)!`, 'success');
+                    } else if (successCount > 0 && errorCount > 0) {
+                        displayMessage(`Uploaded ${successCount} file(s), ${errorCount} failed.`, 'warning');
+                        console.log('Upload errors:', errors);
+                    } else {
+                        displayMessage('All uploads failed.', 'danger');
+                        console.log('Upload errors:', errors);
                     }
+                    
+                    // Refresh the file list and storage usage
+                    fetchFiles();
+                    loadUserSubscription();
                 }
                 catch (error) {
                     console.error('Error during file upload:', error);

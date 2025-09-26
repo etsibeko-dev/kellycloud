@@ -48,15 +48,16 @@
                     <div class="card-body">
                         <h5>Upload a new file</h5>
                         <form class="mb-4" id="uploadForm" enctype="multipart/form-data">
-                            <div class="mb-3">
-                                <label for="fileInput" class="form-label">Choose File</label>
-                                <input type="file" class="form-control" id="fileInput" name="file" required>
-                            </div>
+        <div class="mb-3">
+            <label for="fileInput" class="form-label">Choose Files (up to 100 files)</label>
+            <input type="file" class="form-control" id="fileInput" name="file" multiple required>
+            <div class="form-text">Hold Shift or Ctrl to select multiple files</div>
+        </div>
                             <div class="mb-3">
                                 <label for="fileName" class="form-label">File Name (optional)</label>
                                 <input type="text" class="form-control" id="fileName" name="fileName" placeholder="Leave empty to use original filename">
                             </div>
-                            <button type="submit" class="btn btn-primary" id="uploadButton">Upload
+                            <button type="submit" class="btn btn-primary" id="uploadButton">Upload Files
                                 <span id="loadingSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                             </button>
                         </form>
