@@ -574,6 +574,62 @@ function updateStorageDisplay(storageInfo) {
     
     storageUsed.textContent = usedDisplay;
     storageLimit.textContent = limitDisplay;
+    
+    // Also update upload section storage display
+    updateUploadStorageDisplay(storageInfo);
+}
+
+function updateUploadStorageDisplay(storageInfo) {
+    const uploadProgressBar = document.getElementById('uploadStorageProgressBar');
+    const uploadStorageText = document.getElementById('uploadStorageText');
+    const uploadStoragePercentage = document.getElementById('uploadStoragePercentage');
+    
+    if (!uploadProgressBar || !uploadStorageText || !uploadStoragePercentage) {
+        return; // Elements not found, skip update
+    }
+    
+    const usedBytes = storageInfo.current_usage_bytes;
+    const limitBytes = storageInfo.limit_bytes;
+    const percentage = Math.min((usedBytes / limitBytes) * 100, 100);
+    
+    // Ensure minimum width for very low percentages
+    const minWidth = percentage < 0.001 ? 0.1 : percentage;
+    uploadProgressBar.style.width = `${minWidth}%`;
+    
+    // iCloud-style color coding based on usage
+    if (percentage > 90) {
+        uploadProgressBar.style.setProperty('background-color', '#ff3b30', 'important'); // Red for critical usage
+    } else if (percentage > 80) {
+        uploadProgressBar.style.setProperty('background-color', '#ff9500', 'important'); // Orange for high usage
+    } else if (percentage > 60) {
+        uploadProgressBar.style.setProperty('background-color', '#ffcc00', 'important'); // Yellow for moderate usage
+    } else if (percentage > 30) {
+        uploadProgressBar.style.setProperty('background-color', '#34c759', 'important'); // Green for normal usage
+    } else {
+        uploadProgressBar.style.setProperty('background-color', '#007aff', 'important'); // Blue for low usage (iCloud style)
+    }
+    
+    // Format storage display with appropriate units
+    let usedDisplay, limitDisplay;
+    
+    if (usedBytes >= 1024 * 1024 * 1024) { // GB or more
+        usedDisplay = `${Math.round(usedBytes / (1024 * 1024 * 1024) * 100) / 100} GB`;
+    } else if (usedBytes >= 1024 * 1024) { // MB
+        usedDisplay = `${Math.round(usedBytes / (1024 * 1024) * 100) / 100} MB`;
+    } else if (usedBytes >= 1024) { // KB
+        usedDisplay = `${Math.round(usedBytes / 1024 * 100) / 100} KB`;
+    } else { // Bytes
+        usedDisplay = `${usedBytes} bytes`;
+    }
+    
+    if (storageInfo.limit_gb >= 1024) { // TB
+        limitDisplay = `${Math.round(storageInfo.limit_gb / 1024 * 100) / 100} TB`;
+    } else { // GB
+        limitDisplay = `${storageInfo.limit_gb} GB`;
+    }
+    
+    uploadStorageText.textContent = `${usedDisplay} of ${limitDisplay} used`;
+    uploadStoragePercentage.textContent = `${Math.round(percentage * 100) / 100}%`;
 }
 
 // Navigation functionality for new dashboard

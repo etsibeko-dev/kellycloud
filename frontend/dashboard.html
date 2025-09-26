@@ -321,6 +321,19 @@
             <div class="content-section" id="upload-section">
                 <div class="stats-card">
                     <h5 class="mb-4">Upload Files</h5>
+                    
+                    <!-- Storage Usage Display -->
+                    <div class="mb-4">
+                        <h6 class="mb-2">Storage Usage</h6>
+                        <div class="progress-container mb-2">
+                            <div class="progress-bar-custom" id="uploadStorageProgressBar" style="width: 0%; background: #007aff;"></div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted" id="uploadStorageText">0 MB of 2 TB used</small>
+                            <small class="text-muted" id="uploadStoragePercentage">0%</small>
+                        </div>
+                    </div>
+                    
                     <form id="uploadForm" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="fileInput" class="form-label">Choose Files (up to 100 files)</label>
