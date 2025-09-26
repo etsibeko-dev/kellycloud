@@ -134,14 +134,15 @@ h1, h2, h3, h4, h5, h6 {
 
 .feature-card h5 {
     font-size: 1.5rem;
-    font-weight: 600;
+    font-weight: 700; /* Make it bolder */
     color: #2c3e50;
-    margin-bottom: 15px;
+    margin-bottom: 20px; /* Increased space below title */
 }
 
 .feature-card p {
-    color: #666;
-    font-size: 1rem;
+    color: #555; /* Slightly darker for better contrast */
+    font-size: 0.95rem; /* Slightly smaller */
+    line-height: 1.8; /* Improved readability */
 }
 
 /* Forms (Login/Register) Styles */
