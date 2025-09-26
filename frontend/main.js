@@ -965,25 +965,34 @@ async function loadProfileSection() {
         }
         
         // Load subscription data for profile
-        const response = await fetch('http://0.0.0.0:8000/api/user-subscription/?t=' + Date.now(), {
+        const subscriptionResponse = await fetch('http://0.0.0.0:8000/api/user-subscription/?t=' + Date.now(), {
             headers: {
                 'Authorization': `Token ${token}`,
             },
         });
         
-        if (response.ok) {
-            const data = await response.json();
-            updateProfileInfo(data);
+        // Load files data for total count
+        const filesResponse = await fetch('http://0.0.0.0:8000/api/files/', {
+            headers: {
+                'Authorization': `Token ${token}`,
+            },
+        });
+        
+        if (subscriptionResponse.ok && filesResponse.ok) {
+            const subscriptionData = await subscriptionResponse.json();
+            const filesData = await filesResponse.json();
+            updateProfileInfo(subscriptionData, filesData);
         }
     } catch (error) {
         console.error('Error loading profile:', error);
     }
 }
 
-function updateProfileInfo(subscriptionData) {
+function updateProfileInfo(subscriptionData, filesData) {
     const profileCurrentPlan = document.getElementById('profileCurrentPlan');
     const profileStorageUsed = document.getElementById('profileStorageUsed');
     const profileMemberSince = document.getElementById('profileMemberSince');
+    const profileTotalFiles = document.getElementById('profileTotalFiles');
     
     if (profileCurrentPlan) {
         profileCurrentPlan.textContent = subscriptionData.plan_type.charAt(0).toUpperCase() + subscriptionData.plan_type.slice(1);
@@ -1006,6 +1015,11 @@ function updateProfileInfo(subscriptionData) {
     
     if (profileMemberSince) {
         profileMemberSince.textContent = new Date(subscriptionData.start_date).getFullYear();
+    }
+    
+    if (profileTotalFiles && filesData) {
+        const totalFiles = Array.isArray(filesData) ? filesData.length : 0;
+        profileTotalFiles.textContent = totalFiles;
     }
 }
 
