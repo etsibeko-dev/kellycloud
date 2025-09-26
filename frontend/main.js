@@ -50,9 +50,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 const passwordInput = loginForm.querySelector('#password');
                 const username = usernameInput.value;
                 const password = passwordInput.value;
+                
+                if (!username || !password) {
+                    displayMessage('Please fill in all fields', 'danger');
+                    return;
+                }
+                
                 toggleLoadingSpinner('loginButton', true); // Show loading spinner
                 try {
-                    const response = await fetch('http://127.0.0.1:8000/api/login/', {
+                    const response = await fetch('http://0.0.0.0:8000/api/login/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -92,13 +98,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 const email = emailInput.value;
                 const password = passwordInput.value;
                 const confirmPassword = confirmPasswordInput.value;
+                
+                if (!username || !email || !password || !confirmPassword) {
+                    displayMessage('Please fill in all fields', 'danger');
+                    return;
+                }
+                
                 if (password !== confirmPassword) {
                     displayMessage('Passwords do not match!', 'danger');
                     return;
                 }
+                
                 toggleLoadingSpinner('registerButton', true); // Show loading spinner
                 try {
-                    const response = await fetch('http://127.0.0.1:8000/api/register/', {
+                    const response = await fetch('http://0.0.0.0:8000/api/register/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -123,6 +136,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
+    }
+    else if (window.location.pathname.endsWith('pricing.html')) {
+        // Load subscription plans
+        loadSubscriptionPlans();
+        
+        // Handle plan selection
+        document.querySelectorAll('.pricing-card .btn').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const card = event.target.closest('.pricing-card');
+                const planType = card.classList.contains('plan-basic') ? 'basic' : 
+                               card.classList.contains('plan-standard') ? 'standard' : 'premium';
+                
+                await selectPlan(planType);
+            });
+        });
     }
     else if (window.location.pathname.endsWith('dashboard.html')) {
         const token = localStorage.getItem('token');
@@ -169,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const deleteFile = async (fileId) => {
             showLoadingIndicator(); // Show loading indicator
             try {
-                const response = await fetch(`http://127.0.0.1:8000/api/files/${fileId}/`, {
+                const response = await fetch(`http://0.0.0.0:8000/api/files/${fileId}/`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Token ${token}`,
@@ -195,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const fetchFiles = async () => {
             showLoadingIndicator(); // Show loading indicator
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/files/', {
+                const response = await fetch('http://0.0.0.0:8000/api/files/', {
                     headers: {
                         'Authorization': `Token ${token}`,
                     },
@@ -235,6 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
         fetchFiles();
+        loadUserSubscription();
         const uploadForm = document.querySelector('form');
         if (uploadForm) {
             uploadForm.addEventListener('submit', async (event) => {
@@ -245,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const file_type = fileTypeInput.value;
                 toggleLoadingSpinner('uploadButton', true); // Show loading spinner
                 try {
-                    const response = await fetch('http://127.0.0.1:8000/api/files/upload/', {
+                    const response = await fetch('http://0.0.0.0:8000/api/files/', {
                         method: 'POST',
                         headers: {
                             'Authorization': `Token ${token}`,
@@ -273,3 +302,138 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
+// Subscription management functions
+async function loadSubscriptionPlans() {
+    try {
+        const response = await fetch('http://0.0.0.0:8000/api/subscriptions/');
+        const plans = await response.json();
+        
+        // Update pricing cards with dynamic data
+        plans.forEach(plan => {
+            const card = document.querySelector(`.plan-${plan.plan_type}`);
+            if (card) {
+                const priceElement = card.querySelector('.card-title');
+                const storageElement = card.querySelector('li:first-child');
+                
+                if (priceElement) {
+                    priceElement.textContent = `R${plan.price_monthly} / month`;
+                }
+                if (storageElement) {
+                    storageElement.textContent = `${plan.storage_limit_gb} GB Storage`;
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error loading subscription plans:', error);
+    }
+}
+
+async function selectPlan(planType) {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        displayMessage('Please log in to select a plan', 'danger');
+        window.location.href = 'login.html';
+        return;
+    }
+    
+    try {
+        const response = await fetch('http://0.0.0.0:8000/api/user-subscription/', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Token ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ plan_type: planType }),
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            displayMessage(`Successfully upgraded to ${data.plan_type} plan!`, 'success');
+            // Redirect to dashboard after 2 seconds
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 2000);
+        } else {
+            const errorData = await response.json();
+            displayMessage(errorData.error || 'Failed to upgrade plan', 'danger');
+        }
+    } catch (error) {
+        console.error('Error selecting plan:', error);
+        displayMessage('An error occurred while selecting the plan', 'danger');
+    }
+}
+
+async function loadUserSubscription() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    
+    try {
+        const response = await fetch('http://0.0.0.0:8000/api/user-subscription/', {
+            headers: {
+                'Authorization': `Token ${token}`,
+            },
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            updateStorageDisplay(data.storage_info);
+        }
+    } catch (error) {
+        console.error('Error loading user subscription:', error);
+    }
+}
+
+function updateStorageDisplay(storageInfo) {
+    // Create or update storage info display
+    let storageDisplay = document.querySelector('#storageInfo');
+    if (!storageDisplay) {
+        storageDisplay = document.createElement('div');
+        storageDisplay.id = 'storageInfo';
+        storageDisplay.className = 'card mb-4';
+        storageDisplay.innerHTML = `
+            <div class="card-header">
+                <h5>Storage Usage</h5>
+            </div>
+            <div class="card-body">
+                <div class="progress mb-2">
+                    <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <small class="text-muted">
+                    <span id="storageUsed">0 MB</span> of <span id="storageLimit">${storageInfo.limit_gb} GB</span> used
+                </small>
+            </div>
+        `;
+        
+        // Insert before the upload form
+        const uploadForm = document.querySelector('form');
+        if (uploadForm) {
+            uploadForm.parentNode.insertBefore(storageDisplay, uploadForm);
+        }
+    }
+    
+    // Update progress bar and text
+    const progressBar = storageDisplay.querySelector('.progress-bar');
+    const storageUsed = storageDisplay.querySelector('#storageUsed');
+    const storageLimit = storageDisplay.querySelector('#storageLimit');
+    
+    const usedMB = Math.round(storageInfo.current_usage_bytes / (1024 * 1024));
+    const limitMB = storageInfo.limit_gb * 1024;
+    const percentage = Math.min((usedMB / limitMB) * 100, 100);
+    
+    progressBar.style.width = `${percentage}%`;
+    progressBar.setAttribute('aria-valuenow', percentage);
+    progressBar.textContent = `${Math.round(percentage)}%`;
+    
+    // Color coding based on usage
+    if (percentage > 90) {
+        progressBar.className = 'progress-bar bg-danger';
+    } else if (percentage > 70) {
+        progressBar.className = 'progress-bar bg-warning';
+    } else {
+        progressBar.className = 'progress-bar bg-success';
+    }
+    
+    storageUsed.textContent = `${usedMB} MB`;
+    storageLimit.textContent = `${storageInfo.limit_gb} GB`;
+}

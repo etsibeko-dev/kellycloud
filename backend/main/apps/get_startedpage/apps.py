@@ -1,6 +1,5 @@
 from django.apps import AppConfig
 
-
-class ApiConfig(AppConfig):
+class Get_startedpageConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'api'
+    name = 'apps.get_startedpage'

@@ -19,10 +19,6 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path("", include("landingpage_CLOUD.urls")),
-    path("", include("landingpage_cloudMainpage.urls")),
-    path("api/", include("api.urls")),
+    path("api/", include("apps.api.urls")),
     path("admin/", admin.site.urls),
-    path("get_started/", include("get_startedpage.urls")),
-    path("auth/", include("landingpage_logincloud.urls")),
 ]

@@ -1,6 +1,0 @@
-from django.apps import AppConfig
-
-
-class LandingpageCloudmainpageConfig(AppConfig):
-    default_auto_field = "django.db.models.BigAutoField"
-    name = "landingpage_cloudMainpage"
