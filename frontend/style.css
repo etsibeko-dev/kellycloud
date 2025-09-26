@@ -333,6 +333,10 @@ footer {
     font-weight: 600;
     color: #2c3e50;
     padding: 20px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 .pricing-card.border-primary .card-header {
