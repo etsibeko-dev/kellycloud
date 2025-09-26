@@ -1216,7 +1216,7 @@ function createStorageChart(files) {
         window.storageChartInstance.destroy();
     }
     
-    // Generate mock data for storage over time (last 7 days)
+    // Generate daily storage usage data (last 7 days)
     const last7Days = [];
     const storageData = [];
     const today = new Date();
@@ -1226,10 +1226,12 @@ function createStorageChart(files) {
         date.setDate(date.getDate() - i);
         last7Days.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
         
-        // Calculate cumulative storage for this day
+        // Calculate storage used on this specific day only
         const dayFiles = files.filter(file => {
             const fileDate = new Date(file.upload_date);
-            return fileDate <= date;
+            const fileDateOnly = new Date(fileDate.getFullYear(), fileDate.getMonth(), fileDate.getDate());
+            const targetDateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            return fileDateOnly.getTime() === targetDateOnly.getTime();
         });
         
         const dayStorage = dayFiles.reduce((total, file) => total + (file.file_size || 0), 0);
@@ -1241,7 +1243,7 @@ function createStorageChart(files) {
         data: {
             labels: last7Days,
             datasets: [{
-                label: 'Storage Used (MB)',
+                label: 'Daily Storage Added (MB)',
                 data: storageData,
                 borderColor: '#007aff',
                 backgroundColor: 'rgba(0, 122, 255, 0.1)',
