@@ -939,11 +939,11 @@ function displayPlans(plans) {
                     <h4 class="card-title">R${plan.price_monthly} / month</h4>
                     <ul class="list-unstyled mt-3 mb-4">
                         <li><strong>${plan.storage_limit_gb >= 1024 ? Math.round(plan.storage_limit_gb / 1024 * 100) / 100 + ' TB' : plan.storage_limit_gb + ' GB'} Storage</strong></li>
-                        <li>${plan.features.core_features}</li>
-                        <li>${plan.features.data_protection}</li>
-                        <li>${plan.features.access_speed}</li>
-                        <li>${plan.features.support}</li>
-                        <li>${plan.features.file_versioning}</li>
+                        <li>${plan.features.features || 'Essential Cloud Features'}</li>
+                        <li>${plan.features.security || 'Basic Data Protection'}</li>
+                        <li>${plan.features.speed || 'Standard Access Speed'}</li>
+                        <li>${plan.features.support || 'Email Support'}</li>
+                        <li>${plan.features.versioning || 'Limited File Versioning'}</li>
                     </ul>
                     <button class="btn btn-primary" onclick="selectPlan('${plan.plan_type}')">Choose ${plan.plan_display}</button>
                 </div>
