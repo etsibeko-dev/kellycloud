@@ -64,6 +64,23 @@ class FileListCreateView(generics.ListCreateAPIView):
         
         serializer.save(owner=self.request.user, file_size=1024*1024)  # Demo: 1MB per file
 
+class FileDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = FileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_queryset(self):
+        return File.objects.filter(owner=self.request.user)
+    
+    def perform_destroy(self, instance):
+        # Update user's storage usage when file is deleted
+        try:
+            user_sub = self.request.user.subscription
+            user_sub.current_usage_bytes = max(0, user_sub.current_usage_bytes - instance.file_size)
+            user_sub.save()
+        except:
+            pass  # If subscription doesn't exist, just delete the file
+        instance.delete()
+
 class SubscriptionListView(APIView):
     permission_classes = [permissions.AllowAny]
     

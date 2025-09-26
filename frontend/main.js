@@ -144,12 +144,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Handle plan selection
         document.querySelectorAll('.pricing-card .btn').forEach(button => {
             button.addEventListener('click', async (event) => {
-                console.log('Plan button clicked');
                 const card = event.target.closest('.pricing-card');
-                console.log('Card classes:', card.className);
                 const planType = card.classList.contains('plan-basic') ? 'basic' : 
                                card.classList.contains('plan-standard') ? 'standard' : 'premium';
-                console.log('Detected plan type:', planType);
                 
                 await selectPlan(planType);
             });
