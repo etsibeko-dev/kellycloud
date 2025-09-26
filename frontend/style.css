@@ -312,3 +312,57 @@ footer {
         font-size: 2.2rem;
     }
 }
+
+/* Pricing Page Styles */
+.pricing-card {
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+}
+
+.pricing-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+
+.pricing-card .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    padding: 20px;
+}
+
+.pricing-card.border-primary .card-header {
+    background-color: #3498db;
+    color: #fff;
+}
+
+.pricing-card .card-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.pricing-card .card-title span {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #6c757d;
+}
+
+.pricing-card ul {
+    padding-left: 0;
+    list-style: none;
+}
+
+.pricing-card ul li {
+    padding: 8px 0;
+    color: #555;
+}
+
+.pricing-card .btn {
+    margin-top: 20px;
+}
