@@ -114,18 +114,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 const emailInput = registerForm.querySelector('#email');
                 const passwordInput = registerForm.querySelector('#password');
                 const confirmPasswordInput = registerForm.querySelector('#confirm_password');
-                const username = usernameInput.value;
-                const email = emailInput.value;
+                const username = usernameInput.value.trim();
+                const email = emailInput.value.trim();
                 const password = passwordInput.value;
                 const confirmPassword = confirmPasswordInput.value;
                 
+                // Basic field validation
                 if (!username || !email || !password || !confirmPassword) {
-                    displayMessage('Please fill in all fields', 'danger');
+                    displayMessage('All fields are required.', 'danger');
                     return;
                 }
-                
-                if (password !== confirmPassword) {
-                    displayMessage('Passwords do not match!', 'danger');
+
+                // Username validation
+                if (username.length < 3) {
+                    displayMessage('Username must be at least 3 characters long.', 'danger');
+                    showFieldError(usernameInput, 'Username must be at least 3 characters long');
+                    return;
+                }
+
+                // Email validation
+                if (!validateEmail(email)) {
+                    displayMessage('Please enter a valid email address.', 'danger');
+                    showFieldError(emailInput, 'Please enter a valid email address');
+                    return;
+                }
+
+                // Password validation
+                const passwordValidation = validatePassword(password);
+                if (!passwordValidation.isValid) {
+                    displayMessage('Password does not meet requirements.', 'danger');
+                    showFieldError(passwordInput, 'Password does not meet requirements');
+                    return;
+                }
+
+                // Password confirmation validation
+                if (!validateConfirmPassword(password, confirmPassword)) {
+                    displayMessage('Passwords do not match.', 'danger');
+                    showFieldError(confirmPasswordInput, 'Passwords do not match');
                     return;
                 }
                 
@@ -428,7 +453,189 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize navigation authentication state
     initializeNavigationAuth();
+    
+    // Initialize form validation
+    initializeValidation();
 });
+
+// Validation functions
+function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function validatePassword(password) {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    
+    return {
+        isValid: password.length >= minLength && hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChar,
+        minLength: password.length >= minLength,
+        hasUpperCase,
+        hasLowerCase,
+        hasNumbers,
+        hasSpecialChar,
+        length: password.length
+    };
+}
+
+function validateConfirmPassword(password, confirmPassword) {
+    return password === confirmPassword && password.length > 0;
+}
+
+function showFieldError(field, message) {
+    // Remove existing error
+    const existingError = field.parentNode.querySelector('.field-error');
+    if (existingError) {
+        existingError.remove();
+    }
+    
+    // Add new error
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'field-error text-danger small mt-1';
+    errorDiv.textContent = message;
+    field.parentNode.appendChild(errorDiv);
+    
+    // Add error styling
+    field.classList.add('is-invalid');
+    field.classList.remove('is-valid');
+}
+
+function showFieldSuccess(field) {
+    // Remove existing error
+    const existingError = field.parentNode.querySelector('.field-error');
+    if (existingError) {
+        existingError.remove();
+    }
+    
+    // Add success styling
+    field.classList.add('is-valid');
+    field.classList.remove('is-invalid');
+}
+
+function showPasswordStrength(passwordField, strengthContainer) {
+    const password = passwordField.value;
+    const validation = validatePassword(password);
+    
+    if (password.length === 0) {
+        strengthContainer.innerHTML = '';
+        return;
+    }
+    
+    let strengthHTML = '<div class="password-strength mt-2">';
+    strengthHTML += '<div class="strength-label small mb-1">Password Strength:</div>';
+    
+    // Length requirement
+    strengthHTML += `<div class="strength-item ${validation.minLength ? 'valid' : 'invalid'}">
+        <i class="fas ${validation.minLength ? 'fa-check' : 'fa-times'}"></i>
+        At least 8 characters (${validation.length}/8)
+    </div>`;
+    
+    // Uppercase requirement
+    strengthHTML += `<div class="strength-item ${validation.hasUpperCase ? 'valid' : 'invalid'}">
+        <i class="fas ${validation.hasUpperCase ? 'fa-check' : 'fa-times'}"></i>
+        One uppercase letter
+    </div>`;
+    
+    // Lowercase requirement
+    strengthHTML += `<div class="strength-item ${validation.hasLowerCase ? 'valid' : 'invalid'}">
+        <i class="fas ${validation.hasLowerCase ? 'fa-check' : 'fa-times'}"></i>
+        One lowercase letter
+    </div>`;
+    
+    // Number requirement
+    strengthHTML += `<div class="strength-item ${validation.hasNumbers ? 'valid' : 'invalid'}">
+        <i class="fas ${validation.hasNumbers ? 'fa-check' : 'fa-times'}"></i>
+        One number
+    </div>`;
+    
+    // Special character requirement
+    strengthHTML += `<div class="strength-item ${validation.hasSpecialChar ? 'valid' : 'invalid'}">
+        <i class="fas ${validation.hasSpecialChar ? 'fa-check' : 'fa-times'}"></i>
+        One special character
+    </div>`;
+    
+    strengthHTML += '</div>';
+    strengthContainer.innerHTML = strengthHTML;
+}
+
+function initializeValidation() {
+    // Email validation for register page
+    const emailField = document.getElementById('email');
+    if (emailField) {
+        emailField.addEventListener('input', function() {
+            const email = this.value.trim();
+            if (email.length > 0) {
+                if (validateEmail(email)) {
+                    showFieldSuccess(this);
+                } else {
+                    showFieldError(this, 'Please enter a valid email address');
+                }
+            } else {
+                this.classList.remove('is-valid', 'is-invalid');
+                const existingError = this.parentNode.querySelector('.field-error');
+                if (existingError) {
+                    existingError.remove();
+                }
+            }
+        });
+    }
+    
+    // Password validation for register page
+    const passwordField = document.getElementById('password');
+    if (passwordField) {
+        const strengthContainer = document.createElement('div');
+        strengthContainer.className = 'password-strength-container';
+        passwordField.parentNode.appendChild(strengthContainer);
+        
+        passwordField.addEventListener('input', function() {
+            const password = this.value;
+            const validation = validatePassword(password);
+            
+            if (password.length > 0) {
+                if (validation.isValid) {
+                    showFieldSuccess(this);
+                } else {
+                    showFieldError(this, 'Password does not meet requirements');
+                }
+            } else {
+                this.classList.remove('is-valid', 'is-invalid');
+                const existingError = this.parentNode.querySelector('.field-error');
+                if (existingError) {
+                    existingError.remove();
+                }
+            }
+            
+            showPasswordStrength(this, strengthContainer);
+        });
+    }
+    
+    // Confirm password validation for register page
+    const confirmPasswordField = document.getElementById('confirm_password');
+    if (confirmPasswordField) {
+        confirmPasswordField.addEventListener('input', function() {
+            const password = passwordField ? passwordField.value : '';
+            const confirmPassword = this.value;
+            
+            if (confirmPassword.length > 0) {
+                if (validateConfirmPassword(password, confirmPassword)) {
+                    showFieldSuccess(this);
+                } else {
+                    showFieldError(this, 'Passwords do not match');
+                }
+            } else {
+                this.classList.remove('is-valid', 'is-invalid');
+                const existingError = this.parentNode.querySelector('.field-error');
+                if (existingError) {
+                    existingError.remove();
+                }
+            }
+        });
+    }
+}
 
 // Initialize navigation based on authentication state
 function initializeNavigationAuth() {
