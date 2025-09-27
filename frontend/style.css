@@ -436,8 +436,9 @@ footer {
 .input-group .btn-outline-secondary {
     border-color: #d1d5db;
     color: #6b7280;
-    background-color: transparent;
+    background-color: #f8f9fa;
     transition: all 0.2s ease;
+    min-width: 45px;
 }
 
 .input-group .btn-outline-secondary:hover {
@@ -453,6 +454,11 @@ footer {
 
 .input-group .btn-outline-secondary i {
     font-size: 0.875rem;
+    color: #6b7280 !important;
+}
+
+.input-group .btn-outline-secondary:hover i {
+    color: #374151 !important;
 }
 
 /* Ensure input group looks seamless */
