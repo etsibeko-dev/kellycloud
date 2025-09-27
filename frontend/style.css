@@ -503,12 +503,16 @@ footer {
 }
 
 /* Password strength indicator */
+.password-strength-container {
+    margin-top: 0.5rem;
+}
+
 .password-strength {
     background-color: #f8f9fa;
     border: 1px solid #dee2e6;
     border-radius: 0.375rem;
     padding: 0.75rem;
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
 }
 
 .strength-label {

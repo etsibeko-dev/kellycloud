@@ -587,9 +587,12 @@ function initializeValidation() {
     // Password validation for register page
     const passwordField = document.getElementById('password');
     if (passwordField) {
+        // Find the parent container (mb-3 div) to place strength indicator after the input group
+        const parentContainer = passwordField.closest('.mb-3');
         const strengthContainer = document.createElement('div');
         strengthContainer.className = 'password-strength-container';
-        passwordField.parentNode.appendChild(strengthContainer);
+        // Insert after the input group, before any existing error messages
+        parentContainer.appendChild(strengthContainer);
         
         passwordField.addEventListener('input', function() {
             const password = this.value;
