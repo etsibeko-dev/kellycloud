@@ -327,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (filesTableBody) {
                     filesTableBody.innerHTML = ''; // Clear existing rows
                     if (Array.isArray(files)) {
-                    files.forEach((file) => {
+                        files.forEach((file) => {
                         const row = filesTableBody.insertRow();
                         row.insertCell().textContent = file.name;
                         row.insertCell().textContent = file.file_type;
@@ -348,18 +348,18 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         });
                     });
-                    } else {
-                        console.error('Files response is not an array:', files);
-                    }
+                } else {
+                    console.error('Files response is not an array:', files);
                 }
+            } else {
+                console.log('filesTableBody element not found - files table might not be on this page');
             }
-            catch (error) {
-                console.error('Error fetching files:', error);
-            }
-            finally {
-                hideLoadingIndicator(); // Hide loading indicator
-            }
-        };
+        } catch (error) {
+            console.error('Error fetching files:', error);
+        } finally {
+            hideLoadingIndicator(); // Hide loading indicator
+        }
+    };
         fetchFiles();
         loadUserSubscription();
         const uploadForm = document.querySelector('form');
@@ -996,38 +996,43 @@ function getUploadedFiles() {
     // Fetch actual uploaded files from the API for real categorization
     try {
         const token = localStorage.getItem('token');
-        if (!token) return [];
+        if (!token) {
+            console.log('🔍 STORAGE VISUALIZATION: No token found, using sample data');
+            return getSampleFiles();
+        }
 
         // Make synchronous request to get files (in a real app, this would be async)
         const xhr = new XMLHttpRequest();
         xhr.open('GET', 'http://localhost:8000/api/files/', false); // Synchronous for now
         xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+        xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send();
 
+        console.log('API Response Status:', xhr.status);
+        
         if (xhr.status === 200) {
             const response = JSON.parse(xhr.responseText);
             console.log('🔍 STORAGE VISUALIZATION: Using real uploaded files from API');
+            console.log('Real files:', response);
             return response.files || [];
+        } else {
+            console.log('🔍 STORAGE VISUALIZATION: API failed with status', xhr.status, 'using sample data');
+            return getSampleFiles();
         }
-        
-        // For testing purposes, return some sample files if API fails
-        console.log('🔍 STORAGE VISUALIZATION: Using sample data (API failed)');
-        return [
-            { name: 'batman.jpg', size: 2500000 }, // 2.5MB photo
-            { name: 'document.pdf', size: 1500000 }, // 1.5MB document
-            { name: 'video.mp4', size: 5000000 }, // 5MB video
-            { name: 'music.mp3', size: 800000 }, // 800KB audio (others)
-        ];
     } catch (error) {
         console.error('Error fetching uploaded files:', error);
-        // Return sample data for testing
-        return [
-            { name: 'batman.jpg', size: 2500000 }, // 2.5MB photo
-            { name: 'document.pdf', size: 1500000 }, // 1.5MB document
-            { name: 'video.mp4', size: 5000000 }, // 5MB video
-            { name: 'music.mp3', size: 800000 }, // 800KB audio (others)
-        ];
+        console.log('🔍 STORAGE VISUALIZATION: Exception occurred, using sample data');
+        return getSampleFiles();
     }
+}
+
+function getSampleFiles() {
+    return [
+        { name: 'batman.jpg', size: 2500000 }, // 2.5MB photo
+        { name: 'document.pdf', size: 1500000 }, // 1.5MB document
+        { name: 'video.mp4', size: 5000000 }, // 5MB video
+        { name: 'music.mp3', size: 800000 }, // 800KB audio (others)
+    ];
 }
 
 function getFileExtension(filename) {
@@ -1685,7 +1690,7 @@ function updateAnalyticsData(files) {
     updateRecentActivity(files);
     
     // Update storage breakdown
-    updateStorageBreakdown(files);
+    updateFilesStorageBreakdown(files);
 }
 
 function updateRecentActivity(files) {
@@ -1727,7 +1732,7 @@ function updateRecentActivity(files) {
     }).join('');
 }
 
-function updateStorageBreakdown(files) {
+function updateFilesStorageBreakdown(files) {
     const storageBreakdown = document.getElementById('storageBreakdown');
     if (!storageBreakdown) return;
     
