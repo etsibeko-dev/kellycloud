@@ -496,9 +496,8 @@ function showFieldError(field, message) {
         existingBubble.remove();
     }
     
-    // Add error styling with red border
-    field.classList.add('is-invalid');
-    field.classList.remove('is-valid');
+    // Add error styling with red border (using only our custom classes)
+    field.classList.remove('is-valid', 'is-invalid');
     field.classList.add('password-invalid');
     field.classList.remove('password-valid');
 }
@@ -514,9 +513,8 @@ function showFieldSuccess(field) {
         existingBubble.remove();
     }
     
-    // Add success styling with green border
-    field.classList.add('is-valid');
-    field.classList.remove('is-invalid');
+    // Add success styling with green border (using only our custom classes)
+    field.classList.remove('is-valid', 'is-invalid');
     field.classList.add('password-valid');
     field.classList.remove('password-invalid');
 }
@@ -580,7 +578,7 @@ function initializeValidation() {
                     showFieldError(this, 'Please enter a valid email address');
                 }
             } else {
-                this.classList.remove('is-valid', 'is-invalid');
+                this.classList.remove('is-valid', 'is-invalid', 'password-valid', 'password-invalid');
                 const existingError = this.parentNode.querySelector('.field-error');
                 if (existingError) {
                     existingError.remove();
@@ -610,7 +608,7 @@ function initializeValidation() {
                     showFieldError(this, 'Password does not meet requirements');
                 }
             } else {
-                this.classList.remove('is-valid', 'is-invalid');
+                this.classList.remove('is-valid', 'is-invalid', 'password-valid', 'password-invalid');
                 const existingError = this.parentNode.querySelector('.field-error');
                 if (existingError) {
                     existingError.remove();
@@ -635,7 +633,7 @@ function initializeValidation() {
                     showFieldError(this, 'Passwords do not match');
                 }
             } else {
-                this.classList.remove('is-valid', 'is-invalid');
+                this.classList.remove('is-valid', 'is-invalid', 'password-valid', 'password-invalid');
                 const existingError = this.parentNode.querySelector('.field-error');
                 if (existingError) {
                     existingError.remove();
