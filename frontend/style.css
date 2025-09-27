@@ -541,12 +541,29 @@ footer {
     border-top: 6px solid #dc3545;
 }
 
+/* Right-positioned speech bubble arrow */
+.speech-bubble-right::after {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 15px;
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 6px solid #dc3545;
+}
+
 .speech-bubble-error {
     background: #dc3545;
 }
 
 .speech-bubble-error::after {
     border-top-color: #dc3545;
+}
+
+.speech-bubble-error.speech-bubble-right::after {
+    border-right-color: #dc3545;
 }
 
 .speech-bubble-success {
@@ -557,6 +574,10 @@ footer {
     border-top-color: #198754;
 }
 
+.speech-bubble-success.speech-bubble-right::after {
+    border-right-color: #198754;
+}
+
 @keyframes fadeInBubble {
     from {
         opacity: 0;
@@ -565,6 +586,22 @@ footer {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* Right-positioned speech bubble animation */
+.speech-bubble-right {
+    animation: fadeInBubbleRight 0.3s ease-out;
+}
+
+@keyframes fadeInBubbleRight {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
     }
 }
 

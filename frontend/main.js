@@ -499,10 +499,10 @@ function showFieldError(field, message) {
     
     // Add speech bubble error message
     const bubbleDiv = document.createElement('div');
-    bubbleDiv.className = 'speech-bubble speech-bubble-error';
+    bubbleDiv.className = 'speech-bubble speech-bubble-error speech-bubble-right';
     bubbleDiv.textContent = message;
-    bubbleDiv.style.top = '-40px';
-    bubbleDiv.style.left = '0px';
+    bubbleDiv.style.top = '0px';
+    bubbleDiv.style.left = 'calc(100% + 10px)';
     field.parentNode.appendChild(bubbleDiv);
     
     // Add error styling
