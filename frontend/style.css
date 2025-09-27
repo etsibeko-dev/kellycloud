@@ -431,3 +431,43 @@ footer {
     background-color: #FFD700; /* Gold header */
     color: #333; /* Darker text for gold background */
 }
+
+/* Password visibility toggle styles */
+.input-group .btn-outline-secondary {
+    border-color: #d1d5db;
+    color: #6b7280;
+    background-color: transparent;
+    transition: all 0.2s ease;
+}
+
+.input-group .btn-outline-secondary:hover {
+    background-color: #f3f4f6;
+    border-color: #9ca3af;
+    color: #374151;
+}
+
+.input-group .btn-outline-secondary:focus {
+    box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
+    border-color: #6b7280;
+}
+
+.input-group .btn-outline-secondary i {
+    font-size: 0.875rem;
+}
+
+/* Ensure input group looks seamless */
+.input-group .form-control {
+    border-right: 0;
+}
+
+.input-group .btn {
+    border-left: 0;
+}
+
+.input-group .form-control:focus {
+    border-right: 0;
+}
+
+.input-group .form-control:focus + .btn {
+    border-left: 0;
+}

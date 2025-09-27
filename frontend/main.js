@@ -379,6 +379,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
+    
+    // Initialize password visibility toggles
+    initializePasswordToggles();
 });
 
 // Subscription management functions
@@ -1469,5 +1472,84 @@ function getTimeAgo(date) {
         return `${days}d ago`;
     } else {
         return date.toLocaleDateString();
+    }
+}
+
+// Password visibility toggle functionality
+function initializePasswordToggles() {
+    // Toggle for login page
+    const loginToggle = document.getElementById('togglePassword');
+    const loginPassword = document.getElementById('password');
+    const loginIcon = document.getElementById('togglePasswordIcon');
+    
+    if (loginToggle && loginPassword && loginIcon) {
+        loginToggle.addEventListener('click', function() {
+            togglePasswordVisibility(loginPassword, loginIcon);
+        });
+    }
+    
+    // Toggle for register page password
+    const registerToggle = document.getElementById('togglePassword');
+    const registerPassword = document.getElementById('password');
+    const registerIcon = document.getElementById('togglePasswordIcon');
+    
+    if (registerToggle && registerPassword && registerIcon) {
+        registerToggle.addEventListener('click', function() {
+            togglePasswordVisibility(registerPassword, registerIcon);
+        });
+    }
+    
+    // Toggle for register page confirm password
+    const confirmToggle = document.getElementById('toggleConfirmPassword');
+    const confirmPassword = document.getElementById('confirm_password');
+    const confirmIcon = document.getElementById('toggleConfirmPasswordIcon');
+    
+    if (confirmToggle && confirmPassword && confirmIcon) {
+        confirmToggle.addEventListener('click', function() {
+            togglePasswordVisibility(confirmPassword, confirmIcon);
+        });
+    }
+    
+    // Toggles for dashboard settings
+    const currentPasswordToggle = document.getElementById('toggleCurrentPassword');
+    const currentPassword = document.getElementById('currentPassword');
+    const currentPasswordIcon = document.getElementById('toggleCurrentPasswordIcon');
+    
+    if (currentPasswordToggle && currentPassword && currentPasswordIcon) {
+        currentPasswordToggle.addEventListener('click', function() {
+            togglePasswordVisibility(currentPassword, currentPasswordIcon);
+        });
+    }
+    
+    const newPasswordToggle = document.getElementById('toggleNewPassword');
+    const newPassword = document.getElementById('newPassword');
+    const newPasswordIcon = document.getElementById('toggleNewPasswordIcon');
+    
+    if (newPasswordToggle && newPassword && newPasswordIcon) {
+        newPasswordToggle.addEventListener('click', function() {
+            togglePasswordVisibility(newPassword, newPasswordIcon);
+        });
+    }
+    
+    const dashboardConfirmToggle = document.getElementById('toggleConfirmPassword');
+    const dashboardConfirmPassword = document.getElementById('confirmPassword');
+    const dashboardConfirmIcon = document.getElementById('toggleConfirmPasswordIcon');
+    
+    if (dashboardConfirmToggle && dashboardConfirmPassword && dashboardConfirmIcon) {
+        dashboardConfirmToggle.addEventListener('click', function() {
+            togglePasswordVisibility(dashboardConfirmPassword, dashboardConfirmIcon);
+        });
+    }
+}
+
+function togglePasswordVisibility(passwordInput, iconElement) {
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        iconElement.classList.remove('fa-eye');
+        iconElement.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        iconElement.classList.remove('fa-eye-slash');
+        iconElement.classList.add('fa-eye');
     }
 }

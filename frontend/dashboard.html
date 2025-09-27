@@ -528,15 +528,30 @@
                             <form id="passwordForm">
                                 <div class="mb-3">
                                     <label for="currentPassword" class="form-label">Current Password</label>
-                                    <input type="password" class="form-control" id="currentPassword">
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="currentPassword">
+                                        <button class="btn btn-outline-secondary" type="button" id="toggleCurrentPassword">
+                                            <i class="fas fa-eye" id="toggleCurrentPasswordIcon"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="newPassword" class="form-label">New Password</label>
-                                    <input type="password" class="form-control" id="newPassword">
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="newPassword">
+                                        <button class="btn btn-outline-secondary" type="button" id="toggleNewPassword">
+                                            <i class="fas fa-eye" id="toggleNewPasswordIcon"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                                    <input type="password" class="form-control" id="confirmPassword">
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="confirmPassword">
+                                        <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                                            <i class="fas fa-eye" id="toggleConfirmPasswordIcon"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <button type="submit" class="btn btn-warning">Change Password</button>
                             </form>
