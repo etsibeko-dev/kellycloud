@@ -143,7 +143,8 @@ python3 manage.py createsuperuser
 ### Default Login Credentials
 For testing purposes, you can use these credentials:
 - **Username**: `admin`
-- **Password**: `admin123`
+- **Password**: `Admin123!` (meets all validation requirements)
+- **Alternative Test User**: `testuser` / `TestUser123!`
 
 Or create a new account via the registration page.
 
