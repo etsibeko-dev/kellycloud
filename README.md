@@ -16,6 +16,9 @@ This is a fork of the original KellyCloud project, enhanced with improved user i
 - 📊 **Analytics Dashboard** - Storage usage charts and file statistics
 - 👤 **Profile Management** - User profile settings and account information
 - 🔐 **Authentication** - Token-based authentication with secure login/logout
+- 👁️ **Password Visibility** - Toggle password visibility with eye icons
+- ✅ **Input Validation** - Real-time email and password validation with visual feedback
+- 🎨 **Color-Coded Validation** - Red/green borders for invalid/valid input fields
 
 ## 🛠️ Tech Stack
 
@@ -202,6 +205,9 @@ This fork includes:
 - **Profile Management** - User profile settings and account information
 - **Enhanced Authentication** - Token-based auth with secure sessions
 - **File Management** - Upload, delete, and organize files
+- **Password Visibility Toggles** - Eye icons for showing/hiding passwords
+- **Input Validation** - Real-time email and password validation
+- **Color-Coded Feedback** - Visual validation indicators
 - **Responsive Design** - Mobile-friendly interface
 - **Better Organization** - Clean Django app structure
 - **Code Optimization** - Improved performance and maintainability
@@ -215,11 +221,15 @@ This fork includes:
 - ✅ Storage usage tracking
 - ✅ Profile settings
 - ✅ Analytics dashboard
+- ✅ Password visibility toggles
+- ✅ Real-time input validation
+- ✅ Color-coded validation feedback
+- ✅ Logout functionality
 
 ### Subscription Plans
-- **Basic**: 50GB storage, $50/month
-- **Standard**: 500GB storage, $150/month  
-- **Premium**: 2TB storage, $300/month
+- **Basic**: 50GB storage, R50/month
+- **Standard**: 500GB storage, R150/month  
+- **Premium**: 2TB storage, R300/month
 
 ### Dashboard Sections
 - **Overview** - Storage usage and recent files
