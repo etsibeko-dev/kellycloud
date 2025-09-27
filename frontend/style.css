@@ -439,6 +439,17 @@ footer {
     background-color: #f8f9fa;
     transition: all 0.2s ease;
     min-width: 45px;
+    flex-shrink: 0; /* Prevent button from shrinking */
+}
+
+/* Ensure input groups have consistent width with regular inputs */
+.input-group {
+    width: 100%;
+}
+
+.input-group .form-control {
+    flex: 1;
+    min-width: 0; /* Allow input to shrink if needed */
 }
 
 .input-group .btn-outline-secondary:hover {
