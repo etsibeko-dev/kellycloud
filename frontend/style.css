@@ -610,6 +610,29 @@ footer {
     position: relative;
 }
 
+/* Color-coded password validation */
+.password-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+    background-color: rgba(220, 53, 69, 0.05) !important;
+}
+
+.password-valid {
+    border-color: #198754 !important;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25) !important;
+    background-color: rgba(25, 135, 84, 0.05) !important;
+}
+
+.password-invalid:focus {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+.password-valid:focus {
+    border-color: #198754 !important;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25) !important;
+}
+
 /* Password strength indicator */
 .password-strength-container {
     margin-top: 0.5rem;

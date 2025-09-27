@@ -139,13 +139,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                // Password validation
-                const passwordValidation = validatePassword(password);
-                if (!passwordValidation.isValid) {
-                    displayMessage('Password does not meet requirements.', 'danger');
-                    showFieldError(passwordInput, 'Password does not meet requirements');
-                    return;
-                }
+            // Password validation
+            const passwordValidation = validatePassword(password);
+            if (!passwordValidation.isValid) {
+                showFieldError(passwordInput, 'Password does not meet requirements');
+                return;
+            }
 
                 // Password confirmation validation
                 if (!validateConfirmPassword(password, confirmPassword)) {
@@ -497,17 +496,11 @@ function showFieldError(field, message) {
         existingBubble.remove();
     }
     
-    // Add speech bubble error message
-    const bubbleDiv = document.createElement('div');
-    bubbleDiv.className = 'speech-bubble speech-bubble-error speech-bubble-right';
-    bubbleDiv.textContent = message;
-    bubbleDiv.style.top = '0px';
-    bubbleDiv.style.left = 'calc(100% + 10px)';
-    field.parentNode.appendChild(bubbleDiv);
-    
-    // Add error styling
+    // Add error styling with red border
     field.classList.add('is-invalid');
     field.classList.remove('is-valid');
+    field.classList.add('password-invalid');
+    field.classList.remove('password-valid');
 }
 
 function showFieldSuccess(field) {
@@ -521,9 +514,11 @@ function showFieldSuccess(field) {
         existingBubble.remove();
     }
     
-    // Add success styling
+    // Add success styling with green border
     field.classList.add('is-valid');
     field.classList.remove('is-invalid');
+    field.classList.add('password-valid');
+    field.classList.remove('password-invalid');
 }
 
 function showPasswordStrength(passwordField, strengthContainer) {
