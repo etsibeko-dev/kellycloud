@@ -1599,9 +1599,9 @@ function initializePasswordToggles() {
     }
     
     // Toggle for register page password
-    const registerToggle = document.getElementById('togglePassword');
+    const registerToggle = document.getElementById('toggleRegisterPassword');
     const registerPassword = document.getElementById('password');
-    const registerIcon = document.getElementById('togglePasswordIcon');
+    const registerIcon = document.getElementById('toggleRegisterPasswordIcon');
     
     if (registerToggle && registerPassword && registerIcon) {
         registerToggle.addEventListener('click', function() {
