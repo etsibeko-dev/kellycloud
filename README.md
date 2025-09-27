@@ -67,8 +67,10 @@ This is a fork of the original KellyCloud project, enhanced with improved user i
    ```
 
 4. **Access the application**
-   - Frontend: http://0.0.0.0:3000
-   - Backend API: http://0.0.0.0:8000
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:8000
+   
+   > **Note**: The backend root URL (`http://localhost:8000/`) will show a 404 error - this is expected! The backend is API-only and serves endpoints under `/api/`.
 
 ## 📁 Project Structure
 
@@ -120,6 +122,8 @@ cd main
 python3 manage.py runserver 0.0.0.0:8000
 ```
 
+> **Note**: The backend runs on `0.0.0.0:8000` but is accessed via `localhost:8000` from the frontend.
+
 ### Frontend Development
 ```bash
 cd frontend
@@ -133,6 +137,22 @@ python3 manage.py makemigrations
 python3 manage.py migrate
 python3 manage.py createsuperuser
 ```
+
+## 🧪 Testing
+
+### Default Login Credentials
+For testing purposes, you can use these credentials:
+- **Username**: `admin`
+- **Password**: `admin123`
+
+Or create a new account via the registration page.
+
+### Access Points
+- **Landing Page**: http://localhost:3000/index.html
+- **Login**: http://localhost:3000/login.html
+- **Register**: http://localhost:3000/register.html
+- **Pricing**: http://localhost:3000/pricing.html
+- **Dashboard**: http://localhost:3000/dashboard.html
 
 ## 📚 API Endpoints
 
