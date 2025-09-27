@@ -879,57 +879,158 @@ function updateICloudStorageDisplay(storageInfo, section) {
 }
 
 function generateFileTypeBreakdown(totalBytes) {
-    // Simulate file type distribution based on common patterns
-    // In a real app, this would come from the backend API
-    const breakdown = [
-        { type: 'photos', name: 'Photos', percentage: 0, bytes: 0 },
-        { type: 'documents', name: 'Documents', percentage: 0, bytes: 0 },
-        { type: 'videos', name: 'Videos', percentage: 0, bytes: 0 },
-        { type: 'audio', name: 'Audio', percentage: 0, bytes: 0 },
-        { type: 'images', name: 'Images', percentage: 0, bytes: 0 },
-        { type: 'backup', name: 'Backup', percentage: 0, bytes: 0 },
-        { type: 'other', name: 'Other', percentage: 0, bytes: 0 }
-    ];
-    
-    if (totalBytes === 0) {
-        return breakdown;
-    }
-    
-    // Simulate realistic distribution
-    const distribution = [
-        { type: 'photos', ratio: 0.35 },
-        { type: 'videos', ratio: 0.25 },
-        { type: 'documents', ratio: 0.15 },
-        { type: 'images', ratio: 0.10 },
-        { type: 'audio', ratio: 0.08 },
-        { type: 'backup', ratio: 0.05 },
-        { type: 'other', ratio: 0.02 }
-    ];
-    
-    distribution.forEach((dist, index) => {
-        const bytes = Math.floor(totalBytes * dist.ratio);
-        const percentage = (bytes / totalBytes) * 100;
-        
-        if (percentage > 0.1) { // Only show if more than 0.1%
-            breakdown[index].bytes = bytes;
-            breakdown[index].percentage = percentage;
+    // Define file type categories based on user specifications
+    const fileCategories = {
+        documents: {
+            name: 'Documents',
+            extensions: [
+                // Text / Word Processing
+                'txt', 'doc', 'docx', 'odt', 'rtf', 'wps',
+                // Portable Formats
+                'pdf', 'epub', 'mobi',
+                // Spreadsheets
+                'xls', 'xlsx', 'ods', 'csv', 'tsv',
+                // Presentations
+                'ppt', 'pptx', 'odp', 'key',
+                // Other Structured Docs
+                'xml', 'json', 'yaml', 'md', 'tex'
+            ]
+        },
+        photos: {
+            name: 'Photos',
+            extensions: [
+                // Common Raster
+                'jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff', 'heif', 'heic',
+                // Raw Image Formats
+                'raw', 'cr2', 'nef', 'arw', 'orf', 'sr2', 'dng',
+                // Vector
+                'svg', 'ai', 'eps',
+                // Web Formats
+                'webp', 'avif'
+            ]
+        },
+        videos: {
+            name: 'Videos',
+            extensions: [
+                // Standard Video Files
+                'mp4', 'mov', 'avi', 'wmv', 'flv', 'f4v', 'mkv',
+                // Modern/Streaming Formats
+                'webm', 'm4v', '3gp', 'ts',
+                // Professional/Raw
+                'mxf', 'r3d', 'cine', 'yuv', 'vob'
+            ]
+        },
+        others: {
+            name: 'Others',
+            extensions: [] // Everything else falls here
         }
-    });
+    };
+
+    // Get actual files from the uploaded files to calculate real distribution
+    const uploadedFiles = getUploadedFiles();
     
-    // Format display sizes
-    breakdown.forEach(category => {
-        if (category.bytes > 0) {
-            if (category.bytes >= 1024 * 1024 * 1024) {
-                category.displaySize = `${Math.round(category.bytes / (1024 * 1024 * 1024) * 100) / 100} GB`;
-            } else if (category.bytes >= 1024 * 1024) {
-                category.displaySize = `${Math.round(category.bytes / (1024 * 1024) * 100) / 100} MB`;
-            } else {
-                category.displaySize = `${Math.round(category.bytes / 1024 * 100) / 100} KB`;
+    if (uploadedFiles.length === 0 || totalBytes === 0) {
+        // Return empty breakdown if no files
+        return [
+            { type: 'documents', name: 'Documents', percentage: 0, bytes: 0, displaySize: '0 MB' },
+            { type: 'photos', name: 'Photos', percentage: 0, bytes: 0, displaySize: '0 MB' },
+            { type: 'videos', name: 'Videos', percentage: 0, bytes: 0, displaySize: '0 MB' },
+            { type: 'others', name: 'Others', percentage: 0, bytes: 0, displaySize: '0 MB' }
+        ];
+    }
+
+    // Calculate actual file distribution based on uploaded files
+    const categoryBytes = {
+        documents: 0,
+        photos: 0,
+        videos: 0,
+        others: 0
+    };
+
+    // Categorize each uploaded file
+    uploadedFiles.forEach(file => {
+        const extension = getFileExtension(file.name).toLowerCase();
+        let categorized = false;
+
+        // Check each category
+        for (const [categoryKey, categoryData] of Object.entries(fileCategories)) {
+            if (categoryKey === 'others') continue; // Skip others for now
+            
+            if (categoryData.extensions.includes(extension)) {
+                categoryBytes[categoryKey] += file.size || 0;
+                categorized = true;
+                break;
             }
         }
+
+        // If not categorized, add to others
+        if (!categorized) {
+            categoryBytes.others += file.size || 0;
+        }
     });
-    
-    return breakdown.filter(category => category.percentage > 0);
+
+    // Create breakdown array
+    const breakdown = [];
+    for (const [categoryKey, bytes] of Object.entries(categoryBytes)) {
+        const percentage = totalBytes > 0 ? (bytes / totalBytes) * 100 : 0;
+        const categoryData = fileCategories[categoryKey];
+        
+        if (percentage > 0.01) { // Only show if more than 0.01%
+            breakdown.push({
+                type: categoryKey,
+                name: categoryData.name,
+                percentage: percentage,
+                bytes: bytes,
+                displaySize: formatFileSize(bytes)
+            });
+        }
+    }
+
+    // Sort by size (largest first)
+    breakdown.sort((a, b) => b.bytes - a.bytes);
+
+    return breakdown;
+}
+
+function getUploadedFiles() {
+    // Fetch actual uploaded files from the API for real categorization
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) return [];
+
+        // Make synchronous request to get files (in a real app, this would be async)
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'http://localhost:8000/api/files/', false); // Synchronous for now
+        xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+        xhr.send();
+
+        if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            return response.files || [];
+        }
+        
+        return [];
+    } catch (error) {
+        console.error('Error fetching uploaded files:', error);
+        return [];
+    }
+}
+
+function getFileExtension(filename) {
+    return filename.slice((filename.lastIndexOf('.') - 1 >>> 0) + 2);
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 B';
+    if (bytes >= 1024 * 1024 * 1024) {
+        return `${Math.round(bytes / (1024 * 1024 * 1024) * 100) / 100} GB`;
+    } else if (bytes >= 1024 * 1024) {
+        return `${Math.round(bytes / (1024 * 1024) * 100) / 100} MB`;
+    } else if (bytes >= 1024) {
+        return `${Math.round(bytes / 1024 * 100) / 100} KB`;
+    } else {
+        return `${bytes} B`;
+    }
 }
 
 function updateStorageLegend(legendContainer, fileBreakdown) {
@@ -977,24 +1078,17 @@ function updateStorageBreakdown(breakdownContainer, fileBreakdown) {
             // Get appropriate icon for each category
             let icon = 'fas fa-file';
             switch (category.type) {
+                case 'documents':
+                    icon = 'fas fa-file-alt';
+                    break;
                 case 'photos':
-                case 'images':
                     icon = 'fas fa-images';
                     break;
                 case 'videos':
                     icon = 'fas fa-video';
                     break;
-                case 'documents':
-                    icon = 'fas fa-file-alt';
-                    break;
-                case 'audio':
-                    icon = 'fas fa-music';
-                    break;
-                case 'backup':
-                    icon = 'fas fa-archive';
-                    break;
-                case 'other':
-                    icon = 'fas fa-file';
+                case 'others':
+                    icon = 'fas fa-folder';
                     break;
             }
             
