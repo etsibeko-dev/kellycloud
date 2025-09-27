@@ -10,28 +10,30 @@
     <style>
         .sidebar {
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--kelly-gray-900);
             position: fixed;
             top: 0;
             left: 0;
             width: 250px;
             z-index: 1000;
             transition: all 0.3s;
+            border-right: 1px solid var(--kelly-gray-800);
         }
         .sidebar.collapsed {
             width: 70px;
         }
         .sidebar .nav-link {
-            color: rgba(255,255,255,0.8);
+            color: var(--kelly-gray-300);
             padding: 12px 20px;
-            border-radius: 8px;
+            border-radius: var(--kelly-radius-sm);
             margin: 4px 12px;
-            transition: all 0.3s;
+            transition: var(--kelly-transition-fast);
+            font-weight: 500;
         }
         .sidebar .nav-link:hover, .sidebar .nav-link.active {
-            color: white;
-            background: rgba(255,255,255,0.1);
-            transform: translateX(5px);
+            color: var(--kelly-white);
+            background: var(--kelly-primary);
+            transform: none;
         }
         .sidebar .nav-link i {
             width: 20px;
@@ -41,37 +43,141 @@
             margin-left: 250px;
             transition: all 0.3s;
             min-height: 100vh;
-            background: #f8f9fa;
+            background: var(--kelly-gray-50);
         }
         .main-content.expanded {
             margin-left: 70px;
         }
         .top-navbar {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 1rem 2rem;
-            margin-bottom: 2rem;
+            background: var(--kelly-white);
+            box-shadow: var(--kelly-shadow-2);
+            padding: var(--kelly-space-4) var(--kelly-space-8);
+            margin-bottom: var(--kelly-space-8);
         }
         .stats-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            border: none;
-            transition: transform 0.3s;
+            background: var(--kelly-white);
+            border-radius: var(--kelly-radius-lg);
+            padding: var(--kelly-space-6);
+            box-shadow: var(--kelly-shadow-2);
+            border: 1px solid var(--kelly-gray-200);
+            transition: var(--kelly-transition-fast);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
         .stats-card:hover {
-            transform: translateY(-5px);
+            box-shadow: var(--kelly-shadow-8);
+            border-color: var(--kelly-gray-300);
         }
         .stats-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
+            width: 48px;
+            height: 48px;
+            border-radius: var(--kelly-radius-sm);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            color: white;
+            font-size: var(--kelly-font-size-lg);
+            color: var(--kelly-white);
+            background: var(--kelly-primary);
+        }
+        /* Override Bootstrap background colors for KellyCloud design */
+        .stats-icon.bg-primary {
+            background: var(--kelly-primary) !important;
+        }
+        .stats-icon.bg-success {
+            background: var(--kelly-accent-green) !important;
+        }
+        .stats-icon.bg-warning {
+            background: var(--kelly-accent-orange) !important;
+        }
+        .stats-icon.bg-info {
+            background: var(--kelly-accent-teal) !important;
+        }
+        /* KellyCloud Dropdown Menu Styling */
+        .dropdown-menu {
+            background: var(--kelly-white);
+            border: 1px solid var(--kelly-gray-200);
+            border-radius: var(--kelly-radius-lg);
+            box-shadow: var(--kelly-shadow-8);
+            padding: var(--kelly-space-2);
+            margin-top: var(--kelly-space-2);
+            min-width: 200px;
+        }
+        .dropdown-item {
+            color: var(--kelly-gray-700);
+            padding: var(--kelly-space-3) var(--kelly-space-4);
+            border-radius: var(--kelly-radius-sm);
+            transition: var(--kelly-transition-fast);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        .dropdown-item:hover {
+            background: var(--kelly-primary-light);
+            color: var(--kelly-primary);
+        }
+        .dropdown-item i {
+            color: var(--kelly-gray-600);
+            width: 16px;
+            margin-right: var(--kelly-space-3);
+        }
+        .dropdown-item:hover i {
+            color: var(--kelly-primary);
+        }
+        .dropdown-divider {
+            border-top: 1px solid var(--kelly-gray-200);
+            margin: var(--kelly-space-2) 0;
+        }
+        .btn-outline-secondary {
+            border-color: var(--kelly-gray-300);
+            color: var(--kelly-gray-700);
+            background: var(--kelly-white);
+            transition: var(--kelly-transition-fast);
+        }
+        .btn-outline-secondary:hover {
+            background: var(--kelly-gray-100);
+            border-color: var(--kelly-gray-400);
+            color: var(--kelly-gray-900);
+        }
+        /* Ensure dropdown buttons have equal heights */
+        .dropdown .btn {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 120px;
+        }
+        .dropdown .btn .badge {
+            margin-left: var(--kelly-space-2);
+        }
+        /* Message Container Styling */
+        #messageContainer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 400px;
+            min-width: 300px;
+        }
+        #messageContainer .alert {
+            border-radius: var(--kelly-radius-lg);
+            box-shadow: var(--kelly-shadow-8);
+            border: none;
+            padding: var(--kelly-space-4);
+            margin-bottom: var(--kelly-space-2);
+            font-weight: 500;
+        }
+        #messageContainer .alert-success {
+            background: var(--kelly-accent-green);
+            color: var(--kelly-white);
+        }
+        #messageContainer .alert-danger {
+            background: var(--kelly-accent-red);
+            color: var(--kelly-white);
+        }
+        #messageContainer .alert-warning {
+            background: var(--kelly-accent-orange);
+            color: var(--kelly-white);
         }
         .content-section {
             display: none;
@@ -79,27 +185,36 @@
         .content-section.active {
             display: block;
         }
+        /* Ensure equal height stats cards */
+        .row.mb-4 {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .row.mb-4 .col-md-3,
+        .row.mb-4 .col-lg-3 {
+            display: flex;
+        }
         .file-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: var(--kelly-white);
+            border-radius: var(--kelly-radius-lg);
+            padding: var(--kelly-space-4);
+            margin-bottom: var(--kelly-space-4);
+            box-shadow: var(--kelly-shadow-2);
             transition: all 0.3s;
         }
         .file-card:hover {
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: var(--kelly-shadow-8);
             transform: translateY(-2px);
         }
         .progress-container {
-            background: #f8f9fa;
-            border-radius: 12px;
+            background: var(--kelly-gray-100);
+            border-radius: var(--kelly-radius-lg);
             height: 20px;
             overflow: hidden;
         }
         .progress-bar-custom {
             height: 100%;
-            border-radius: 12px;
+            border-radius: var(--kelly-radius-lg);
             transition: all 0.3s ease;
             min-width: 0.5%;
         }
@@ -273,7 +388,7 @@
                         <div class="stats-card">
                             <h5 class="mb-3">Storage Usage</h5>
                             <div class="progress-container mb-2">
-                                <div class="progress-bar-custom" id="storageProgressBar" style="width: 0%; background: #007aff;"></div>
+                                <div class="progress-bar-custom" id="storageProgressBar" style="width: 0%; background: var(--kelly-primary);"></div>
                             </div>
                             <div class="d-flex justify-content-between">
                                 <small class="text-muted" id="storageText">0 MB of 2 TB used</small>
@@ -326,7 +441,7 @@
                     <div class="mb-4">
                         <h6 class="mb-2">Storage Usage</h6>
                         <div class="progress-container mb-2">
-                            <div class="progress-bar-custom" id="uploadStorageProgressBar" style="width: 0%; background: #007aff;"></div>
+                            <div class="progress-bar-custom" id="uploadStorageProgressBar" style="width: 0%; background: var(--kelly-primary);"></div>
                         </div>
                         <div class="d-flex justify-content-between">
                             <small class="text-muted" id="uploadStorageText">0 MB of 2 TB used</small>

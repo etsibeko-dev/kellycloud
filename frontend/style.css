@@ -1,108 +1,328 @@
-/* General Body Styles */
+/* ===========================================
+   KELLYCLOUD DESIGN SYSTEM
+   =========================================== */
+
+/* CSS Custom Properties - KellyCloud Theme */
+:root {
+    /* KellyCloud Primary Colors */
+    --kelly-primary: #0078D4;
+    --kelly-primary-hover: #106EBE;
+    --kelly-primary-light: #DEECF9;
+    --kelly-primary-dark: #005A9E;
+    --kelly-primary-subtle: #F3F9FF;
+    
+    /* KellyCloud Accent Colors */
+    --kelly-accent-green: #107C10;
+    --kelly-accent-orange: #D83B01;
+    --kelly-accent-red: #D13438;
+    --kelly-accent-purple: #8764B8;
+    --kelly-accent-teal: #00B7C3;
+    
+    /* KellyCloud Neutral Palette */
+    --kelly-white: #FFFFFF;
+    --kelly-black: #323130;
+    --kelly-gray-50: #FAFAFA;
+    --kelly-gray-100: #F3F2F1;
+    --kelly-gray-200: #EDEBE9;
+    --kelly-gray-300: #E1DFDD;
+    --kelly-gray-400: #C8C6C4;
+    --kelly-gray-500: #A19F9D;
+    --kelly-gray-600: #8A8886;
+    --kelly-gray-700: #605E5C;
+    --kelly-gray-800: #484644;
+    --kelly-gray-900: #323130;
+    
+    /* KellyCloud Typography */
+    --kelly-font-primary: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    --kelly-font-mono: 'Consolas', 'Monaco', 'Courier New', monospace;
+    --kelly-font-size-xs: 0.75rem;
+    --kelly-font-size-sm: 0.875rem;
+    --kelly-font-size-base: 1rem;
+    --kelly-font-size-lg: 1.125rem;
+    --kelly-font-size-xl: 1.25rem;
+    --kelly-font-size-2xl: 1.5rem;
+    --kelly-font-size-3xl: 1.875rem;
+    --kelly-font-size-4xl: 2.25rem;
+    
+    /* KellyCloud Spacing System */
+    --kelly-space-1: 0.25rem;   /* 4px */
+    --kelly-space-2: 0.5rem;    /* 8px */
+    --kelly-space-3: 0.75rem;   /* 12px */
+    --kelly-space-4: 1rem;      /* 16px */
+    --kelly-space-5: 1.25rem;   /* 20px */
+    --kelly-space-6: 1.5rem;    /* 24px */
+    --kelly-space-8: 2rem;      /* 32px */
+    --kelly-space-10: 2.5rem;   /* 40px */
+    --kelly-space-12: 3rem;     /* 48px */
+    --kelly-space-16: 4rem;     /* 64px */
+    --kelly-space-20: 5rem;     /* 80px */
+    
+    /* KellyCloud Border Radius */
+    --kelly-radius-none: 0;
+    --kelly-radius-sm: 0.125rem;  /* 2px */
+    --kelly-radius-md: 0.25rem;   /* 4px */
+    --kelly-radius-lg: 0.5rem;    /* 8px */
+    --kelly-radius-xl: 0.75rem;   /* 12px */
+    
+    /* KellyCloud Shadows */
+    --kelly-shadow-2: 0 1px 2px 0 rgba(0, 0, 0, 0.14);
+    --kelly-shadow-4: 0 2px 4px 0 rgba(0, 0, 0, 0.14);
+    --kelly-shadow-8: 0 4px 8px 0 rgba(0, 0, 0, 0.14);
+    --kelly-shadow-16: 0 8px 16px 0 rgba(0, 0, 0, 0.14);
+    --kelly-shadow-28: 0 14px 28px 0 rgba(0, 0, 0, 0.14);
+    
+    /* KellyCloud Transitions */
+    --kelly-transition-fast: 0.1s cubic-bezier(0.4, 0.0, 0.2, 1);
+    --kelly-transition-normal: 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+    --kelly-transition-slow: 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    
+    /* KellyCloud Layout */
+    --kelly-navbar-height: 48px;
+    --kelly-sidebar-width: 240px;
+    --kelly-sidebar-collapsed-width: 48px;
+}
+
+/* KellyCloud Body Styles */
 body {
-    font-family: 'Inter', sans-serif; /* Apply Inter to body text */
-    line-height: 1.6;
-    color: #334155; /* Updated text color */
-    background: linear-gradient(135deg, #F0F4F8 0%, #D9E2EC 100%); /* Lighter, cloud-like gradient */
+    font-family: var(--kelly-font-primary);
+    font-size: var(--kelly-font-size-base);
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--kelly-gray-900);
+    background: var(--kelly-gray-50);
     min-height: 100vh;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-/* Container for main content */
+/* KellyCloud Container */
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 15px;
+    padding: 0 var(--kelly-space-4);
 }
 
-/* Header/Navbar Styles */
+/* KellyCloud Header/Navbar - KellyCloud Portal Style */
 .navbar {
-    background-color: #2F3E46 !important; /* Dark blue-gray */
-    padding: 1rem 0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    position: sticky; /* Make the navbar sticky */
-    top: 0; /* Stick to the top of the viewport */
-    z-index: 1020; /* Ensure it stays above other content */
+    background: var(--kelly-white) !important;
+    height: var(--kelly-navbar-height);
+    padding: 0 var(--kelly-space-4);
+    box-shadow: var(--kelly-shadow-2);
+    border-bottom: 1px solid var(--kelly-gray-200);
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    display: flex;
+    align-items: center;
 }
 
 .navbar-brand {
-    font-family: 'Montserrat', sans-serif; /* Apply Montserrat to navbar brand */
-    font-weight: 700;
-    font-size: 1.5rem; /* Reduced font size */
-    color: #ecf0f1 !important; /* Light gray */
+    font-family: var(--kelly-font-primary);
+    font-weight: 600;
+    font-size: var(--kelly-font-size-lg);
+    color: var(--kelly-primary) !important;
+    text-decoration: none;
+    transition: var(--kelly-transition-fast);
+    display: flex;
+    align-items: center;
+    gap: var(--kelly-space-2);
+}
+
+.navbar-brand:hover {
+    color: var(--kelly-primary-hover) !important;
+}
+
+.navbar-nav {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    gap: var(--kelly-space-1);
 }
 
 .navbar-nav .nav-link {
-    color: #ecf0f1 !important;
-    font-weight: 500;
-    margin-left: 15px;
-    transition: color 0.3s ease;
+    color: var(--kelly-gray-700) !important;
+    font-weight: 400;
+    font-size: var(--kelly-font-size-sm);
+    padding: var(--kelly-space-2) var(--kelly-space-3) !important;
+    border-radius: var(--kelly-radius-sm);
+    transition: var(--kelly-transition-fast);
+    text-decoration: none;
 }
 
 .navbar-nav .nav-link:hover {
-    color: #60A5FA !important; /* Primary Blue */
+    color: var(--kelly-gray-900) !important;
+    background-color: var(--kelly-gray-100);
 }
 
-/* Global Heading Styles */
+/* KellyCloud Typography System */
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 700;
+    font-family: var(--kelly-font-primary);
+    font-weight: 600;
+    color: var(--kelly-gray-900);
+    line-height: 1.2;
+    margin: 0 0 var(--kelly-space-4) 0;
 }
 
-/* Hero Section */
+h1 { 
+    font-size: var(--kelly-font-size-4xl);
+    font-weight: 600;
+}
+h2 { 
+    font-size: var(--kelly-font-size-3xl);
+    font-weight: 600;
+}
+h3 { 
+    font-size: var(--kelly-font-size-2xl);
+    font-weight: 600;
+}
+h4 { 
+    font-size: var(--kelly-font-size-xl);
+    font-weight: 600;
+}
+h5 { 
+    font-size: var(--kelly-font-size-lg);
+    font-weight: 600;
+}
+h6 { 
+    font-size: var(--kelly-font-size-base);
+    font-weight: 600;
+}
+
+p {
+    font-size: var(--kelly-font-size-base);
+    line-height: 1.5;
+    color: var(--kelly-gray-800);
+    margin: 0 0 var(--kelly-space-4) 0;
+}
+
+/* KellyCloud Hero Section */
 .hero-section {
-    background: linear-gradient(rgba(44,62,80,0.8), rgba(44,62,80,0.8)), url('https://via.placeholder.com/1500x800') no-repeat center center/cover;
-    color: #fff;
-    padding: 100px 0;
+    background: linear-gradient(135deg, var(--kelly-primary) 0%, var(--kelly-primary-dark) 100%);
+    color: var(--kelly-white);
+    padding: var(--kelly-space-20) 0;
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="azure-pattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="2" fill="white" opacity="0.1"/><circle cx="75" cy="35" r="3" fill="white" opacity="0.1"/><circle cx="45" cy="75" r="1.5" fill="white" opacity="0.1"/><circle cx="85" cy="85" r="2.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23azure-pattern)"/></svg>');
+    opacity: 0.4;
 }
 
 .hero-title {
-    font-size: 3.8rem;
-    font-weight: 700;
-    margin-bottom: 20px;
-    letter-spacing: 1px;
-    color: #fff;
+    font-size: var(--kelly-font-size-4xl);
+    font-weight: 600;
+    margin-bottom: var(--kelly-space-6);
+    letter-spacing: -0.01em;
+    color: var(--kelly-white);
+    position: relative;
+    z-index: 1;
 }
 
 .hero-subtitle {
-    font-size: 1.6rem;
-    margin-bottom: 40px;
-    color: #f0f0f0;
-    max-width: 800px;
+    font-size: var(--kelly-font-size-lg);
+    margin-bottom: var(--kelly-space-8);
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 600px;
     margin-left: auto;
     margin-right: auto;
+    font-weight: 400;
+    line-height: 1.5;
+    position: relative;
+    z-index: 1;
 }
 
+/* KellyCloud Button System */
 .cta-btn {
-    font-size: 1.3rem;
-    padding: 15px 40px;
-    border-radius: 50px;
-    background: #60A5FA; /* Primary Blue */
-    color: #fff;
-    border: none;
-    transition: background 0.3s ease, transform 0.2s ease;
+    font-size: var(--kelly-font-size-base);
+    font-weight: 600;
+    padding: var(--kelly-space-3) var(--kelly-space-6);
+    border-radius: var(--kelly-radius-sm);
+    background: var(--kelly-white);
+    color: var(--kelly-primary);
+    border: 1px solid var(--kelly-white);
+    transition: var(--kelly-transition-fast);
     text-decoration: none;
     display: inline-block;
+    position: relative;
+    z-index: 1;
+    box-shadow: var(--kelly-shadow-4);
 }
 
 .cta-btn:hover {
-    background: #4A89F0; /* Darker Primary Blue */
-    transform: translateY(-3px);
-    color: #fff;
+    background: var(--kelly-gray-100);
+    color: var(--kelly-primary-hover);
+    border-color: var(--kelly-gray-200);
 }
 
-/* Features Section */
+/* KellyCloud Button Variants */
+.btn {
+    font-family: var(--kelly-font-primary);
+    font-weight: 600;
+    font-size: var(--kelly-font-size-sm);
+    border-radius: var(--kelly-radius-sm);
+    transition: var(--kelly-transition-fast);
+    border: 1px solid transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--kelly-space-2);
+    padding: var(--kelly-space-2) var(--kelly-space-4);
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--kelly-primary);
+    color: var(--kelly-white);
+    border-color: var(--kelly-primary);
+}
+
+.btn-primary:hover {
+    background: var(--kelly-primary-hover);
+    border-color: var(--kelly-primary-hover);
+}
+
+.btn-outline-primary {
+    background: transparent;
+    color: var(--kelly-primary);
+    border-color: var(--kelly-primary);
+}
+
+.btn-outline-primary:hover {
+    background: var(--kelly-primary-light);
+    color: var(--kelly-primary-hover);
+}
+
+.btn-secondary {
+    background: var(--kelly-gray-100);
+    color: var(--kelly-gray-700);
+    border-color: var(--kelly-gray-300);
+}
+
+.btn-secondary:hover {
+    background: var(--kelly-gray-200);
+    color: var(--kelly-gray-800);
+    border-color: var(--kelly-gray-400);
+}
+
+/* KellyCloud Features Section */
 .features {
-    padding: 60px 0;
-    background-color: #fdfdfd;
+    padding: var(--kelly-space-20) 0;
+    background: var(--kelly-white);
 }
 
 .features h2 {
@@ -110,7 +330,7 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 50px;
-    color: #2F3E46; /* Dark blue-gray */
+    color: var(--kelly-gray-900);
 }
 
 .feature-card {
@@ -132,14 +352,14 @@ h1, h2, h3, h4, h5, h6 {
 
 .feature-icon {
     font-size: 3.5rem;
-    color: #60A5FA; /* Primary Blue */
+    color: var(--kelly-primary);
     margin-bottom: 20px;
 }
 
 .feature-card h5 {
     font-size: 1.5rem;
     font-weight: 700; /* Make it bolder */
-    color: #2F3E46; /* Dark blue-gray */
+    color: var(--kelly-gray-900);
     margin-bottom: 20px; /* Increased space below title */
 }
 
@@ -169,124 +389,222 @@ h1, h2, h3, h4, h5, h6 {
     padding: 30px;
 }
 
+/* KellyCloud Card System */
+.card {
+    background: var(--kelly-white);
+    border: 1px solid var(--kelly-gray-200);
+    border-radius: var(--kelly-radius-lg);
+    box-shadow: var(--kelly-shadow-2);
+    transition: var(--kelly-transition-fast);
+    overflow: hidden;
+}
+
+.card:hover {
+    box-shadow: var(--kelly-shadow-8);
+    border-color: var(--kelly-gray-300);
+}
+
 .auth-card .card-header {
     background: none;
     border-bottom: none;
-    font-size: 2rem;
-    font-weight: 700;
-    color: #2F3E46; /* Dark blue-gray */
+    font-size: var(--kelly-font-size-xl);
+    font-weight: 600;
+    color: var(--kelly-gray-900);
     text-align: center;
-    margin-bottom: 25px;
+    margin-bottom: var(--kelly-space-6);
     padding: 0;
 }
 
+/* KellyCloud Form Styles */
+.form-label {
+    font-weight: 600;
+    color: var(--kelly-gray-700);
+    margin-bottom: var(--kelly-space-2);
+    font-size: var(--kelly-font-size-sm);
+}
+
+.form-control {
+    border: 1px solid var(--kelly-gray-300);
+    border-radius: var(--kelly-radius-sm);
+    padding: var(--kelly-space-3) var(--kelly-space-4);
+    font-size: var(--kelly-font-size-base);
+    transition: var(--kelly-transition-fast);
+    background: var(--kelly-white);
+    font-family: var(--kelly-font-primary);
+}
+
+.form-control:focus {
+    border-color: var(--kelly-primary);
+    box-shadow: 0 0 0 2px var(--kelly-primary-light);
+    outline: none;
+}
+
 .auth-card .form-label {
-    font-weight: 500;
-    color: #334155; /* New dark text color */
+    font-weight: 600;
+    color: var(--kelly-gray-700);
 }
 
 .auth-card .form-control {
-    border-radius: 8px;
-    border: 1px solid #D9E2EC; /* Lighter gray border from new palette */
-    padding: 10px 15px;
+    border-radius: var(--kelly-radius-sm);
+    border: 1px solid var(--kelly-gray-300);
+    padding: var(--kelly-space-3) var(--kelly-space-4);
 }
 
 .auth-card .form-control:focus {
-    border-color: #60A5FA;
-    box-shadow: 0 0 0 0.25rem rgba(96, 165, 250, 0.25);
+    border-color: var(--kelly-primary);
+    box-shadow: 0 0 0 2px var(--kelly-primary-light);
 }
 
 .btn-auth {
-    background: #60A5FA; /* Primary Blue */
-    color: #fff;
-    border-radius: 50px;
-    padding: 12px 30px;
-    border: none;
-    transition: background 0.3s ease, transform 0.2s ease;
+    background: var(--kelly-primary);
+    color: var(--kelly-white);
+    border-radius: var(--kelly-radius-sm);
+    padding: var(--kelly-space-3) var(--kelly-space-6);
+    border: 1px solid var(--kelly-primary);
+    transition: var(--kelly-transition-fast);
     width: 100%;
-    font-size: 1.1rem;
+    font-size: var(--kelly-font-size-base);
     font-weight: 600;
+    box-shadow: var(--kelly-shadow-2);
+    font-family: var(--kelly-font-primary);
 }
 
 .btn-auth:hover {
-    background: #4A89F0; /* Darker Primary Blue */
-    transform: translateY(-2px);
-    color: #fff;
+    background: var(--kelly-primary-hover);
+    border-color: var(--kelly-primary-hover);
+    color: var(--kelly-white);
+    box-shadow: var(--kelly-shadow-4);
 }
 
 .auth-card p a {
-    color: #60A5FA; /* Primary Blue */
+    color: var(--kelly-primary);
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
+    transition: var(--kelly-transition-fast);
 }
 
 .auth-card p a:hover {
+    color: var(--kelly-primary-hover);
     text-decoration: underline;
 }
 
-/* Dashboard Styles */
+/* KellyCloud Dashboard Styles */
 .dashboard-header {
-    background-color: #2F3E46; /* Dark blue-gray */
-    color: #fff;
+    background: var(--kelly-primary);
+    color: var(--kelly-white);
     padding: 40px 0;
     text-align: center;
     margin-bottom: 30px;
 }
 
 .dashboard-header h2 {
-    font-size: 2.8rem;
-    font-weight: 700;
-    margin-bottom: 10px;
+    font-size: var(--kelly-font-size-4xl);
+    font-weight: 600;
+    margin-bottom: var(--kelly-space-3);
+    color: var(--kelly-white);
 }
 
 .dashboard-content .card {
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-    border: none;
+    border-radius: var(--kelly-radius-lg);
+    box-shadow: var(--kelly-shadow-2);
+    border: 1px solid var(--kelly-gray-200);
+    transition: var(--kelly-transition-fast);
+}
+
+.dashboard-content .card:hover {
+    box-shadow: var(--kelly-shadow-8);
+    border-color: var(--kelly-gray-300);
 }
 
 .dashboard-content .card-header {
-    background-color: #60A5FA; /* Primary Blue */
-    color: #fff;
-    font-size: 1.4rem;
+    background: var(--kelly-primary);
+    color: var(--kelly-white);
+    font-size: var(--kelly-font-size-lg);
     font-weight: 600;
-    border-radius: 15px 15px 0 0;
-    padding: 15px 20px;
+    border-radius: var(--kelly-radius-lg) var(--kelly-radius-lg) 0 0;
+    padding: var(--kelly-space-4) var(--kelly-space-6);
+    border-bottom: none;
 }
 
 .dashboard-content .table {
-    margin-top: 20px;
+    margin-top: var(--kelly-space-4);
+}
+
+/* KellyCloud Dashboard Layout Improvements */
+.dashboard-content {
+    padding: var(--kelly-space-6);
+    background: var(--kelly-gray-50);
+    min-height: calc(100vh - var(--kelly-navbar-height));
+}
+
+/* KellyCloud Statistics Cards */
+.stats-card {
+    background: var(--kelly-white);
+    border: 1px solid var(--kelly-gray-200);
+    border-radius: var(--kelly-radius-lg);
+    padding: var(--kelly-space-6);
+    box-shadow: var(--kelly-shadow-2);
+    transition: var(--kelly-transition-fast);
+}
+
+.stats-card:hover {
+    box-shadow: var(--kelly-shadow-8);
+    border-color: var(--kelly-gray-300);
+}
+
+.stats-card .icon {
+    width: 40px;
+    height: 40px;
+    background: var(--kelly-primary-light);
+    border-radius: var(--kelly-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--kelly-primary);
+    font-size: var(--kelly-font-size-lg);
+}
+
+.stats-card .number {
+    font-size: var(--kelly-font-size-2xl);
+    font-weight: 600;
+    color: var(--kelly-gray-900);
+    margin: var(--kelly-space-2) 0;
+}
+
+.stats-card .label {
+    font-size: var(--kelly-font-size-sm);
+    color: var(--kelly-gray-600);
+    font-weight: 400;
 }
 
 .dashboard-content .table th {
-    background-color: #E0E7FF; /* Light blue-gray */
-    color: #2F3E46; /* Dark blue-gray */
+    background-color: var(--kelly-gray-100);
+    color: var(--kelly-gray-900);
     font-weight: 600;
 }
 
 .dashboard-content .table tbody tr:hover {
-    background-color: #f8f9fa;
+    background-color: var(--kelly-gray-50);
 }
 
 .btn-primary {
-    background-color: #60A5FA !important; /* Primary Blue */
-    border-color: #60A5FA !important; /* Primary Blue */
-    border-radius: 50px;
+    background-color: var(--kelly-primary) !important;
+    border-color: var(--kelly-primary) !important;
+    border-radius: var(--kelly-radius-sm);
     padding: 10px 25px;
     font-weight: 600;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .btn-primary:hover {
-    background-color: #4A89F0 !important; /* Darker Primary Blue */
-    border-color: #4A89F0 !important; /* Darker Primary Blue */
-    transform: translateY(-2px);
+    background-color: var(--kelly-primary-hover) !important;
+    border-color: var(--kelly-primary-hover) !important;
 }
 
-/* Footer Styles */
+/* KellyCloud Footer Styles */
 footer {
-    background-color: #2F3E46; /* Dark blue-gray */
-    color: #F8FAFC; /* Light text color */
+    background-color: var(--kelly-gray-900);
+    color: var(--kelly-gray-200);
     text-align: center;
     padding: 25px 0;
     margin-top: auto; /* Pushes footer to the bottom */
@@ -325,41 +643,43 @@ footer {
     }
 }
 
-/* Pricing Page Styles */
+/* KellyCloud Pricing Cards */
 .pricing-card {
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: none;
+    border-radius: var(--kelly-radius-lg);
+    box-shadow: var(--kelly-shadow-2);
+    border: 1px solid var(--kelly-gray-200);
+    transition: var(--kelly-transition-fast);
+    height: 100%;
+    background: var(--kelly-white);
+    position: relative;
+    overflow: hidden;
 }
 
+
 .pricing-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    box-shadow: var(--kelly-shadow-8);
+    border-color: var(--kelly-gray-300);
 }
 
 .pricing-card .card-header {
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #e9ecef;
-    font-size: 1.5rem;
+    background: var(--kelly-gray-50);
+    border-bottom: 1px solid var(--kelly-gray-200);
+    font-size: var(--kelly-font-size-lg);
     font-weight: 600;
-    color: #2c3e50;
-    padding: 20px;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
+    color: var(--kelly-gray-900);
+    padding: var(--kelly-space-6);
+    border-radius: var(--kelly-radius-lg) var(--kelly-radius-lg) 0 0;
 }
 
 .pricing-card.border-primary .card-header {
-    background-color: #3498db;
-    color: #fff;
+    background-color: var(--kelly-primary);
+    color: var(--kelly-white);
 }
 
 .pricing-card .card-title {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #2F3E46; /* Dark blue-gray */
+    color: var(--kelly-gray-900);
     margin-bottom: 20px;
 }
 
@@ -384,62 +704,72 @@ footer {
 }
 
 .pricing-card.plan-basic .btn-primary {
-    background-color: #4A90E2 !important;
-    border-color: #4A90E2 !important;
+    background-color: var(--kelly-primary) !important;
+    border-color: var(--kelly-primary) !important;
+}
+
+.pricing-card.plan-basic .btn-primary:hover {
+    background-color: var(--kelly-primary-hover) !important;
+    border-color: var(--kelly-primary-hover) !important;
 }
 
 .pricing-card.plan-standard .btn-primary {
-    background-color: #6A5ACD !important;
-    border-color: #6A5ACD !important;
+    background-color: var(--kelly-accent-purple) !important;
+    border-color: var(--kelly-accent-purple) !important;
+}
+
+.pricing-card.plan-standard .btn-primary:hover {
+    background-color: #6B46C1 !important;
+    border-color: #6B46C1 !important;
 }
 
 .pricing-card.plan-premium .btn-primary {
-    background-color: #FFD700 !important;
-    border-color: #FFD700 !important;
-    color: #333 !important; /* Ensure text is readable on gold */
+    background-color: var(--kelly-accent-orange) !important;
+    border-color: var(--kelly-accent-orange) !important;
+    color: var(--kelly-white) !important;
 }
 
 .pricing-card.plan-premium .btn-primary:hover {
-    background-color: #e6c200 !important; /* Slightly darker gold on hover */
-    border-color: #e6c200 !important;
+    background-color: #B91C1C !important;
+    border-color: #B91C1C !important;
 }
 
 /* Specific Plan Card Styles - Final Colors */
 .pricing-card.plan-basic {
-    border: 1px solid #60A5FA; /* Primary Blue border */
+    border: 1px solid var(--kelly-primary);
 }
 
 .pricing-card.plan-basic .card-header {
-    background-color: #60A5FA; /* Primary Blue header */
-    color: #fff;
+    background-color: var(--kelly-primary);
+    color: var(--kelly-white);
 }
 
 .pricing-card.plan-standard {
-    border: 1px solid #6A5ACD; /* Indigo border */
+    border: 1px solid var(--kelly-accent-purple);
 }
 
 .pricing-card.plan-standard .card-header {
-    background-color: #6A5ACD; /* Indigo header */
-    color: #fff;
+    background-color: var(--kelly-accent-purple);
+    color: var(--kelly-white);
 }
 
 .pricing-card.plan-premium {
-    border: 1px solid #FFD700; /* Gold border */
+    border: 1px solid var(--kelly-accent-orange);
 }
 
 .pricing-card.plan-premium .card-header {
-    background-color: #FFD700; /* Gold header */
-    color: #333; /* Darker text for gold background */
+    background-color: var(--kelly-accent-orange);
+    color: var(--kelly-white);
 }
 
-/* Password visibility toggle styles */
+/* KellyCloud Input Group Styles */
 .input-group .btn-outline-secondary {
-    border-color: #d1d5db;
-    color: #6b7280;
-    background-color: #f8f9fa;
-    transition: all 0.2s ease;
+    border-color: var(--kelly-gray-300);
+    color: var(--kelly-gray-600);
+    background-color: var(--kelly-gray-100);
+    transition: var(--kelly-transition-fast);
     min-width: 45px;
-    flex-shrink: 0; /* Prevent button from shrinking */
+    flex-shrink: 0;
 }
 
 /* Ensure input groups have consistent width with regular inputs */

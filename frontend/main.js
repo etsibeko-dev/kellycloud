@@ -5,9 +5,14 @@ function displayMessage(message, type) {
     const messageContainer = document.getElementById('messageContainer');
     if (messageContainer) {
         messageContainer.innerHTML = `<div class="alert alert-${type}" role="alert">${message}</div>`;
+        // Remove scrollIntoView to prevent message being cut off
         setTimeout(() => {
             messageContainer.innerHTML = '';
         }, 5000);
+    } else {
+        // Fallback to console if messageContainer not found
+        console.log(`${type.toUpperCase()}: ${message}`);
+        alert(message); // Show alert as fallback
     }
 }
 // Function to show loading indicator
