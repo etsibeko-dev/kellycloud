@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 toggleLoadingSpinner('loginButton', true); // Show loading spinner
                 try {
-                    const response = await fetch('http://0.0.0.0:8000/api/login/', {
+                    const response = await fetch('http://localhost:8000/api/login/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 toggleLoadingSpinner('registerButton', true); // Show loading spinner
                 try {
-                    const response = await fetch('http://0.0.0.0:8000/api/register/', {
+                    const response = await fetch('http://localhost:8000/api/register/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 event.preventDefault();
                 showLoadingIndicator(); // Show loading indicator
                 try {
-                    const response = await fetch('http://0.0.0.0:8000/api/logout/', {
+                    const response = await fetch('http://localhost:8000/api/logout/', {
                         method: 'POST',
                         headers: {
                             'Authorization': `Token ${token}`,
@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const deleteFile = async (fileId) => {
             showLoadingIndicator(); // Show loading indicator
             try {
-                const response = await fetch(`http://0.0.0.0:8000/api/files/${fileId}/`, {
+                const response = await fetch(`http://localhost:8000/api/files/${fileId}/`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Token ${token}`,
@@ -236,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const fetchFiles = async () => {
             showLoadingIndicator(); // Show loading indicator
             try {
-                const response = await fetch('http://0.0.0.0:8000/api/files/', {
+                const response = await fetch('http://localhost:8000/api/files/', {
                     headers: {
                         'Authorization': `Token ${token}`,
                     },
@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             formData.append('file', file);
                             formData.append('name', name);
                             
-                            const response = await fetch('http://0.0.0.0:8000/api/files/', {
+                            const response = await fetch('http://localhost:8000/api/files/', {
                                 method: 'POST',
                                 headers: {
                                     'Authorization': `Token ${token}`,
@@ -384,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Subscription management functions
 async function loadSubscriptionPlans() {
     try {
-        const response = await fetch('http://0.0.0.0:8000/api/subscriptions/?t=' + Date.now());
+        const response = await fetch('http://localhost:8000/api/subscriptions/?t=' + Date.now());
         const plans = await response.json();
         
         // Update pricing cards with dynamic data
@@ -425,7 +425,7 @@ async function selectPlan(planType) {
     }
     
     try {
-        const response = await fetch('http://0.0.0.0:8000/api/user-subscription/?t=' + Date.now(), {
+        const response = await fetch('http://localhost:8000/api/user-subscription/?t=' + Date.now(), {
             method: 'POST',
             headers: {
                 'Authorization': `Token ${token}`,
@@ -456,7 +456,7 @@ async function loadUserSubscription() {
     if (!token) return;
     
     try {
-        const response = await fetch('http://0.0.0.0:8000/api/user-subscription/?t=' + Date.now(), {
+        const response = await fetch('http://localhost:8000/api/user-subscription/?t=' + Date.now(), {
             headers: {
                 'Authorization': `Token ${token}`,
             },
@@ -683,7 +683,7 @@ async function loadDashboardData() {
     
     try {
         // Load user subscription data
-        const subscriptionResponse = await fetch('http://0.0.0.0:8000/api/user-subscription/?t=' + Date.now(), {
+        const subscriptionResponse = await fetch('http://localhost:8000/api/user-subscription/?t=' + Date.now(), {
             headers: {
                 'Authorization': `Token ${token}`,
             },
@@ -695,7 +695,7 @@ async function loadDashboardData() {
         }
         
         // Load files for recent files
-        const filesResponse = await fetch('http://0.0.0.0:8000/api/files/', {
+        const filesResponse = await fetch('http://localhost:8000/api/files/', {
             headers: {
                 'Authorization': `Token ${token}`,
             },
@@ -822,7 +822,7 @@ async function loadFilesSection() {
     if (!token) return;
     
     try {
-        const response = await fetch('http://0.0.0.0:8000/api/files/', {
+        const response = await fetch('http://localhost:8000/api/files/', {
             headers: {
                 'Authorization': `Token ${token}`,
             },
@@ -921,7 +921,7 @@ async function loadPlansSection() {
     if (!token) return;
     
     try {
-        const response = await fetch('http://0.0.0.0:8000/api/subscriptions/?t=' + Date.now());
+        const response = await fetch('http://localhost:8000/api/subscriptions/?t=' + Date.now());
         if (response.ok) {
             const plans = await response.json();
             displayPlans(plans);
@@ -971,14 +971,14 @@ async function loadProfileSection() {
         }
         
         // Load subscription data for profile
-        const subscriptionResponse = await fetch('http://0.0.0.0:8000/api/user-subscription/?t=' + Date.now(), {
+        const subscriptionResponse = await fetch('http://localhost:8000/api/user-subscription/?t=' + Date.now(), {
             headers: {
                 'Authorization': `Token ${token}`,
             },
         });
         
         // Load files data for total count
-        const filesResponse = await fetch('http://0.0.0.0:8000/api/files/', {
+        const filesResponse = await fetch('http://localhost:8000/api/files/', {
             headers: {
                 'Authorization': `Token ${token}`,
             },
@@ -1038,7 +1038,7 @@ async function loadCurrentUserData() {
     if (!token) return;
     
     try {
-        const response = await fetch('http://0.0.0.0:8000/api/profile/', {
+        const response = await fetch('http://localhost:8000/api/profile/', {
             headers: {
                 'Authorization': `Token ${token}`,
             },
@@ -1086,7 +1086,7 @@ async function updateProfile(event) {
     };
     
     try {
-        const response = await fetch('http://0.0.0.0:8000/api/profile/', {
+        const response = await fetch('http://localhost:8000/api/profile/', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -1115,7 +1115,7 @@ async function deleteFile(fileId) {
     if (!token) return;
     
     try {
-        const response = await fetch(`http://0.0.0.0:8000/api/files/${fileId}/`, {
+        const response = await fetch(`http://localhost:8000/api/files/${fileId}/`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Token ${token}`,
@@ -1150,7 +1150,7 @@ async function loadAnalyticsSection() {
     
     try {
         // Load files data for analytics
-        const filesResponse = await fetch('http://0.0.0.0:8000/api/files/', {
+        const filesResponse = await fetch('http://localhost:8000/api/files/', {
             headers: {
                 'Authorization': `Token ${token}`,
             },
