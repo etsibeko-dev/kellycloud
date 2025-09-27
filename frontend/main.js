@@ -41,6 +41,26 @@ function toggleLoadingSpinner(buttonId, show) {
     }
 }
 document.addEventListener('DOMContentLoaded', () => {
+    // Check if user is already logged in and redirect accordingly
+    const token = localStorage.getItem('token');
+    const username = localStorage.getItem('username');
+    
+    if (token && username) {
+        // User is logged in
+        if (window.location.pathname.endsWith('login.html') || window.location.pathname.endsWith('register.html')) {
+            // Redirect logged-in users away from login/register pages
+            window.location.href = 'dashboard.html';
+            return;
+        }
+    } else {
+        // User is not logged in
+        if (window.location.pathname.endsWith('dashboard.html')) {
+            // Redirect non-logged-in users away from dashboard
+            window.location.href = 'login.html';
+            return;
+        }
+    }
+    
     if (window.location.pathname.endsWith('login.html')) {
         const loginForm = document.querySelector('form');
         if (loginForm) {
@@ -172,32 +192,55 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Initialize navigation
         initializeNavigation();
-        const logoutButton = document.querySelector('#logoutButton');
+        const logoutButton = document.querySelector('#logoutLink');
         if (logoutButton) {
             logoutButton.addEventListener('click', async (event) => {
                 event.preventDefault();
-                showLoadingIndicator(); // Show loading indicator
+                
+                // Show confirmation dialog
+                if (!confirm('Are you sure you want to logout?')) {
+                    return;
+                }
+                
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    // If no token, just redirect to home
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
                 try {
+                    // Call logout API
                     const response = await fetch('http://localhost:8000/api/logout/', {
                         method: 'POST',
                         headers: {
                             'Authorization': `Token ${token}`,
+                            'Content-Type': 'application/json',
                         },
                     });
-                    // Always clear local storage and redirect, regardless of API response
-                        localStorage.removeItem('token');
-                        localStorage.removeItem('username');
+                    
+                    if (response.ok) {
+                        console.log('Logged out successfully');
+                    } else {
+                        console.log('Logout API failed, but continuing with logout');
+                    }
+                } catch (error) {
+                    console.error('Error during logout API call:', error);
+                    // Continue with logout even if API fails
+                }
+                
+                // Always clear local storage and redirect
+                localStorage.removeItem('token');
+                localStorage.removeItem('username');
+                
+                // Show success message briefly before redirect
+                if (typeof displayMessage === 'function') {
+                    displayMessage('Logged out successfully!', 'success');
+                    setTimeout(() => {
                         window.location.href = 'index.html';
-                }
-                catch (error) {
-                    console.error('Error during logout:', error);
-                    // Even if API fails, clear local storage and redirect
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('username');
+                    }, 1000);
+                } else {
                     window.location.href = 'index.html';
-                }
-                finally {
-                    hideLoadingIndicator(); // Hide loading indicator
                 }
             });
         }
@@ -382,7 +425,74 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize password visibility toggles
     initializePasswordToggles();
+    
+    // Initialize navigation authentication state
+    initializeNavigationAuth();
 });
+
+// Initialize navigation based on authentication state
+function initializeNavigationAuth() {
+    const token = localStorage.getItem('token');
+    const username = localStorage.getItem('username');
+    
+    // Get navigation elements
+    const loginNavItem = document.getElementById('loginNavItem');
+    const registerNavItem = document.getElementById('registerNavItem');
+    const dashboardNavItem = document.getElementById('dashboardNavItem');
+    const logoutNavItem = document.getElementById('logoutNavItem');
+    const logoutLinkNav = document.getElementById('logoutLinkNav');
+    
+    if (token && username) {
+        // User is logged in - show dashboard and logout, hide login/register
+        if (loginNavItem) loginNavItem.classList.add('d-none');
+        if (registerNavItem) registerNavItem.classList.add('d-none');
+        if (dashboardNavItem) dashboardNavItem.classList.remove('d-none');
+        if (logoutNavItem) logoutNavItem.classList.remove('d-none');
+        
+        // Add logout functionality to navbar logout link
+        if (logoutLinkNav) {
+            logoutLinkNav.addEventListener('click', async (event) => {
+                event.preventDefault();
+                
+                // Show confirmation dialog
+                if (!confirm('Are you sure you want to logout?')) {
+                    return;
+                }
+                
+                try {
+                    // Call logout API
+                    const response = await fetch('http://localhost:8000/api/logout/', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Token ${token}`,
+                            'Content-Type': 'application/json',
+                        },
+                    });
+                    
+                    if (response.ok) {
+                        console.log('Logged out successfully');
+                    } else {
+                        console.log('Logout API failed, but continuing with logout');
+                    }
+                } catch (error) {
+                    console.error('Error during logout API call:', error);
+                    // Continue with logout even if API fails
+                }
+                
+                // Always clear local storage and redirect
+                localStorage.removeItem('token');
+                localStorage.removeItem('username');
+                window.location.href = 'index.html';
+            });
+        }
+    } else {
+        // User is not logged in - show login/register, hide dashboard/logout
+        if (loginNavItem) loginNavItem.classList.remove('d-none');
+        if (registerNavItem) registerNavItem.classList.remove('d-none');
+        if (dashboardNavItem) dashboardNavItem.classList.add('d-none');
+        if (logoutNavItem) logoutNavItem.classList.add('d-none');
+    }
+}
 
 // Subscription management functions
 async function loadSubscriptionPlans() {
