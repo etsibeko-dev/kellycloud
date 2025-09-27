@@ -1,0 +1,11 @@
+--- Original Text ---
+Hello everyone. I am Edward, the founder of Writon. I just wanted to say that Writon is a great tool, and I can't wait to share it with the world. Thank you.
+
+--- Processed Text ---
+Edward, the founder of Writon, states that Writon is a great tool and he looks forward to sharing it with the world, expressing gratitude with a thank you.
+
+--- Stats ---
+Original Character Count: 157
+Processed Character Count: 155
+Original Word Count: 32
+Processed Word Count: 28

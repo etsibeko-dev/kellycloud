@@ -811,34 +811,44 @@ async function loadUserSubscription() {
 }
 
 function updateStorageDisplay(storageInfo) {
-    // Update dashboard storage display
-    const progressBar = document.getElementById('storageProgressBar');
-    const storageText = document.getElementById('storageText');
-    const storagePercentage = document.getElementById('storagePercentage');
+    // Update iCloud-style storage visualization
+    updateICloudStorageDisplay(storageInfo, 'dashboard');
     
-    if (progressBar && storageText && storagePercentage) {
-        const usedBytes = storageInfo.current_usage_bytes;
-        const limitBytes = storageInfo.limit_bytes;
-        const percentage = Math.min((usedBytes / limitBytes) * 100, 100);
+    // Also update upload section storage display
+    updateICloudStorageDisplay(storageInfo, 'upload');
+}
+
+function updateICloudStorageDisplay(storageInfo, section) {
+    const usedBytes = storageInfo.current_usage_bytes;
+    const limitBytes = storageInfo.limit_bytes;
+    const percentage = Math.min((usedBytes / limitBytes) * 100, 100);
+    
+    // Get the appropriate elements based on section
+    const storageBar = document.getElementById(section === 'dashboard' ? 'storageBar' : 'uploadStorageBar');
+    const storageSummary = document.getElementById(section === 'dashboard' ? 'storageSummary' : 'uploadStorageSummary');
+    const storagePercentage = document.getElementById(section === 'dashboard' ? 'storagePercentage' : 'uploadStoragePercentage');
+    const storageLegend = document.getElementById(section === 'dashboard' ? 'storageLegend' : null);
+    const storageBreakdown = document.getElementById(section === 'dashboard' ? 'storageBreakdown' : null);
+    
+    if (storageBar && storageSummary && storagePercentage) {
+        // Generate file type breakdown (simulated based on uploaded files)
+        const fileBreakdown = generateFileTypeBreakdown(usedBytes);
         
-        // Ensure minimum width for very low percentages
-        const minWidth = percentage < 0.001 ? 0.1 : percentage;
-        progressBar.style.width = `${minWidth}%`;
+        // Clear and rebuild storage bar
+        storageBar.innerHTML = '';
         
-        // iCloud-style color coding based on usage
-        if (percentage > 90) {
-            progressBar.style.setProperty('background-color', '#ff3b30', 'important'); // Red for critical usage
-        } else if (percentage > 80) {
-            progressBar.style.setProperty('background-color', '#ff9500', 'important'); // Orange for high usage
-        } else if (percentage > 60) {
-            progressBar.style.setProperty('background-color', '#ffcc00', 'important'); // Yellow for moderate usage
-        } else if (percentage > 30) {
-            progressBar.style.setProperty('background-color', '#34c759', 'important'); // Green for normal usage
-        } else {
-            progressBar.style.setProperty('background-color', '#007aff', 'important'); // Blue for low usage (iCloud style)
-        }
+        // Add segments to the storage bar
+        fileBreakdown.forEach(category => {
+            if (category.percentage > 0) {
+                const segment = document.createElement('div');
+                segment.className = `storage-segment ${category.type}`;
+                segment.style.width = `${category.percentage}%`;
+                segment.title = `${category.name}: ${category.displaySize}`;
+                storageBar.appendChild(segment);
+            }
+        });
         
-        // Format storage display with appropriate units
+        // Update summary text
         let usedDisplay, limitDisplay;
         
         if (usedBytes >= 1024 * 1024 * 1024) { // GB or more
@@ -857,66 +867,151 @@ function updateStorageDisplay(storageInfo) {
             limitDisplay = `${storageInfo.limit_gb} GB`;
         }
         
-        storageText.textContent = `${usedDisplay} of ${limitDisplay} used`;
+        storageSummary.textContent = `${usedDisplay} of ${limitDisplay} Used`;
         storagePercentage.textContent = `${Math.round(percentage * 100) / 100}%`;
+        
+        // Update legend and breakdown for dashboard section
+        if (section === 'dashboard' && storageLegend && storageBreakdown) {
+            updateStorageLegend(storageLegend, fileBreakdown);
+            updateStorageBreakdown(storageBreakdown, fileBreakdown);
+        }
     }
-    
-    // Also update upload section storage display
-    updateUploadStorageDisplay(storageInfo);
 }
 
-function updateUploadStorageDisplay(storageInfo) {
-    const uploadProgressBar = document.getElementById('uploadStorageProgressBar');
-    const uploadStorageText = document.getElementById('uploadStorageText');
-    const uploadStoragePercentage = document.getElementById('uploadStoragePercentage');
+function generateFileTypeBreakdown(totalBytes) {
+    // Simulate file type distribution based on common patterns
+    // In a real app, this would come from the backend API
+    const breakdown = [
+        { type: 'photos', name: 'Photos', percentage: 0, bytes: 0 },
+        { type: 'documents', name: 'Documents', percentage: 0, bytes: 0 },
+        { type: 'videos', name: 'Videos', percentage: 0, bytes: 0 },
+        { type: 'audio', name: 'Audio', percentage: 0, bytes: 0 },
+        { type: 'images', name: 'Images', percentage: 0, bytes: 0 },
+        { type: 'backup', name: 'Backup', percentage: 0, bytes: 0 },
+        { type: 'other', name: 'Other', percentage: 0, bytes: 0 }
+    ];
     
-    if (!uploadProgressBar || !uploadStorageText || !uploadStoragePercentage) {
-        return; // Elements not found, skip update
+    if (totalBytes === 0) {
+        return breakdown;
     }
     
-    const usedBytes = storageInfo.current_usage_bytes;
-    const limitBytes = storageInfo.limit_bytes;
-    const percentage = Math.min((usedBytes / limitBytes) * 100, 100);
+    // Simulate realistic distribution
+    const distribution = [
+        { type: 'photos', ratio: 0.35 },
+        { type: 'videos', ratio: 0.25 },
+        { type: 'documents', ratio: 0.15 },
+        { type: 'images', ratio: 0.10 },
+        { type: 'audio', ratio: 0.08 },
+        { type: 'backup', ratio: 0.05 },
+        { type: 'other', ratio: 0.02 }
+    ];
     
-    // Ensure minimum width for very low percentages
-    const minWidth = percentage < 0.001 ? 0.1 : percentage;
-    uploadProgressBar.style.width = `${minWidth}%`;
+    distribution.forEach((dist, index) => {
+        const bytes = Math.floor(totalBytes * dist.ratio);
+        const percentage = (bytes / totalBytes) * 100;
+        
+        if (percentage > 0.1) { // Only show if more than 0.1%
+            breakdown[index].bytes = bytes;
+            breakdown[index].percentage = percentage;
+        }
+    });
     
-    // iCloud-style color coding based on usage
-    if (percentage > 90) {
-        uploadProgressBar.style.setProperty('background-color', '#ff3b30', 'important'); // Red for critical usage
-    } else if (percentage > 80) {
-        uploadProgressBar.style.setProperty('background-color', '#ff9500', 'important'); // Orange for high usage
-    } else if (percentage > 60) {
-        uploadProgressBar.style.setProperty('background-color', '#ffcc00', 'important'); // Yellow for moderate usage
-    } else if (percentage > 30) {
-        uploadProgressBar.style.setProperty('background-color', '#34c759', 'important'); // Green for normal usage
-    } else {
-        uploadProgressBar.style.setProperty('background-color', '#007aff', 'important'); // Blue for low usage (iCloud style)
-    }
+    // Format display sizes
+    breakdown.forEach(category => {
+        if (category.bytes > 0) {
+            if (category.bytes >= 1024 * 1024 * 1024) {
+                category.displaySize = `${Math.round(category.bytes / (1024 * 1024 * 1024) * 100) / 100} GB`;
+            } else if (category.bytes >= 1024 * 1024) {
+                category.displaySize = `${Math.round(category.bytes / (1024 * 1024) * 100) / 100} MB`;
+            } else {
+                category.displaySize = `${Math.round(category.bytes / 1024 * 100) / 100} KB`;
+            }
+        }
+    });
     
-    // Format storage display with appropriate units
-    let usedDisplay, limitDisplay;
-    
-    if (usedBytes >= 1024 * 1024 * 1024) { // GB or more
-        usedDisplay = `${Math.round(usedBytes / (1024 * 1024 * 1024) * 100) / 100} GB`;
-    } else if (usedBytes >= 1024 * 1024) { // MB
-        usedDisplay = `${Math.round(usedBytes / (1024 * 1024) * 100) / 100} MB`;
-    } else if (usedBytes >= 1024) { // KB
-        usedDisplay = `${Math.round(usedBytes / 1024 * 100) / 100} KB`;
-    } else { // Bytes
-        usedDisplay = `${usedBytes} bytes`;
-    }
-    
-    if (storageInfo.limit_gb >= 1024) { // TB
-        limitDisplay = `${Math.round(storageInfo.limit_gb / 1024 * 100) / 100} TB`;
-    } else { // GB
-        limitDisplay = `${storageInfo.limit_gb} GB`;
-    }
-    
-    uploadStorageText.textContent = `${usedDisplay} of ${limitDisplay} used`;
-    uploadStoragePercentage.textContent = `${Math.round(percentage * 100) / 100}%`;
+    return breakdown.filter(category => category.percentage > 0);
 }
+
+function updateStorageLegend(legendContainer, fileBreakdown) {
+    legendContainer.innerHTML = '';
+    
+    fileBreakdown.forEach(category => {
+        if (category.percentage > 0.1) {
+            const legendItem = document.createElement('div');
+            legendItem.className = 'col-md-6 mb-2';
+            legendItem.innerHTML = `
+                <div class="legend-item">
+                    <div class="legend-color ${category.type}"></div>
+                    <div class="legend-text">${category.name}</div>
+                    <div class="legend-size">${category.displaySize}</div>
+                </div>
+            `;
+            legendContainer.appendChild(legendItem);
+        }
+    });
+}
+
+function updateStorageBreakdown(breakdownContainer, fileBreakdown) {
+    breakdownContainer.innerHTML = '';
+    
+    // Add header
+    const header = document.createElement('div');
+    header.className = 'breakdown-item';
+    header.style.borderBottom = '2px solid var(--kelly-gray-300)';
+    header.style.fontWeight = '600';
+    header.innerHTML = `
+        <div class="breakdown-name">
+            <i class="fas fa-folder-open" style="color: var(--kelly-primary); margin-right: 8px;"></i>
+            File Categories
+        </div>
+        <div class="breakdown-size">Size</div>
+    `;
+    breakdownContainer.appendChild(header);
+    
+    // Add breakdown items
+    fileBreakdown.forEach(category => {
+        if (category.percentage > 0.1) {
+            const breakdownItem = document.createElement('div');
+            breakdownItem.className = 'breakdown-item';
+            
+            // Get appropriate icon for each category
+            let icon = 'fas fa-file';
+            switch (category.type) {
+                case 'photos':
+                case 'images':
+                    icon = 'fas fa-images';
+                    break;
+                case 'videos':
+                    icon = 'fas fa-video';
+                    break;
+                case 'documents':
+                    icon = 'fas fa-file-alt';
+                    break;
+                case 'audio':
+                    icon = 'fas fa-music';
+                    break;
+                case 'backup':
+                    icon = 'fas fa-archive';
+                    break;
+                case 'other':
+                    icon = 'fas fa-file';
+                    break;
+            }
+            
+            breakdownItem.innerHTML = `
+                <div class="breakdown-name">
+                    <div class="breakdown-icon ${category.type}">
+                        <i class="${icon}"></i>
+                    </div>
+                    ${category.name}
+                </div>
+                <div class="breakdown-size">${category.displaySize}</div>
+            `;
+            breakdownContainer.appendChild(breakdownItem);
+        }
+    });
+}
+
 
 // Navigation functionality for new dashboard
 function initializeNavigation() {

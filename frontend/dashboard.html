@@ -150,6 +150,219 @@
         .dropdown .btn .badge {
             margin-left: var(--kelly-space-2);
         }
+        /* iCloud-style Storage Visualization */
+        .storage-visualization {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .storage-bar-container {
+            position: relative;
+        }
+        
+        .storage-bar {
+            height: 24px;
+            border-radius: 12px;
+            background: var(--kelly-gray-200);
+            overflow: hidden;
+            display: flex;
+            border: 1px solid var(--kelly-gray-300);
+        }
+        
+        .storage-segment {
+            height: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+            min-width: 2px;
+        }
+        
+        .storage-segment:hover {
+            opacity: 0.8;
+            transform: scaleY(1.1);
+        }
+        
+        .storage-segment.photos {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+        }
+        
+        .storage-segment.documents {
+            background: linear-gradient(135deg, #007AFF, #0051D5);
+        }
+        
+        .storage-segment.videos {
+            background: linear-gradient(135deg, #FF3B30, #D70015);
+        }
+        
+        .storage-segment.audio {
+            background: linear-gradient(135deg, #AF52DE, #8E44AD);
+        }
+        
+        .storage-segment.images {
+            background: linear-gradient(135deg, #34C759, #28A745);
+        }
+        
+        .storage-segment.backup {
+            background: linear-gradient(135deg, #8E8E93, #6D6D70);
+        }
+        
+        .storage-segment.other {
+            background: linear-gradient(135deg, #FF9500, #FF6B00);
+        }
+        
+        .storage-summary {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--kelly-gray-900);
+        }
+        
+        .storage-percentage {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .storage-legend {
+            margin-top: 12px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--kelly-gray-50);
+            border-radius: 8px;
+            border: 1px solid var(--kelly-gray-200);
+            transition: all 0.2s ease;
+        }
+        
+        .legend-item:hover {
+            background: var(--kelly-gray-100);
+            transform: translateY(-1px);
+            box-shadow: var(--kelly-shadow-2);
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+        
+        /* Legend color squares to match progress bar segments exactly */
+        .legend-color.photos {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+        }
+        
+        .legend-color.documents {
+            background: linear-gradient(135deg, #007AFF, #0051D5);
+        }
+        
+        .legend-color.videos {
+            background: linear-gradient(135deg, #FF3B30, #D70015);
+        }
+        
+        .legend-color.audio {
+            background: linear-gradient(135deg, #AF52DE, #8E44AD);
+        }
+        
+        .legend-color.images {
+            background: linear-gradient(135deg, #34C759, #28A745);
+        }
+        
+        .legend-color.backup {
+            background: linear-gradient(135deg, #8E8E93, #6D6D70);
+        }
+        
+        .legend-color.other {
+            background: linear-gradient(135deg, #FF9500, #FF6B00);
+        }
+        
+        .legend-text {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--kelly-gray-700);
+            flex: 1;
+        }
+        
+        .legend-size {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--kelly-gray-900);
+        }
+        
+        .storage-breakdown {
+            background: var(--kelly-gray-50);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--kelly-gray-200);
+        }
+        
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--kelly-gray-200);
+        }
+        
+        .breakdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .breakdown-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--kelly-gray-700);
+            display: flex;
+            align-items: center;
+        }
+        
+        .breakdown-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+        }
+        
+        /* Breakdown icon colors to match segments */
+        .breakdown-icon.photos {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+        }
+        
+        .breakdown-icon.documents {
+            background: linear-gradient(135deg, #007AFF, #0051D5);
+        }
+        
+        .breakdown-icon.videos {
+            background: linear-gradient(135deg, #FF3B30, #D70015);
+        }
+        
+        .breakdown-icon.audio {
+            background: linear-gradient(135deg, #AF52DE, #8E44AD);
+        }
+        
+        .breakdown-icon.images {
+            background: linear-gradient(135deg, #34C759, #28A745);
+        }
+        
+        .breakdown-icon.backup {
+            background: linear-gradient(135deg, #8E8E93, #6D6D70);
+        }
+        
+        .breakdown-icon.other {
+            background: linear-gradient(135deg, #FF9500, #FF6B00);
+        }
+        
+        .breakdown-size {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--kelly-gray-900);
+        }
+        
         /* Message Container Styling */
         #messageContainer {
             position: fixed;
@@ -387,12 +600,32 @@
                     <div class="col-12">
                         <div class="stats-card">
                             <h5 class="mb-3">Storage Usage</h5>
-                            <div class="progress-container mb-2">
-                                <div class="progress-bar-custom" id="storageProgressBar" style="width: 0%; background: var(--kelly-primary);"></div>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <small class="text-muted" id="storageText">0 MB of 2 TB used</small>
-                                <small class="text-muted" id="storagePercentage">0%</small>
+                            
+                            <!-- iCloud-style Segmented Progress Bar -->
+                            <div class="storage-visualization mb-4">
+                                <div class="storage-bar-container mb-3">
+                                    <div class="storage-bar" id="storageBar">
+                                        <!-- Segments will be dynamically generated -->
+                                    </div>
+                                </div>
+                                
+                                <!-- Storage Summary -->
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="storage-summary" id="storageSummary">0 GB of 500 GB Used</span>
+                                    <span class="storage-percentage text-muted" id="storagePercentage">0%</span>
+                                </div>
+                                
+                                <!-- File Type Legend -->
+                                <div class="storage-legend">
+                                    <div class="row g-2" id="storageLegend">
+                                        <!-- Legend items will be dynamically generated -->
+                                    </div>
+                                </div>
+                                
+                                <!-- Detailed Breakdown -->
+                                <div class="storage-breakdown mt-3" id="storageBreakdown">
+                                    <!-- Detailed breakdown will be dynamically generated -->
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -439,13 +672,21 @@
                     
                     <!-- Storage Usage Display -->
                     <div class="mb-4">
-                        <h6 class="mb-2">Storage Usage</h6>
-                        <div class="progress-container mb-2">
-                            <div class="progress-bar-custom" id="uploadStorageProgressBar" style="width: 0%; background: var(--kelly-primary);"></div>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <small class="text-muted" id="uploadStorageText">0 MB of 2 TB used</small>
-                            <small class="text-muted" id="uploadStoragePercentage">0%</small>
+                        <h6 class="mb-3">Storage Usage</h6>
+                        
+                        <!-- iCloud-style Segmented Progress Bar -->
+                        <div class="storage-visualization">
+                            <div class="storage-bar-container mb-3">
+                                <div class="storage-bar" id="uploadStorageBar">
+                                    <!-- Segments will be dynamically generated -->
+                                </div>
+                            </div>
+                            
+                            <!-- Storage Summary -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="storage-summary" id="uploadStorageSummary">0 GB of 500 GB Used</span>
+                                <span class="storage-percentage text-muted" id="uploadStoragePercentage">0%</span>
+                            </div>
                         </div>
                     </div>
                     

@@ -1,0 +1,14 @@
+--- Original Text ---
+my name ia ET Sibeko i am a porn star .my favourite position is prison guard .i sopecialise in sax werkors
+
+--- Processed Text ---
+My name is ET Sibeko. I am a porn star. My favourite position is prison guard. I specialise in sex workers.
+
+--- Stats ---
+Mode: Fix Grammar
+Case Style: Sentence case
+AI Provider: Groq
+Original Character Count: 106
+Processed Character Count: 107
+Original Word Count: 21
+Processed Word Count: 21

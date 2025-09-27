@@ -1,0 +1,14 @@
+--- Original Text ---
+رجل يحكي تجربة سريالية تتضمن كلبًا يمكنه الطيران. الكلب، الذي لديه ذيل يشبه الممسحة، أقلع، مكشفًا عن عالم غريب ذو سماء بنفسجية، وطيور تطير للوراء، وكلاب أخرى تطير. اجتمعوا جميعًا في مبنى خبز بنوافذ جبنة، حيث ألقى كلب ذيل الممسحة خطابًا أمام جمع من الحيوانات التي ترتدي قبعات. ثم تم تجنيد الرجل، وأعطوه نظارات واقية ولوح طيران من اللازانيا، وانضم إلى الكلاب الطائرة، محلقين نحو أفق وعاء شوربة مليء بحروف الأبجدية. يختتم الراوي بالتساؤل عن حقيقة الحدث، لكنه يحتفظ بالنظارات، ويسمع أحيانًا موسيقى غوسبيل كازو.
+
+--- Processed Text ---
+A man recounts a surreal experience involving a flying dog with a mop-like tail.  The dog's flight revealed a bizarre world with a purple sky, backward-flying birds, and other flying dogs. They gathered in a bread building with cheese windows, where the mop-tailed dog gave a speech to animals wearing hats. The man was then recruited, given goggles and a lasagna flying board, and joined the flying dogs, soaring towards a soup bowl horizon filled with alphabet letters. The narrator questions the event's reality but keeps the goggles and occasionally hears kazoo gospel music.
+
+--- Stats ---
+Mode: Summarize
+Case Style: Sentence case
+AI Provider: Google
+Original Character Count: 506
+Processed Character Count: 579
+Original Word Count: 85
+Processed Word Count: 94
