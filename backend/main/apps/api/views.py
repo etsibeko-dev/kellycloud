@@ -114,15 +114,13 @@ class UserSubscriptionView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request):
-        try:
-            user_sub = request.user.subscription
-            serializer = UserSubscriptionSerializer(user_sub)
-            return Response(serializer.data)
-        except UserSubscription.DoesNotExist:
-            # Create basic subscription if none exists
-            user_sub = UserSubscription.objects.create(user=request.user, plan_type='basic')
-            serializer = UserSubscriptionSerializer(user_sub)
-            return Response(serializer.data)
+        # Get or create basic subscription if none exists
+        user_sub, created = UserSubscription.objects.get_or_create(
+            user=request.user, 
+            defaults={'plan_type': 'basic'}
+        )
+        serializer = UserSubscriptionSerializer(user_sub)
+        return Response(serializer.data)
     
     def post(self, request):
         plan_type = request.data.get('plan_type')
