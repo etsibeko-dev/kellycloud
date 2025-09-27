@@ -513,6 +513,66 @@ footer {
     color: #dc3545;
 }
 
+/* Speech bubble styles */
+.speech-bubble {
+    position: absolute;
+    background: #dc3545;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    max-width: 250px;
+    word-wrap: break-word;
+    animation: fadeInBubble 0.3s ease-out;
+}
+
+.speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 20px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #dc3545;
+}
+
+.speech-bubble-error {
+    background: #dc3545;
+}
+
+.speech-bubble-error::after {
+    border-top-color: #dc3545;
+}
+
+.speech-bubble-success {
+    background: #198754;
+}
+
+.speech-bubble-success::after {
+    border-top-color: #198754;
+}
+
+@keyframes fadeInBubble {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Ensure parent container can position speech bubbles */
+.mb-3 {
+    position: relative;
+}
+
 /* Password strength indicator */
 .password-strength-container {
     margin-top: 0.5rem;

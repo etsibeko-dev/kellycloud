@@ -487,17 +487,23 @@ function validateConfirmPassword(password, confirmPassword) {
 }
 
 function showFieldError(field, message) {
-    // Remove existing error
+    // Remove existing error and speech bubble
     const existingError = field.parentNode.querySelector('.field-error');
+    const existingBubble = field.parentNode.querySelector('.speech-bubble');
     if (existingError) {
         existingError.remove();
     }
+    if (existingBubble) {
+        existingBubble.remove();
+    }
     
-    // Add new error
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'field-error text-danger small mt-1';
-    errorDiv.textContent = message;
-    field.parentNode.appendChild(errorDiv);
+    // Add speech bubble error message
+    const bubbleDiv = document.createElement('div');
+    bubbleDiv.className = 'speech-bubble speech-bubble-error';
+    bubbleDiv.textContent = message;
+    bubbleDiv.style.top = '-40px';
+    bubbleDiv.style.left = '0px';
+    field.parentNode.appendChild(bubbleDiv);
     
     // Add error styling
     field.classList.add('is-invalid');
@@ -505,10 +511,14 @@ function showFieldError(field, message) {
 }
 
 function showFieldSuccess(field) {
-    // Remove existing error
+    // Remove existing error and speech bubble
     const existingError = field.parentNode.querySelector('.field-error');
+    const existingBubble = field.parentNode.querySelector('.speech-bubble');
     if (existingError) {
         existingError.remove();
+    }
+    if (existingBubble) {
+        existingBubble.remove();
     }
     
     // Add success styling
