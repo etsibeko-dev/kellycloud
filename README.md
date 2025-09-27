@@ -1,24 +1,52 @@
 # ☁️ KellyCloud
 
-> **Forked cloud storage platform** with improved Django backend and modern frontend interface.
+> **Forked cloud storage platform** with major UI/UX and functionality improvements by [@etsibeko-dev](https://github.com/etsibeko-dev)
 
-This is a fork of the original KellyCloud project, enhanced with improved user interface, better functionality, and optimized code structure. Built with Django REST Framework and vanilla JavaScript, featuring user authentication, file upload, subscription management, and a clean, responsive design.
+## ⚠️ Development Notice
 
-## ✨ Improvements Made
+**🚧 This project is currently under active development and is NOT production-ready.**
 
-- 🎨 **Enhanced UI** - Modern SaaS-style dashboard with cloud-themed styling
+This is a **forked contribution** where I'm exploring how far I can push the concept of a modern cloud storage platform. As a contributor, I've made significant improvements to the UI, functionality, and overall user experience, but this project serves as a **proof of concept** and **learning exercise**.
+
+### Current Status:
+- ✅ **Major UI/UX Overhaul** - Modern SaaS-style dashboard with cloud-themed styling
+- ✅ **Functionality Enhancements** - Better authentication, file management, and validation
+- ⚠️ **Responsive Design** - Still being refined for all screen sizes
+- ⚠️ **Production Features** - Missing security hardening, performance optimization, and production deployment features
+- 🔄 **Ongoing Development** - Continuously adding new features and improvements
+
+**This project is for educational purposes and concept demonstration only.**
+
+### 🎯 Contribution Goals:
+This fork represents my exploration of modern web development practices, where I'm challenging myself to see how far I can take a cloud storage concept. The focus is on:
+- **Learning & Experimentation** - Trying new UI/UX patterns and development techniques
+- **Best Practices** - Implementing clean code, modern frameworks, and user-centered design
+- **Concept Validation** - Testing ideas for what makes a great cloud storage experience
+- **Skill Development** - Pushing boundaries in both frontend and backend development
+
+### 🔮 Future Vision:
+While this project may never become a full production service, it serves as a foundation for understanding what it takes to build modern SaaS applications and exploring the possibilities of cloud storage platforms.
+
+---
+
+**Original Project**: This is a fork of the original KellyCloud project by [COSTA300](https://github.com/COSTA300/kellycloud). Built with Django REST Framework and vanilla JavaScript, featuring user authentication, file upload, subscription management, and a clean, responsive design.
+
+## ✨ Major Improvements Made
+
+- 🎨 **Complete UI/UX Overhaul** - Modern SaaS-style dashboard with cloud-themed styling
 - 🔧 **Better Organization** - Restructured Django apps for better maintainability
-- 📁 **File Management** - Real file upload, multi-file support, and file deletion
+- 📁 **Enhanced File Management** - Real file upload, multi-file support, and file deletion
 - ⚡ **Optimized API** - Improved Django REST Framework implementation
 - 📱 **Responsive Design** - Better mobile and desktop experience
-- 🏗️ **Code Structure** - Cleaner, more organized project structure
-- 💳 **Subscription Plans** - Basic, Standard, and Premium plans with storage limits
-- 📊 **Analytics Dashboard** - Storage usage charts and file statistics
+- 🏗️ **Clean Code Structure** - More organized and maintainable project structure
+- 💳 **Subscription Management** - Basic, Standard, and Premium plans with storage limits
+- 📊 **Analytics Dashboard** - Storage usage charts and file statistics with Chart.js
 - 👤 **Profile Management** - User profile settings and account information
-- 🔐 **Authentication** - Token-based authentication with secure login/logout
-- 👁️ **Password Visibility** - Toggle password visibility with eye icons
-- ✅ **Input Validation** - Real-time email and password validation with visual feedback
+- 🔐 **Enhanced Authentication** - Token-based authentication with secure login/logout
+- 👁️ **Password Visibility Toggles** - Eye icons for showing/hiding passwords
+- ✅ **Real-time Input Validation** - Email and password validation with visual feedback
 - 🎨 **Color-Coded Validation** - Red/green borders for invalid/valid input fields
+- 🔄 **Logout Functionality** - Secure session management
 
 ## 🛠️ Tech Stack
 
@@ -197,7 +225,7 @@ This is a fork of the original KellyCloud project by [COSTA300](https://github.c
 
 ## 🔧 Fork Improvements
 
-This fork includes:
+This fork includes significant enhancements:
 - **Modern SaaS Dashboard** - Professional cloud storage interface
 - **Subscription Management** - Basic, Standard, Premium plans with storage limits
 - **Real File Upload** - Multi-file upload with actual file storage
