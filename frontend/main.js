@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     else if (window.location.pathname.endsWith('register.html')) {
-        const registerForm = document.querySelector('form');
+        const registerForm = document.getElementById('registerForm');
         if (registerForm) {
             registerForm.addEventListener('submit', async (event) => {
                 event.preventDefault();
