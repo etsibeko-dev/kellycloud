@@ -819,20 +819,16 @@ function updateStorageDisplay(storageInfo) {
 }
 
 function updateICloudStorageDisplay(storageInfo, section) {
-    console.log('updateICloudStorageDisplay called with:', storageInfo, section);
-    
-    const usedBytes = storageInfo.current_usage_bytes;
-    const limitBytes = storageInfo.limit_bytes;
-    const percentage = Math.min((usedBytes / limitBytes) * 100, 100);
-    
+        const usedBytes = storageInfo.current_usage_bytes;
+        const limitBytes = storageInfo.limit_bytes;
+        const percentage = Math.min((usedBytes / limitBytes) * 100, 100);
+        
     // Get the appropriate elements based on section
     const storageBar = document.getElementById(section === 'dashboard' ? 'storageBar' : 'uploadStorageBar');
     const storageSummary = document.getElementById(section === 'dashboard' ? 'storageSummary' : 'uploadStorageSummary');
     const storagePercentage = document.getElementById(section === 'dashboard' ? 'storagePercentage' : 'uploadStoragePercentage');
     const storageLegend = document.getElementById(section === 'dashboard' ? 'storageLegend' : null);
     const storageBreakdown = document.getElementById(section === 'dashboard' ? 'storageBreakdown' : null);
-    
-    console.log('Elements found:', { storageBar, storageSummary, storagePercentage, storageLegend, storageBreakdown });
     
     if (storageBar && storageSummary && storagePercentage) {
         // Generate file type breakdown (simulated based on uploaded files)
@@ -883,8 +879,6 @@ function updateICloudStorageDisplay(storageInfo, section) {
 }
 
 function generateFileTypeBreakdown(totalBytes) {
-    console.log('generateFileTypeBreakdown called with totalBytes:', totalBytes);
-    
     // Define file type categories based on user specifications
     const fileCategories = {
         documents: {
@@ -934,7 +928,6 @@ function generateFileTypeBreakdown(totalBytes) {
 
     // Get actual files from the uploaded files to calculate real distribution
     const uploadedFiles = getUploadedFiles();
-    console.log('Uploaded files found:', uploadedFiles);
     
     if (uploadedFiles.length === 0 || totalBytes === 0) {
         // Return empty breakdown if no files
@@ -1013,11 +1006,12 @@ function getUploadedFiles() {
 
         if (xhr.status === 200) {
             const response = JSON.parse(xhr.responseText);
+            console.log('🔍 STORAGE VISUALIZATION: Using real uploaded files from API');
             return response.files || [];
         }
         
         // For testing purposes, return some sample files if API fails
-        console.log('API failed, using sample data for testing');
+        console.log('🔍 STORAGE VISUALIZATION: Using sample data (API failed)');
         return [
             { name: 'batman.jpg', size: 2500000 }, // 2.5MB photo
             { name: 'document.pdf', size: 1500000 }, // 1.5MB document
