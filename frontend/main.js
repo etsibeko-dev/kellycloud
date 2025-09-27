@@ -819,6 +819,8 @@ function updateStorageDisplay(storageInfo) {
 }
 
 function updateICloudStorageDisplay(storageInfo, section) {
+    console.log('updateICloudStorageDisplay called with:', storageInfo, section);
+    
     const usedBytes = storageInfo.current_usage_bytes;
     const limitBytes = storageInfo.limit_bytes;
     const percentage = Math.min((usedBytes / limitBytes) * 100, 100);
@@ -829,6 +831,8 @@ function updateICloudStorageDisplay(storageInfo, section) {
     const storagePercentage = document.getElementById(section === 'dashboard' ? 'storagePercentage' : 'uploadStoragePercentage');
     const storageLegend = document.getElementById(section === 'dashboard' ? 'storageLegend' : null);
     const storageBreakdown = document.getElementById(section === 'dashboard' ? 'storageBreakdown' : null);
+    
+    console.log('Elements found:', { storageBar, storageSummary, storagePercentage, storageLegend, storageBreakdown });
     
     if (storageBar && storageSummary && storagePercentage) {
         // Generate file type breakdown (simulated based on uploaded files)
@@ -879,6 +883,8 @@ function updateICloudStorageDisplay(storageInfo, section) {
 }
 
 function generateFileTypeBreakdown(totalBytes) {
+    console.log('generateFileTypeBreakdown called with totalBytes:', totalBytes);
+    
     // Define file type categories based on user specifications
     const fileCategories = {
         documents: {
@@ -928,6 +934,7 @@ function generateFileTypeBreakdown(totalBytes) {
 
     // Get actual files from the uploaded files to calculate real distribution
     const uploadedFiles = getUploadedFiles();
+    console.log('Uploaded files found:', uploadedFiles);
     
     if (uploadedFiles.length === 0 || totalBytes === 0) {
         // Return empty breakdown if no files
