@@ -870,10 +870,9 @@ function updateICloudStorageDisplay(storageInfo, section) {
         storageSummary.textContent = `${usedDisplay} of ${limitDisplay} Used`;
         storagePercentage.textContent = `${Math.round(percentage * 100) / 100}%`;
         
-        // Update legend and breakdown for dashboard section
-        if (section === 'dashboard' && storageLegend && storageBreakdown) {
+        // Update legend for dashboard section
+        if (section === 'dashboard' && storageLegend) {
             updateStorageLegend(storageLegend, fileBreakdown);
-            updateStorageBreakdown(storageBreakdown, fileBreakdown);
         }
     }
 }
