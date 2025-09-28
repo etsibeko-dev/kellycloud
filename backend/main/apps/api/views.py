@@ -4,6 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.http import HttpResponse, Http404
+from django.utils import timezone
 from .serializers import UserSerializer, RegisterSerializer, FileSerializer, SubscriptionSerializer, UserSubscriptionSerializer
 from .models import Subscription, UserSubscription
 from apps.storage.models import File
@@ -48,7 +50,7 @@ class FileListCreateView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
-        return File.objects.filter(owner=self.request.user)
+        return File.objects.filter(owner=self.request.user, is_deleted=False)
     
     def perform_create(self, serializer):
         # Check storage limits before creating file
@@ -81,7 +83,7 @@ class FileDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
-        return File.objects.filter(owner=self.request.user)
+        return File.objects.filter(owner=self.request.user, is_deleted=False)
     
     def perform_destroy(self, instance):
         # Update user's storage usage when file is deleted
@@ -90,8 +92,51 @@ class FileDetailView(generics.RetrieveUpdateDestroyAPIView):
             user_sub.current_usage_bytes = max(0, user_sub.current_usage_bytes - instance.file_size)
             user_sub.save()
         except:
-            pass  # If subscription doesn't exist, just delete the file
-        instance.delete()
+            pass  # If subscription doesn't exist, just soft delete the file
+        # Use soft delete instead of hard delete
+        instance.soft_delete()
+
+class FileDownloadView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get(self, request, pk):
+        try:
+            file_obj = File.objects.get(pk=pk, owner=request.user, is_deleted=False)
+            
+            # Increment download count
+            file_obj.increment_download_count()
+            
+            # Return file for download
+            response = HttpResponse(file_obj.file.read(), content_type='application/octet-stream')
+            response['Content-Disposition'] = f'attachment; filename="{file_obj.name}"'
+            return response
+            
+        except File.DoesNotExist:
+            raise Http404("File not found")
+
+class AnalyticsView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get(self, request):
+        """Get analytics data for the user"""
+        user_files = File.objects.filter(owner=request.user)
+        
+        # Calculate analytics
+        total_uploaded = user_files.count()
+        total_downloaded = sum(file.download_count for file in user_files)
+        total_deleted = user_files.filter(is_deleted=True).count()
+        
+        # Calculate unique active days
+        upload_dates = user_files.values_list('upload_date', flat=True)
+        unique_days = set(date.date() for date in upload_dates)
+        active_days = len(unique_days)
+        
+        return Response({
+            'uploaded': total_uploaded,
+            'downloaded': total_downloaded,
+            'deleted': total_deleted,
+            'active_days': active_days
+        })
 
 class SubscriptionListView(APIView):
     permission_classes = [permissions.AllowAny]

@@ -13,6 +13,10 @@ class File(models.Model):
     file_type = models.CharField(max_length=100)
     file_size = models.BigIntegerField(default=0)  # File size in bytes
     file = models.FileField(upload_to=user_directory_path, blank=True, null=True)  # Actual file
+    download_count = models.PositiveIntegerField(default=0)  # Track downloads
+    last_downloaded = models.DateTimeField(null=True, blank=True)  # Last download timestamp
+    is_deleted = models.BooleanField(default=False)  # Soft delete flag
+    deleted_date = models.DateTimeField(null=True, blank=True)  # When it was deleted
 
     def __str__(self):
         return self.name
@@ -21,6 +25,20 @@ class File(models.Model):
     def size_mb(self):
         """Get file size in MB"""
         return round(self.file_size / (1024 * 1024), 2)
+    
+    def increment_download_count(self):
+        """Increment download count and update last downloaded timestamp"""
+        from django.utils import timezone
+        self.download_count += 1
+        self.last_downloaded = timezone.now()
+        self.save(update_fields=['download_count', 'last_downloaded'])
+    
+    def soft_delete(self):
+        """Mark file as deleted without removing from database"""
+        from django.utils import timezone
+        self.is_deleted = True
+        self.deleted_date = timezone.now()
+        self.save(update_fields=['is_deleted', 'deleted_date'])
     
     def save(self, *args, **kwargs):
         # Update file_size and file_type when file is saved
