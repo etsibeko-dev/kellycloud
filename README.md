@@ -36,8 +36,12 @@ While this project may never become a full production service, it serves as a fo
 - 🎨 **Complete UI/UX Overhaul** - Modern cloud provider-style dashboard with professional KellyCloud theme
 - 🎨 **Professional Design System** - Comprehensive KellyCloud color palette, typography, and spacing system
 - 🔧 **Better Organization** - Restructured Django apps for better maintainability
-- 📁 **Enhanced File Management** - Real file upload, multi-file support, and file deletion
-- ⚡ **Optimized API** - Improved Django REST Framework implementation
+- 📁 **Enhanced File Management** - Real file upload, multi-file support, download functionality, and soft deletion
+- 📊 **iCloud-Style Storage Visualization** - Segmented progress bars with file type breakdown (Documents, Photos, Videos, Others)
+- 📈 **Real-Time Analytics** - Upload, download, and deletion tracking with Chart.js visualizations
+- 🔄 **File Download System** - Proper file download with download count tracking and analytics
+- 🗑️ **Soft File Deletion** - Files marked as deleted but preserved for analytics and recovery
+- ⚡ **Optimized API** - Improved Django REST Framework implementation with new endpoints
 - 📱 **Responsive Design** - Better mobile and desktop experience
 - 🏗️ **Clean Code Structure** - More organized and maintainable project structure
 - 💳 **Subscription Management** - Basic, Standard, and Premium plans with storage limits
@@ -202,7 +206,8 @@ Or create a new account via the registration page.
 ### File Management
 - `GET /api/files/` - List user files
 - `POST /api/files/` - Upload file(s)
-- `DELETE /api/files/<id>/` - Delete file
+- `DELETE /api/files/<id>/` - Soft delete file
+- `GET /api/files/<id>/download/` - Download file (tracks download count)
 
 ### User Profile
 - `GET /api/profile/` - Get user profile
@@ -212,6 +217,9 @@ Or create a new account via the registration page.
 - `GET /api/subscriptions/` - List available plans
 - `GET /api/user-subscription/` - Get user's subscription
 - `POST /api/user-subscription/` - Update user's subscription
+
+### Analytics
+- `GET /api/analytics/` - Get user analytics (uploaded, downloaded, deleted files, active days)
 
 ## 🤝 Contributing
 
@@ -255,10 +263,15 @@ This fork includes significant enhancements:
 ### Core Features
 - ✅ User registration and authentication
 - ✅ File upload and management
+- ✅ **File download functionality** - Download files with proper tracking
+- ✅ **Soft file deletion** - Files marked as deleted but preserved for analytics
+- ✅ **Real-time analytics** - Upload, download, and deletion tracking
 - ✅ Subscription plan management
-- ✅ Storage usage tracking
+- ✅ **iCloud-style storage visualization** - Segmented progress bars with file type breakdown
+- ✅ **File categorization** - Documents, Photos, Videos, Others with color coding
+- ✅ **Real file data display** - Actual file sizes and upload dates
 - ✅ Profile settings
-- ✅ Analytics dashboard
+- ✅ Analytics dashboard with Chart.js
 - ✅ Password visibility toggles
 - ✅ Real-time input validation
 - ✅ Color-coded validation feedback
@@ -270,9 +283,9 @@ This fork includes significant enhancements:
 - **Premium**: 2TB storage, R300/month
 
 ### Dashboard Sections
-- **Overview** - Storage usage and recent files
-- **My Files** - File management with upload/delete
-- **Analytics** - Charts and statistics
+- **Overview** - iCloud-style storage visualization with file type breakdown (Documents, Photos, Videos, Others)
+- **My Files** - File management with upload/download/delete, real file data display
+- **Analytics** - Real-time charts and statistics (uploaded, downloaded, deleted files, active days)
 - **Plans** - Subscription management
 - **Profile** - Account settings
 
