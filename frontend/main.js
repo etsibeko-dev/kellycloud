@@ -350,7 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Add download button
                         const downloadButton = document.createElement('button');
                         downloadButton.textContent = 'Download';
-                        downloadButton.classList.add('btn', 'btn-primary', 'btn-sm', 'me-3');
+                        downloadButton.classList.add('btn', 'btn-primary', 'btn-sm', 'me-4');
                         downloadButton.dataset.fileId = file.id;
                         actionsCell.appendChild(downloadButton);
                         console.log('🔍 DEBUG: Added download button for:', file.name);
