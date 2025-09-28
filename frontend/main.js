@@ -330,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const files = await response.json();
                 const filesTableBody = document.querySelector('#filesTableBody');
-                if (filesTableBody) {
+                if (filesTableBody && filesTableBody.insertRow) {
                     filesTableBody.innerHTML = ''; // Clear existing rows
                     if (Array.isArray(files)) {
                         files.forEach((file) => {
@@ -377,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.error('Files response is not an array:', files);
                 }
             } else {
-                console.log('filesTableBody element not found - files table might not be on this page');
+                console.log('filesTableBody element not found or not a table - files table might not be on this page');
             }
         } catch (error) {
             console.error('Error fetching files:', error);
