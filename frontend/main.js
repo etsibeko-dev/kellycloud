@@ -964,12 +964,15 @@ function generateFileTypeBreakdown(totalBytes) {
         const fileSize = file.file_size || file.size || 0;
         let categorized = false;
 
+        console.log(`Processing file: ${file.name}, extension: ${extension}, size: ${fileSize} bytes`);
+
         // Check each category
         for (const [categoryKey, categoryData] of Object.entries(fileCategories)) {
             if (categoryKey === 'others') continue; // Skip others for now
             
             if (categoryData.extensions.includes(extension)) {
                 categoryBytes[categoryKey] += fileSize;
+                console.log(`Categorized ${file.name} as ${categoryKey}`);
                 categorized = true;
                 break;
             }
@@ -978,24 +981,26 @@ function generateFileTypeBreakdown(totalBytes) {
         // If not categorized, add to others
         if (!categorized) {
             categoryBytes.others += fileSize;
+            console.log(`Categorized ${file.name} as others`);
         }
     });
 
-    // Create breakdown array
+    console.log('Final category breakdown:', categoryBytes);
+
+    // Create breakdown array - always show all categories
     const breakdown = [];
     for (const [categoryKey, bytes] of Object.entries(categoryBytes)) {
         const percentage = totalBytes > 0 ? (bytes / totalBytes) * 100 : 0;
         const categoryData = fileCategories[categoryKey];
         
-        if (percentage > 0.01) { // Only show if more than 0.01%
-            breakdown.push({
-                type: categoryKey,
-                name: categoryData.name,
-                percentage: percentage,
-                bytes: bytes,
-                displaySize: formatFileSize(bytes)
-            });
-        }
+        // Always show all categories, even if they have 0 bytes
+        breakdown.push({
+            type: categoryKey,
+            name: categoryData.name,
+            percentage: percentage,
+            bytes: bytes,
+            displaySize: formatFileSize(bytes)
+        });
     }
 
     // Sort by size (largest first)
