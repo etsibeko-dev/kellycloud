@@ -330,10 +330,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const files = await response.json();
                 const filesTableBody = document.querySelector('#filesTableBody');
+                console.log('🔍 DEBUG: filesTableBody found:', filesTableBody);
+                console.log('🔍 DEBUG: filesTableBody.insertRow exists:', filesTableBody && filesTableBody.insertRow);
+                
                 if (filesTableBody && filesTableBody.insertRow) {
                     filesTableBody.innerHTML = ''; // Clear existing rows
+                    console.log('🔍 DEBUG: About to create rows for', files.length, 'files');
+                    
                     if (Array.isArray(files)) {
-                        files.forEach((file) => {
+                        files.forEach((file, index) => {
+                        console.log(`🔍 DEBUG: Creating row ${index + 1} for file:`, file.name);
                         const row = filesTableBody.insertRow();
                         row.insertCell().textContent = file.name;
                         row.insertCell().textContent = file.file_type;
@@ -346,6 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         downloadButton.classList.add('btn', 'btn-primary', 'btn-sm', 'me-2');
                         downloadButton.dataset.fileId = file.id;
                         actionsCell.appendChild(downloadButton);
+                        console.log('🔍 DEBUG: Added download button for:', file.name);
                         
                         // Add delete button
                         const deleteButton = document.createElement('button');
@@ -353,6 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         deleteButton.classList.add('btn', 'btn-danger', 'btn-sm');
                         deleteButton.dataset.fileId = file.id;
                         actionsCell.appendChild(deleteButton);
+                        console.log('🔍 DEBUG: Added delete button for:', file.name);
                     });
                     // Add event listeners to download buttons
                     filesTableBody.querySelectorAll('.btn-primary').forEach(button => {
@@ -373,6 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         });
                     });
+                    console.log('🔍 DEBUG: Added event listeners to buttons');
                 } else {
                     console.error('Files response is not an array:', files);
                 }
