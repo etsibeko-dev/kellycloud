@@ -1075,18 +1075,17 @@ function updateStorageLegend(legendContainer, fileBreakdown) {
     legendContainer.innerHTML = '';
     
     fileBreakdown.forEach(category => {
-        if (category.percentage > 0.1) {
-            const legendItem = document.createElement('div');
-            legendItem.className = 'col-md-6 mb-2';
-            legendItem.innerHTML = `
-                <div class="legend-item">
-                    <div class="legend-color ${category.type}"></div>
-                    <div class="legend-text">${category.name}</div>
-                    <div class="legend-size">${category.displaySize}</div>
-                </div>
-            `;
-            legendContainer.appendChild(legendItem);
-        }
+        // Always show all categories, even if they have 0 bytes
+        const legendItem = document.createElement('div');
+        legendItem.className = 'col-md-6 mb-2';
+        legendItem.innerHTML = `
+            <div class="legend-item">
+                <div class="legend-color ${category.type}"></div>
+                <div class="legend-text">${category.name}</div>
+                <div class="legend-size">${category.displaySize}</div>
+            </div>
+        `;
+        legendContainer.appendChild(legendItem);
     });
 }
 
@@ -1107,9 +1106,8 @@ function updateStorageBreakdown(breakdownContainer, fileBreakdown) {
     `;
     breakdownContainer.appendChild(header);
     
-    // Add breakdown items
+    // Add breakdown items - always show all categories
     fileBreakdown.forEach(category => {
-        if (category.percentage > 0.1) {
             const breakdownItem = document.createElement('div');
             breakdownItem.className = 'breakdown-item';
             
@@ -1140,7 +1138,6 @@ function updateStorageBreakdown(breakdownContainer, fileBreakdown) {
                 <div class="breakdown-size">${category.displaySize}</div>
             `;
             breakdownContainer.appendChild(breakdownItem);
-        }
     });
 }
 
