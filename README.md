@@ -31,32 +31,49 @@ While this project may never become a full production service, it serves as a fo
 
 **Original Project**: This is a fork of the original KellyCloud project by [COSTA300](https://github.com/COSTA300/kellycloud). Built with Django REST Framework and vanilla JavaScript, featuring user authentication, file upload, subscription management, and a clean, responsive design.
 
-## ✨ Major Improvements Made
+## ✨ Key Features & Improvements
 
-- 🎨 **Complete UI/UX Overhaul** - Modern cloud provider-style dashboard with professional KellyCloud theme
-- 🎨 **Professional Design System** - Comprehensive KellyCloud color palette, typography, and spacing system
-- 🔧 **Better Organization** - Restructured Django apps for better maintainability
-- 📁 **Enhanced File Management** - Real file upload, multi-file support, download functionality, and soft deletion
-- 📊 **iCloud-Style Storage Visualization** - Segmented progress bars with file type breakdown (Documents, Photos, Videos, Others)
-- 📈 **Real-Time Analytics** - Upload, download, and deletion tracking with Chart.js visualizations
-- 🔄 **File Download System** - Proper file download with download count tracking and analytics
-- 🗑️ **Soft File Deletion** - Files marked as deleted but preserved for analytics and recovery
-- ⚡ **Optimized API** - Improved Django REST Framework implementation with new endpoints
-- 📱 **Responsive Design** - Better mobile and desktop experience
-- 🏗️ **Clean Code Structure** - More organized and maintainable project structure
-- 💳 **Subscription Management** - Basic, Standard, and Premium plans with storage limits
-- 📊 **Analytics Dashboard** - Storage usage charts and file statistics with Chart.js
-- 👤 **Profile Management** - User profile settings and account information
-- 🔐 **Enhanced Authentication** - Token-based authentication with secure login/logout
-- 👁️ **Password Visibility Toggles** - Eye icons for showing/hiding passwords
-- ✅ **Real-time Input Validation** - Email and password validation with visual feedback
-- 🎨 **Color-Coded Validation** - Red/green borders for invalid/valid input fields
-- 🔄 **Logout Functionality** - Secure session management
-- 🎨 **Consistent Button Heights** - Equal height dropdown buttons and navigation elements
-- 🎨 **Professional Cards** - Equal height stats cards with KellyCloud styling
-- 🎨 **Modern Dropdown Menus** - Professional dropdown styling with proper hover states
-- 🎨 **Fixed Message Display** - Proper positioning for notification messages
-- 🎨 **KellyCloud Branding** - Complete theme rebrand from generic colors to KellyCloud design system
+### 🎨 **Modern UI/UX Design**
+- **Professional KellyCloud Theme** - Complete design system with color palette, typography, and spacing
+- **iCloud-Style Storage Visualization** - Segmented progress bars with file type breakdown (Documents, Photos, Videos, Others)
+- **Responsive Design** - Optimized for mobile and desktop experiences
+- **Professional Components** - Equal height cards, consistent button styling, modern dropdowns
+
+### 📁 **Advanced File Management**
+- **Multi-file Upload** - Real file storage with proper validation
+- **Download System** - File downloads with download count tracking
+- **Soft Deletion** - Files marked as deleted but preserved for analytics and recovery
+- **File Categorization** - Automatic categorization by file type with color coding
+- **Real-time Data Display** - Actual file sizes, upload dates, and metadata
+
+### 📊 **Analytics & Insights**
+- **Real-time Analytics** - Upload, download, and deletion tracking
+- **Interactive Charts** - Storage usage visualization with Chart.js
+- **User Activity Metrics** - Active days, file statistics, and usage patterns
+
+### 🔐 **Enhanced Security & Authentication**
+- **Token-based Authentication** - Secure login/logout with session management
+- **Input Validation** - Real-time email and password validation with visual feedback
+- **Password Visibility Toggles** - Eye icons for showing/hiding passwords
+
+### 💳 **Subscription Management**
+- **Flexible Plans** - Basic (50GB), Standard (500GB), Premium (2TB) with distinct pricing
+- **Storage Tracking** - Real-time usage monitoring and limit enforcement
+- **Profile Management** - User account settings and subscription details
+
+## 🎯 Dashboard Overview
+
+### 📊 **Dashboard Sections**
+- **Overview** - iCloud-style storage visualization with file type breakdown
+- **My Files** - Complete file management with upload/download/delete functionality
+- **Analytics** - Real-time charts and user activity statistics
+- **Plans** - Subscription management and upgrade options
+- **Profile** - Account settings and user preferences
+
+### 💰 **Subscription Plans**
+- **Basic**: 50GB storage, R50/month
+- **Standard**: 500GB storage, R150/month  
+- **Premium**: 2TB storage, R300/month
 
 ## 🛠️ Tech Stack
 
@@ -229,65 +246,11 @@ Or create a new account via the registration page.
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
+## 📝 License & Attribution
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 📝 Original Project
-
-This is a fork of the original KellyCloud project by [COSTA300](https://github.com/COSTA300/kellycloud). The original repository can be found at: https://github.com/COSTA300/kellycloud
-
-## 🔧 Fork Improvements
-
-This fork includes significant enhancements:
-- **Modern Cloud Provider Dashboard** - Professional KellyCloud-themed interface with comprehensive design system
-- **KellyCloud Design System** - Complete color palette, typography, spacing, and component styling
-- **Subscription Management** - Basic, Standard, Premium plans with storage limits and distinct color coding
-- **Real File Upload** - Multi-file upload with actual file storage
-- **Analytics & Charts** - Storage usage visualization with Chart.js
-- **Profile Management** - User profile settings and account information
-- **Enhanced Authentication** - Token-based auth with secure sessions
-- **File Management** - Upload, delete, and organize files
-- **Password Visibility Toggles** - Eye icons for showing/hiding passwords
-- **Input Validation** - Real-time email and password validation with KellyCloud styling
-- **Color-Coded Feedback** - Visual validation indicators with professional colors
-- **Responsive Design** - Mobile-friendly interface
-- **Better Organization** - Clean Django app structure
-- **Code Optimization** - Improved performance and maintainability
-- **Professional UI Components** - Equal height cards, consistent button styling, modern dropdowns
-- **Fixed User Experience Issues** - Proper message positioning, consistent navigation heights
-- **Complete Theme Rebrand** - KellyCloud branding throughout the entire application
-
-## 🎯 Features
-
-### Core Features
-- ✅ User registration and authentication
-- ✅ File upload and management
-- ✅ **File download functionality** - Download files with proper tracking
-- ✅ **Soft file deletion** - Files marked as deleted but preserved for analytics
-- ✅ **Real-time analytics** - Upload, download, and deletion tracking
-- ✅ Subscription plan management
-- ✅ **iCloud-style storage visualization** - Segmented progress bars with file type breakdown
-- ✅ **File categorization** - Documents, Photos, Videos, Others with color coding
-- ✅ **Real file data display** - Actual file sizes and upload dates
-- ✅ Profile settings
-- ✅ Analytics dashboard with Chart.js
-- ✅ Password visibility toggles
-- ✅ Real-time input validation
-- ✅ Color-coded validation feedback
-- ✅ Logout functionality
-
-### Subscription Plans
-- **Basic**: 50GB storage, R50/month
-- **Standard**: 500GB storage, R150/month  
-- **Premium**: 2TB storage, R300/month
-
-### Dashboard Sections
-- **Overview** - iCloud-style storage visualization with file type breakdown (Documents, Photos, Videos, Others)
-- **My Files** - File management with upload/download/delete, real file data display
-- **Analytics** - Real-time charts and statistics (uploaded, downloaded, deleted files, active days)
-- **Plans** - Subscription management
-- **Profile** - Account settings
+**Original Project**: This is a fork of the original KellyCloud project by [COSTA300](https://github.com/COSTA300/kellycloud). The original repository can be found at: https://github.com/COSTA300/kellycloud
 
 ---
 
