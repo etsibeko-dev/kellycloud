@@ -343,6 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const row = filesTableBody.insertRow();
                         row.insertCell().textContent = file.name;
                         row.insertCell().textContent = file.file_type;
+                        row.insertCell().textContent = file.size_mb + ' MB';
                         row.insertCell().textContent = new Date(file.upload_date).toLocaleDateString();
                         const actionsCell = row.insertCell();
                         
