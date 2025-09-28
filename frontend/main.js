@@ -286,8 +286,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     displayMessage('File deleted successfully!', 'success');
                     fetchFiles(); // Refresh the file list
                     loadUserSubscription(); // Refresh storage usage
-                    // Also refresh dashboard data if we're in the files section
+                    
+                    // Refresh analytics to show updated deletion count
                     const currentSection = document.querySelector('.content-section.active');
+                    if (currentSection && currentSection.id === 'analytics-section') {
+                        loadAnalyticsSection();
+                    }
+                    
+                    // Also refresh dashboard data if we're in the files section
                     if (currentSection && currentSection.id === 'files-section') {
                         loadFilesSection();
                     }
@@ -333,12 +339,31 @@ document.addEventListener('DOMContentLoaded', () => {
                         row.insertCell().textContent = file.file_type;
                         row.insertCell().textContent = new Date(file.upload_date).toLocaleDateString();
                         const actionsCell = row.insertCell();
+                        
+                        // Add download button
+                        const downloadButton = document.createElement('button');
+                        downloadButton.textContent = 'Download';
+                        downloadButton.classList.add('btn', 'btn-primary', 'btn-sm', 'me-2');
+                        downloadButton.dataset.fileId = file.id;
+                        actionsCell.appendChild(downloadButton);
+                        
+                        // Add delete button
                         const deleteButton = document.createElement('button');
                         deleteButton.textContent = 'Delete';
                         deleteButton.classList.add('btn', 'btn-danger', 'btn-sm');
-                        deleteButton.dataset.fileId = file.id; // Assuming file has an 'id' property
+                        deleteButton.dataset.fileId = file.id;
                         actionsCell.appendChild(deleteButton);
                     });
+                    // Add event listeners to download buttons
+                    filesTableBody.querySelectorAll('.btn-primary').forEach(button => {
+                        button.addEventListener('click', async (event) => {
+                            const fileId = event.target.dataset.fileId;
+                            if (fileId) {
+                                await downloadFile(fileId);
+                            }
+                        });
+                    });
+                    
                     // Add event listeners to delete buttons
                     filesTableBody.querySelectorAll('.btn-danger').forEach(button => {
                         button.addEventListener('click', async (event) => {
@@ -1650,62 +1675,121 @@ async function deleteFile(fileId) {
     }
 }
 
+async function downloadFile(fileId) {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        displayMessage('Please log in to download files.', 'danger');
+        return;
+    }
+    
+    try {
+        showLoadingIndicator();
+        
+        const response = await fetch(`http://localhost:8000/api/files/${fileId}/download/`, {
+            headers: {
+                'Authorization': `Token ${token}`,
+            },
+        });
+        
+        if (response.ok) {
+            // Get filename from Content-Disposition header or use a default
+            const contentDisposition = response.headers.get('Content-Disposition');
+            let filename = 'download';
+            if (contentDisposition) {
+                const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+                if (filenameMatch) {
+                    filename = filenameMatch[1];
+                }
+            }
+            
+            // Create blob and download
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            displayMessage('File downloaded successfully!', 'success');
+            
+            // Refresh analytics to show updated download count
+            const currentSection = document.querySelector('.content-section.active');
+            if (currentSection && currentSection.id === 'analytics-section') {
+                loadAnalyticsSection();
+            }
+        } else {
+            const errorData = await response.json();
+            displayMessage(errorData.error || 'Download failed.', 'danger');
+        }
+    } catch (error) {
+        console.error('Error downloading file:', error);
+        displayMessage('An error occurred during file download.', 'danger');
+    } finally {
+        hideLoadingIndicator();
+    }
+}
+
 // Analytics functionality
 async function loadAnalyticsSection() {
     const token = localStorage.getItem('token');
     if (!token) return;
     
     try {
-        // Load files data for analytics
-        const filesResponse = await fetch('http://localhost:8000/api/files/', {
+        // Load analytics data from dedicated endpoint
+        const analyticsResponse = await fetch('http://localhost:8000/api/analytics/', {
             headers: {
                 'Authorization': `Token ${token}`,
             },
         });
         
-        if (filesResponse.ok) {
-            const files = await filesResponse.json();
-            updateAnalyticsData(files);
-            createAnalyticsCharts(files);
+        if (analyticsResponse.ok) {
+            const analyticsData = await analyticsResponse.json();
+            updateAnalyticsData(analyticsData);
+            
+            // Also load files for charts
+            const filesResponse = await fetch('http://localhost:8000/api/files/', {
+                headers: {
+                    'Authorization': `Token ${token}`,
+                },
+            });
+            
+            if (filesResponse.ok) {
+                const files = await filesResponse.json();
+                createAnalyticsCharts(files);
+            }
         }
     } catch (error) {
         console.error('Error loading analytics:', error);
     }
 }
 
-function updateAnalyticsData(files) {
-    // Update analytics overview cards
+function updateAnalyticsData(analyticsData) {
+    // Update analytics overview cards with real data
     const analyticsFilesUploaded = document.getElementById('analyticsFilesUploaded');
     const analyticsFilesDownloaded = document.getElementById('analyticsFilesDownloaded');
     const analyticsFilesDeleted = document.getElementById('analyticsFilesDeleted');
     const analyticsActiveDays = document.getElementById('analyticsActiveDays');
     
     if (analyticsFilesUploaded) {
-        analyticsFilesUploaded.textContent = files.length;
+        analyticsFilesUploaded.textContent = analyticsData.uploaded;
     }
     
-    // For demo purposes, simulate some data
     if (analyticsFilesDownloaded) {
-        analyticsFilesDownloaded.textContent = Math.floor(files.length * 0.3); // 30% of uploads
+        analyticsFilesDownloaded.textContent = analyticsData.downloaded;
     }
     
     if (analyticsFilesDeleted) {
-        analyticsFilesDeleted.textContent = Math.floor(files.length * 0.1); // 10% deleted
+        analyticsFilesDeleted.textContent = analyticsData.deleted;
     }
     
     if (analyticsActiveDays) {
-        // Calculate unique days from file upload dates
-        const uniqueDays = new Set(files.map(file => 
-            new Date(file.upload_date).toDateString()
-        )).size;
-        analyticsActiveDays.textContent = uniqueDays;
+        analyticsActiveDays.textContent = analyticsData.active_days;
     }
     
-    // Update recent activity
-    updateRecentActivity(files);
-    
-    // Update storage breakdown
-    updateFilesStorageBreakdown(files);
+    console.log('Analytics updated with real data:', analyticsData);
 }
 
 function updateRecentActivity(files) {
