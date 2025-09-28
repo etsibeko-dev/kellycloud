@@ -922,7 +922,18 @@ function generateFileTypeBreakdown(totalBytes) {
         },
         others: {
             name: 'Others',
-            extensions: [] // Everything else falls here
+            extensions: [
+                // Executables
+                'appimage', 'exe', 'msi', 'deb', 'rpm', 'dmg', 'pkg',
+                // Archives
+                'zip', 'rar', '7z', 'tar', 'gz', 'bz2', 'xz',
+                // Audio
+                'mp3', 'wav', 'flac', 'aac', 'ogg', 'wma', 'm4a',
+                // Code/Development
+                'py', 'js', 'html', 'css', 'cpp', 'c', 'java', 'php', 'rb', 'go',
+                // System Files
+                'iso', 'img', 'bin', 'dat', 'log', 'tmp'
+            ]
         }
     };
 
@@ -949,7 +960,8 @@ function generateFileTypeBreakdown(totalBytes) {
 
     // Categorize each uploaded file
     uploadedFiles.forEach(file => {
-        const extension = getFileExtension(file.name).toLowerCase();
+        const extension = (file.file_type || getFileExtension(file.name)).toLowerCase();
+        const fileSize = file.file_size || file.size || 0;
         let categorized = false;
 
         // Check each category
@@ -957,7 +969,7 @@ function generateFileTypeBreakdown(totalBytes) {
             if (categoryKey === 'others') continue; // Skip others for now
             
             if (categoryData.extensions.includes(extension)) {
-                categoryBytes[categoryKey] += file.size || 0;
+                categoryBytes[categoryKey] += fileSize;
                 categorized = true;
                 break;
             }
@@ -965,7 +977,7 @@ function generateFileTypeBreakdown(totalBytes) {
 
         // If not categorized, add to others
         if (!categorized) {
-            categoryBytes.others += file.size || 0;
+            categoryBytes.others += fileSize;
         }
     });
 
@@ -1013,8 +1025,10 @@ function getUploadedFiles() {
         if (xhr.status === 200) {
             const response = JSON.parse(xhr.responseText);
             console.log('🔍 STORAGE VISUALIZATION: Using real uploaded files from API');
-            console.log('Real files:', response);
-            return response.files || [];
+            console.log('API Response:', response);
+            console.log('Number of files:', response.length);
+            console.log('File details:', response.map(f => ({ name: f.name, size: f.file_size, type: f.file_type })));
+            return response || [];
         } else {
             console.log('🔍 STORAGE VISUALIZATION: API failed with status', xhr.status, 'using sample data');
             return getSampleFiles();
