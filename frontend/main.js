@@ -1004,7 +1004,7 @@ function getUploadedFiles() {
         // Make synchronous request to get files (in a real app, this would be async)
         const xhr = new XMLHttpRequest();
         xhr.open('GET', 'http://localhost:8000/api/files/', false); // Synchronous for now
-        xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+        xhr.setRequestHeader('Authorization', `Token ${token}`);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send();
 
