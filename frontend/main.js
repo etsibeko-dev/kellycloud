@@ -1417,7 +1417,10 @@ function updateDashboardStats(subscriptionData) {
         if (currentPlanCard && currentPlanIcon) {
             // reset
             currentPlanCard.style.borderColor = '';
-            currentPlanIcon.style.backgroundColor = '';
+            currentPlanIcon.style.background = '';
+            currentPlanIcon.style.backgroundImage = '';
+            // remove any bootstrap bg-* classes so our color shows
+            currentPlanIcon.classList.remove('bg-warning','bg-primary','bg-success','bg-info','bg-danger','bg-secondary','bg-dark');
             // map plan -> color
             const planColors = {
                 basic: getComputedStyle(document.documentElement).getPropertyValue('--kelly-primary').trim() || '#0078D4',
@@ -1427,7 +1430,9 @@ function updateDashboardStats(subscriptionData) {
             const plan = (subscriptionData.plan_type || 'basic').toLowerCase();
             const color = planColors[plan] || planColors.basic;
             currentPlanCard.style.border = `1px solid ${color}`;
-            currentPlanIcon.style.backgroundColor = color;
+            // set solid background behind crown
+            currentPlanIcon.style.background = color;
+            currentPlanIcon.style.backgroundImage = 'none';
         }
     }
     
