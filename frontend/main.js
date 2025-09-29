@@ -384,17 +384,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                     });
                     console.log('🔍 DEBUG: Added event listeners to buttons');
-                } else {
+                    } else {
                     console.error('Files response is not an array:', filtered);
-                }
+                    }
             } else {
                 console.log('filesTableBody element not found or not a table - files table might not be on this page');
-            }
+                }
         } catch (error) {
-            console.error('Error fetching files:', error);
+                console.error('Error fetching files:', error);
         } finally {
-            hideLoadingIndicator(); // Hide loading indicator
-        }
+                hideLoadingIndicator(); // Hide loading indicator
+            }
         };
         window.fetchFiles();
 
@@ -415,6 +415,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 applyCustom.classList.remove('d-none');
                 if (dateStartLabel) dateStartLabel.classList.remove('d-none');
                 if (dateEndLabel) dateEndLabel.classList.remove('d-none');
+                const startHint = document.getElementById('fileDateStartHint');
+                const endHint = document.getElementById('fileDateEndHint');
+                if (startHint) startHint.classList.remove('d-none');
+                if (endHint) endHint.classList.remove('d-none');
                 // Set sensible defaults and bounds
                 const today = new Date();
                 const oneYearAgo = new Date();
@@ -438,6 +442,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 applyCustom.classList.add('d-none');
                 if (dateStartLabel) dateStartLabel.classList.add('d-none');
                 if (dateEndLabel) dateEndLabel.classList.add('d-none');
+                const startHint = document.getElementById('fileDateStartHint');
+                const endHint = document.getElementById('fileDateEndHint');
+                if (startHint) startHint.classList.add('d-none');
+                if (endHint) endHint.classList.add('d-none');
                 await window.fetchFiles();
             }
         });
@@ -1128,7 +1136,7 @@ function getUploadedFiles() {
             console.log('Number of files:', response.length);
             console.log('File details:', response.map(f => ({ name: f.name, size: f.file_size, type: f.file_type })));
             return response || [];
-        } else {
+    } else {
             console.log('🔍 STORAGE VISUALIZATION: API failed with status', xhr.status, 'using sample data');
             return getSampleFiles();
         }
@@ -1726,15 +1734,15 @@ async function loadAnalyticsSection() {
             updateAnalyticsData(analyticsData);
             
             // Also load files for charts
-            const filesResponse = await fetch('http://localhost:8000/api/files/', {
-                headers: {
-                    'Authorization': `Token ${token}`,
-                },
-            });
-            
-            if (filesResponse.ok) {
-                const files = await filesResponse.json();
-                createAnalyticsCharts(files);
+        const filesResponse = await fetch('http://localhost:8000/api/files/', {
+            headers: {
+                'Authorization': `Token ${token}`,
+            },
+        });
+        
+        if (filesResponse.ok) {
+            const files = await filesResponse.json();
+            createAnalyticsCharts(files);
                 // Populate Recent Activity and Storage Breakdown panels
                 updateRecentActivity(files);
                 updateFilesStorageBreakdown(files);

@@ -487,6 +487,20 @@
             box-sizing: border-box !important;
         }
 
+        /* Inline right-aligned labels inside date inputs */
+        .date-inline-wrapper {
+            width: 220px;
+        }
+        .date-inline-wrapper .date-inline-hint {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--kelly-gray-500);
+            font-size: 12px;
+            pointer-events: none;
+        }
+
         /* Flatpickr overrides to match KellyCloud light theme */
         .flatpickr-calendar {
             background: var(--kelly-white) !important;
@@ -746,13 +760,15 @@
                             </select>
                             <!-- Custom range inputs (hidden until 'custom') -->
                             <div class="d-flex gap-2 align-items-center">
-                                <div class="d-flex flex-column">
+                                <div class="d-flex flex-column position-relative date-inline-wrapper">
                                     <small class="date-label d-none" id="fileDateStartLabel">Start</small>
                                     <input type="date" class="form-control date-input d-none" id="fileDateStart" />
+                                    <span class="date-inline-hint d-none" id="fileDateStartHint">Start</span>
                                 </div>
-                                <div class="d-flex flex-column">
+                                <div class="d-flex flex-column position-relative date-inline-wrapper">
                                     <small class="date-label d-none" id="fileDateEndLabel">End</small>
                                     <input type="date" class="form-control date-input d-none" id="fileDateEnd" />
+                                    <span class="date-inline-hint d-none" id="fileDateEndHint">End</span>
                                 </div>
                             </div>
                             <button class="btn btn-outline-secondary d-none" id="applyCustomDate">Apply</button>
