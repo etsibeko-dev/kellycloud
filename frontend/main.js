@@ -2227,30 +2227,37 @@ function createUploadsHeatmap(files) {
     const container = document.getElementById('uploadsHeatmap');
     if (!container) return;
     container.innerHTML = '';
-    // last 7 weeks (49 days)
-    const days = 49;
+    // GitHub-like 52 weeks columns, each column is a week (Sun..Sat)
+    const weeks = 52;
     const today = new Date();
-    const counts = [];
-    for (let i = days - 1; i >= 0; i--) {
-        const d = new Date(today);
-        d.setDate(d.getDate() - i);
-        const key = d.toISOString().slice(0,10);
-        const c = files.filter(f => (f.upload_date || '').slice(0,10) === key).length;
-        counts.push(c);
-    }
-    const max = Math.max(1, ...counts);
-    counts.forEach(c => {
-        const cell = document.createElement('div');
-        const intensity = c / max; // 0..1
-        const base = [0, 122, 255];
-        const alpha = (0.12 + 0.68 * intensity).toFixed(2);
-        cell.style.width = '10px';
-        cell.style.height = '10px';
-        cell.style.borderRadius = '2px';
-        cell.style.background = `rgba(${base[0]}, ${base[1]}, ${base[2]}, ${alpha})`;
-        cell.title = `${c} upload${c===1?'':'s'}`;
-        container.appendChild(cell);
+    // Start from the last Sunday
+    const start = new Date(today);
+    start.setDate(start.getDate() - ((start.getDay() + 7) % 7));
+    // Map yyyy-mm-dd -> count
+    const byDay = {};
+    files.forEach(f => {
+        const key = (f.upload_date || '').slice(0,10);
+        if (key) byDay[key] = (byDay[key] || 0) + 1;
     });
+    let max = 1;
+    Object.values(byDay).forEach(v => { if (v > max) max = v; });
+    for (let w = weeks - 1; w >= 0; w--) {
+        const weekCol = document.createElement('div');
+        weekCol.className = 'gh-week';
+        for (let d = 0; d < 7; d++) {
+            const cellDate = new Date(start);
+            cellDate.setDate(cellDate.getDate() - (weeks - 1 - w) * 7 + d);
+            const key = cellDate.toISOString().slice(0,10);
+            const c = byDay[key] || 0;
+            const ratio = c / max;
+            const lv = c === 0 ? 0 : ratio < 0.25 ? 1 : ratio < 0.5 ? 2 : ratio < 0.75 ? 3 : 4;
+            const cell = document.createElement('div');
+            cell.className = `gh-cell gh-lv${lv}`;
+            cell.title = `${c} upload${c===1?'':'s'} on ${cellDate.toDateString()}`;
+            weekCol.appendChild(cell);
+        }
+        container.appendChild(weekCol);
+    }
 }
 
 function createFileTypesChart(files) {
