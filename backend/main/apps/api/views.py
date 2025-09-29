@@ -4,7 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, FileResponse
+import os
 from django.utils import timezone
 from .serializers import UserSerializer, RegisterSerializer, FileSerializer, SubscriptionSerializer, UserSubscriptionSerializer
 from .models import Subscription, UserSubscription
@@ -106,9 +107,21 @@ class FileDownloadView(APIView):
             # Increment download count
             file_obj.increment_download_count()
             
-            # Return file for download
-            response = HttpResponse(file_obj.file.read(), content_type='application/octet-stream')
-            response['Content-Disposition'] = f'attachment; filename="{file_obj.name}"'
+            # Determine a precise filename (include extension)
+            stored_name = os.path.basename(file_obj.file.name)  # e.g. uploads/user_1/foo.pdf -> foo.pdf
+            stored_ext = os.path.splitext(stored_name)[1]
+            download_name = file_obj.name or stored_name
+            # Ensure extension present
+            base_name = os.path.basename(download_name)
+            if not os.path.splitext(base_name)[1] and stored_ext:
+                download_name = f"{download_name}{stored_ext}"
+
+            # Stream file to client with correct filename
+            file_obj.file.open('rb')
+            response = FileResponse(file_obj.file, as_attachment=True, filename=download_name)
+            # Optional: explicit content type fallback
+            if 'Content-Type' not in response:
+                response['Content-Type'] = 'application/octet-stream'
             return response
             
         except File.DoesNotExist:
