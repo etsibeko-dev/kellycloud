@@ -4,6 +4,8 @@
     grid-template-columns: 32px 1fr; /* day labels + grid */
     grid-template-rows: 16px 1fr;    /* month row + grid */
     gap: 6px;
+    width: 100%;
+    overflow-x: auto;
 }
 .gh-heatmap-months {
     grid-column: 2 / 3;
