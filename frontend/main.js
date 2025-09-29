@@ -535,6 +535,45 @@ function validateEmail(email) {
     return emailRegex.test(email);
 }
 
+// Chart mode toggle handlers
+document.addEventListener('DOMContentLoaded', () => {
+    const btnLine = document.getElementById('storageChartModeLine');
+    const btnBar = document.getElementById('storageChartModeBar');
+    if (btnLine && btnBar) {
+        const setActive = (mode) => {
+            btnLine.classList.toggle('active', mode === 'line');
+            btnBar.classList.toggle('active', mode === 'bar');
+        };
+        btnLine.addEventListener('click', async () => {
+            window.storageChartMode = 'line';
+            setActive('line');
+            // Rebuild analytics charts with current data
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) return;
+                const resp = await fetch('http://localhost:8000/api/files/', { headers: { 'Authorization': `Token ${token}` } });
+                if (resp.ok) {
+                    const files = await resp.json();
+                    createStorageChart(files);
+                }
+            } catch (e) { console.error(e); }
+        });
+        btnBar.addEventListener('click', async () => {
+            window.storageChartMode = 'bar';
+            setActive('bar');
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) return;
+                const resp = await fetch('http://localhost:8000/api/files/', { headers: { 'Authorization': `Token ${token}` } });
+                if (resp.ok) {
+                    const files = await resp.json();
+                    createStorageChart(files);
+                }
+            } catch (e) { console.error(e); }
+        });
+    }
+});
+
 function validatePassword(password) {
     const minLength = 8;
     const hasUpperCase = /[A-Z]/.test(password);
@@ -1954,32 +1993,66 @@ function createStorageChart(files) {
         storageData.push(dayStorage / (1024 * 1024)); // Convert to MB
     }
     
+    const mode = (window.storageChartMode || 'line');
+    const datasets = [];
+    if (mode === 'line') {
+        // Base line data
+        datasets.push({
+            label: 'Daily Storage Added (MB)',
+            data: storageData,
+            borderColor: '#007aff',
+            backgroundColor: 'rgba(0, 122, 255, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#007aff',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointRadius: 6
+        });
+        // 3-day moving average overlay
+        const ma = storageData.map((_, idx, arr) => {
+            const a = Math.max(0, idx - 1);
+            const b = Math.min(arr.length - 1, idx + 1);
+            let sum = 0, count = 0;
+            for (let i = a; i <= b; i++) { sum += arr[i]; count++; }
+            return +(sum / count).toFixed(2);
+        });
+        datasets.push({
+            label: '3‑day Avg (MB)',
+            data: ma,
+            borderColor: '#34c759',
+            backgroundColor: 'transparent',
+            borderDash: [6, 6],
+            borderWidth: 2,
+            fill: false,
+            tension: 0.2,
+            pointRadius: 0
+        });
+    } else {
+        // Bar mode
+        datasets.push({
+            label: 'Daily Storage Added (MB)',
+            data: storageData,
+            backgroundColor: 'rgba(0, 122, 255, 0.7)',
+            borderColor: '#007aff',
+            borderWidth: 1,
+            borderRadius: 0
+        });
+    }
+
     window.storageChartInstance = new Chart(ctx, {
-        type: 'line',
+        type: mode === 'bar' ? 'bar' : 'line',
         data: {
             labels: last7Days,
-            datasets: [{
-                label: 'Daily Storage Added (MB)',
-                data: storageData,
-                borderColor: '#007aff',
-                backgroundColor: 'rgba(0, 122, 255, 0.1)',
-                borderWidth: 3,
-                fill: true,
-                tension: 0.4,
-                pointBackgroundColor: '#007aff',
-                pointBorderColor: '#ffffff',
-                pointBorderWidth: 2,
-                pointRadius: 6
-            }]
+            datasets
         },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 aspectRatio: 2,
                 plugins: {
-                    legend: {
-                        display: false
-                    }
+                    legend: { display: mode === 'line' }
                 },
                 scales: {
                     y: {
