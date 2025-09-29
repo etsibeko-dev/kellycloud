@@ -606,9 +606,49 @@
             color: #fff !important;
             border-radius: 50% !important; /* circular highlight */
         }
+
+        /* Small-screen maintenance mode */
+        .small-screen-message {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #fff;
+            color: var(--kelly-gray-900);
+            z-index: 20000;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 24px;
+        }
+        .small-screen-message .content {
+            max-width: 520px;
+        }
+        .small-screen-message h1 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+        .small-screen-message p {
+            font-size: 16px;
+            color: var(--kelly-gray-600);
+        }
+        @media (max-width: 992px) {
+            .small-screen-message { display: flex; }
+            .main-content, .sidebar { display: none !important; }
+        }
     </style>
 </head>
 <body>
+    <!-- Small screen overlay -->
+    <div class="small-screen-message" aria-live="polite" aria-atomic="true">
+        <div class="content">
+            <h1>Mobile vibes detected 📱</h1>
+            <p>
+                This dashboard is currently “not available, working on it”.
+                For now, please use a desktop or a bigger screen. We’ll make
+                it gorgeous on phones soon — pinky promise 😅
+            </p>
+        </div>
+    </div>
     <!-- Sidebar -->
     <nav class="sidebar" id="sidebar">
         <div class="p-3">
