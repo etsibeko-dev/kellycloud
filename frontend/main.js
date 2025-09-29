@@ -2224,9 +2224,29 @@ function createStorageChart(files) {
 }
 
 function createUploadsHeatmap(files) {
-    const container = document.getElementById('uploadsHeatmap');
-    if (!container) return;
-    container.innerHTML = '';
+    const wrap = document.getElementById('uploadsHeatmap');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    // structure: months row, day labels col, and grid
+    const monthsRow = document.createElement('div');
+    monthsRow.className = 'gh-heatmap-months small text-muted';
+    const dayLabels = document.createElement('div');
+    dayLabels.className = 'gh-heatmap-days small text-muted';
+    const grid = document.createElement('div');
+    grid.className = 'gh-heatmap';
+    wrap.appendChild(monthsRow);
+    wrap.appendChild(dayLabels);
+    wrap.appendChild(grid);
+
+    // Day labels (Mon, Wed, Fri like GitHub; but our rows start Sun(0) .. Sat(6))
+    const labels = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    [1,3,5].forEach(idx => {
+        const el = document.createElement('div');
+        el.textContent = labels[idx];
+        el.style.lineHeight = '12px';
+        dayLabels.appendChild(el);
+    });
+
     // GitHub-like 52 weeks columns, each column is a week (Sun..Sat)
     const weeks = 52;
     const today = new Date();
@@ -2241,6 +2261,7 @@ function createUploadsHeatmap(files) {
     });
     let max = 1;
     Object.values(byDay).forEach(v => { if (v > max) max = v; });
+    let lastMonth = '';
     for (let w = weeks - 1; w >= 0; w--) {
         const weekCol = document.createElement('div');
         weekCol.className = 'gh-week';
@@ -2256,7 +2277,20 @@ function createUploadsHeatmap(files) {
             cell.title = `${c} upload${c===1?'':'s'} on ${cellDate.toDateString()}`;
             weekCol.appendChild(cell);
         }
-        container.appendChild(weekCol);
+        grid.appendChild(weekCol);
+
+        // Month labels: show when month changes at the top of the column
+        const monthName = new Date(start.getFullYear(), start.getMonth(), start.getDate() - (weeks - 1 - w) * 7).toLocaleString('en', { month: 'short' });
+        if (monthName !== lastMonth) {
+            const m = document.createElement('div');
+            m.textContent = monthName;
+            monthsRow.appendChild(m);
+            lastMonth = monthName;
+        } else {
+            const spacer = document.createElement('div');
+            spacer.textContent = '';
+            monthsRow.appendChild(spacer);
+        }
     }
 }
 
