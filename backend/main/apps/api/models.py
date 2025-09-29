@@ -50,7 +50,7 @@ class Subscription(models.Model):
                 'features': {
                     'storage': '2 TB Storage',
                     'features': 'All Standard Features + Premium Tools',
-                    'security': 'Enterprise-Grade Security & Compliance',
+                    'security': 'Security & Compliance',
                     'speed': 'Ultra-Fast Performance & Scalability',
                     'support': '24/7 Phone & Email Support',
                     'versioning': 'Team Collaboration Tools'
