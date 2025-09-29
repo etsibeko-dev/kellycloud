@@ -413,12 +413,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 dateStart.classList.remove('d-none');
                 dateEnd.classList.remove('d-none');
                 applyCustom.classList.remove('d-none');
-                if (dateStartLabel) dateStartLabel.classList.remove('d-none');
-                if (dateEndLabel) dateEndLabel.classList.remove('d-none');
-                const startHint = document.getElementById('fileDateStartHint');
-                const endHint = document.getElementById('fileDateEndHint');
-                if (startHint) startHint.classList.remove('d-none');
-                if (endHint) endHint.classList.remove('d-none');
+                if (dateStartLabel) dateStartLabel.classList.add('d-none');
+                if (dateEndLabel) dateEndLabel.classList.add('d-none');
                 // Set sensible defaults and bounds
                 const today = new Date();
                 const oneYearAgo = new Date();
@@ -442,10 +438,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 applyCustom.classList.add('d-none');
                 if (dateStartLabel) dateStartLabel.classList.add('d-none');
                 if (dateEndLabel) dateEndLabel.classList.add('d-none');
-                const startHint = document.getElementById('fileDateStartHint');
-                const endHint = document.getElementById('fileDateEndHint');
-                if (startHint) startHint.classList.add('d-none');
-                if (endHint) endHint.classList.add('d-none');
                 await window.fetchFiles();
             }
         });
