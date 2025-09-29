@@ -109,6 +109,8 @@ Key CSS hooks:
 - Download/Delete buttons in KellyCloud style with sharp edges, equal widths, and spacing.
 - Removed redundant “File Categories” section; simplified chart controls; cache‑busting for `main.js`.
  - Branding polish: added SVG favicon; unified header spacing; gradient brand text next to logo; professional tab titles (`KellyCloud — Page`).
+ - Landing hero CTA updated to “Get Started” (no free tier wording).
+ - Password fields: visibility toggle moved inside inputs; confirm‑password now validates live and on blur.
 
 ### 🔐 **Enhanced Security & Authentication**
 - **Token-based Authentication** - Secure login/logout with session management
