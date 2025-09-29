@@ -169,6 +169,8 @@
             display: flex;
             border: 1px solid var(--kelly-gray-300);
         }
+        /* Hide empty storage bars so an empty line doesn't appear before data loads */
+        .storage-bar:empty { display: none; }
         
         .storage-segment {
             height: 100%;
