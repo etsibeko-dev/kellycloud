@@ -402,6 +402,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const datePreset = document.getElementById('fileDatePreset');
     const dateStart = document.getElementById('fileDateStart');
     const dateEnd = document.getElementById('fileDateEnd');
+    const dateStartLabel = document.getElementById('fileDateStartLabel');
+    const dateEndLabel = document.getElementById('fileDateEndLabel');
     const applyCustom = document.getElementById('applyCustomDate');
 
     if (datePreset) {
@@ -411,10 +413,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 dateStart.classList.remove('d-none');
                 dateEnd.classList.remove('d-none');
                 applyCustom.classList.remove('d-none');
+                if (dateStartLabel) dateStartLabel.classList.remove('d-none');
+                if (dateEndLabel) dateEndLabel.classList.remove('d-none');
+                // Set sensible defaults and bounds
+                const today = new Date();
+                const oneYearAgo = new Date();
+                oneYearAgo.setFullYear(today.getFullYear() - 1);
+                if (!dateStart.value) dateStart.valueAsDate = oneYearAgo;
+                if (!dateEnd.value) dateEnd.valueAsDate = today;
+                dateStart.max = dateEnd.value;
+                dateEnd.min = dateStart.value;
             } else {
                 dateStart.classList.add('d-none');
                 dateEnd.classList.add('d-none');
                 applyCustom.classList.add('d-none');
+                if (dateStartLabel) dateStartLabel.classList.add('d-none');
+                if (dateEndLabel) dateEndLabel.classList.add('d-none');
                 await window.fetchFiles();
             }
         });
@@ -422,6 +436,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (applyCustom) {
         applyCustom.addEventListener('click', async () => {
+            // keep bounds consistent if edited
+            if (dateStart.value && dateEnd.value) {
+                if (new Date(dateStart.value) > new Date(dateEnd.value)) {
+                    displayMessage('Start date cannot be after end date.', 'danger');
+                    return;
+                }
+            }
             await window.fetchFiles();
         });
     }
@@ -1885,10 +1906,10 @@ function filterFilesByDate(files) {
                 break;
             case 'custom':
                 if (dateStart && dateStart.value) {
-                    startDate = new Date(dateStart.value);
+                    startDate = new Date(dateStart.value + 'T00:00:00');
                 }
                 if (dateEnd && dateEnd.value) {
-                    endDate = new Date(dateEnd.value);
+                    endDate = new Date(dateEnd.value + 'T00:00:00');
                     // Include the entire end day
                     endDate.setHours(23, 59, 59, 999);
                 }
