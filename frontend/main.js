@@ -542,6 +542,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnStacked = document.getElementById('storageChartModeStacked');
     const btnArea = document.getElementById('storageChartModeArea');
     const ma7Toggle = document.getElementById('ma7Toggle');
+    const pieModeCategories = document.getElementById('pieModeCategories');
+    const pieModeTopFiles = document.getElementById('pieModeTopFiles');
     if (btnLine && btnBar) {
         const setActive = (mode) => {
             btnLine.classList.toggle('active', mode === 'line');
@@ -620,6 +622,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 } catch (e) { console.error(e); }
             });
         }
+    }
+    // Pie mode toggles
+    const togglePieMode = async (mode) => {
+        window.filePieMode = mode; // 'categories' | 'topfiles'
+        if (pieModeCategories && pieModeTopFiles) {
+            pieModeCategories.classList.toggle('active', mode === 'categories');
+            pieModeTopFiles.classList.toggle('active', mode === 'topfiles');
+        }
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+            const resp = await fetch('http://localhost:8000/api/files/', { headers: { 'Authorization': `Token ${token}` } });
+            if (resp.ok) {
+                const files = await resp.json();
+                createFileTypesChart(files);
+            }
+        } catch (e) { console.error(e); }
+    };
+    if (pieModeCategories && pieModeTopFiles) {
+        pieModeCategories.addEventListener('click', () => togglePieMode('categories'));
+        pieModeTopFiles.addEventListener('click', () => togglePieMode('topfiles'));
     }
 });
 
@@ -2007,7 +2030,7 @@ function createAnalyticsCharts(files) {
     // Create storage usage over time chart
     createStorageChart(files);
     
-    // Create file types category pie
+    // Create storage composition pie
     createFileTypesChart(files);
     // Create weekly uploads heatmap
     createUploadsHeatmap(files);
@@ -2239,31 +2262,43 @@ function createFileTypesChart(files) {
         window.fileTypesChartInstance.destroy();
     }
 
-    // Aggregate size by category
-    const toCategory = (t) => {
-        const x = (t || '').toLowerCase();
-        if (['jpg','jpeg','png','gif','bmp','tiff','heif','heic','webp','avif'].includes(x)) return 'Photos';
-        if (['mp4','mov','avi','wmv','flv','f4v','mkv','webm','m4v','3gp','ts'].includes(x)) return 'Videos';
-        if (['pdf','doc','docx','odt','rtf','wps','epub','mobi','xls','xlsx','ods','csv','tsv','ppt','pptx','odp','key','xml','json','yaml','md','tex'].includes(x)) return 'Documents';
-        return 'Others';
-    };
-    const bytesByCat = { Documents: 0, Photos: 0, Videos: 0, Others: 0 };
-    files.forEach(f => {
-        const cat = toCategory((f.file_type || 'unknown'));
-        bytesByCat[cat] += (f.file_size || 0);
-    });
-    const labels = Object.keys(bytesByCat);
-    const data = labels.map(k => +(bytesByCat[k] / (1024*1024)).toFixed(2));
-    const colors = ['#007aff','#ffcc00','#ff3b30','#8e8e93'];
-
-    window.fileTypesChartInstance = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels,
-            datasets: [{ data, backgroundColor: colors, borderWidth: 0 }]
-        },
-        options: { responsive: true, maintainAspectRatio: false, aspectRatio: 1, plugins: { legend: { position: 'bottom' } } }
-    });
+    const mode = window.filePieMode || 'categories';
+    if (mode === 'categories') {
+        const toCategory = (t) => {
+            const x = (t || '').toLowerCase();
+            if (['jpg','jpeg','png','gif','bmp','tiff','heif','heic','webp','avif'].includes(x)) return 'Photos';
+            if (['mp4','mov','avi','wmv','flv','f4v','mkv','webm','m4v','3gp','ts'].includes(x)) return 'Videos';
+            if (['pdf','doc','docx','odt','rtf','wps','epub','mobi','xls','xlsx','ods','csv','tsv','ppt','pptx','odp','key','xml','json','yaml','md','tex'].includes(x)) return 'Documents';
+            return 'Others';
+        };
+        const bytesByCat = { Documents: 0, Photos: 0, Videos: 0, Others: 0 };
+        files.forEach(f => {
+            const cat = toCategory((f.file_type || 'unknown'));
+            bytesByCat[cat] += (f.file_size || 0);
+        });
+        const labels = Object.keys(bytesByCat);
+        const data = labels.map(k => +(bytesByCat[k] / (1024*1024)).toFixed(2));
+        const colors = ['#007aff','#ffcc00','#ff3b30','#8e8e93'];
+        window.fileTypesChartInstance = new Chart(ctx, {
+            type: 'pie',
+            data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0 }] },
+            options: { responsive: true, maintainAspectRatio: false, aspectRatio: 1, plugins: { legend: { position: 'bottom' } } }
+        });
+    } else {
+        // Top 10 files by size (pie)
+        const sorted = [...files].sort((a,b) => (b.file_size||0) - (a.file_size||0)).slice(0, 10);
+        const labels = sorted.map(f => (f.name || 'Unnamed'));
+        const data = sorted.map(f => +(((f.file_size||0) / (1024*1024)).toFixed(2)));
+        const colors = ['#007aff','#34c759','#ff9500','#ff3b30','#af52de','#5ac8fa','#ffcc00','#8e8e93','#30d158','#ff2d92'];
+        window.fileTypesChartInstance = new Chart(ctx, {
+            type: 'pie',
+            data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0 }] },
+            options: {
+                responsive: true, maintainAspectRatio: false, aspectRatio: 1,
+                plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.parsed} MB` } } }
+            }
+        });
+    }
 }
 
 function getTimeAgo(date) {

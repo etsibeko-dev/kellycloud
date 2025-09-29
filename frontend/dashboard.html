@@ -1016,7 +1016,13 @@
                             </div>
                     <div class="col-md-4">
                         <div class="stats-card">
-                            <h5 class="mb-3">File Types by Category</h5>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">Storage Composition</h5>
+                                <div class="btn-group btn-group-sm" role="group" aria-label="Pie mode">
+                                    <button id="pieModeCategories" type="button" class="btn btn-outline-secondary active">Categories</button>
+                                    <button id="pieModeTopFiles" type="button" class="btn btn-outline-secondary">Top 10 Files</button>
+                                </div>
+                            </div>
                             <div style="position: relative; height: 300px; width: 100%;">
                                 <canvas id="fileTypesChart"></canvas>
                             </div>
