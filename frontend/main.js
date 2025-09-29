@@ -329,16 +329,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 const files = await response.json();
+                const filtered = filterFilesByDate(files);
                 const filesTableBody = document.querySelector('#filesTableBody');
                 console.log('🔍 DEBUG: filesTableBody found:', filesTableBody);
                 console.log('🔍 DEBUG: filesTableBody.insertRow exists:', filesTableBody && filesTableBody.insertRow);
                 
                 if (filesTableBody && filesTableBody.insertRow) {
                     filesTableBody.innerHTML = ''; // Clear existing rows
-                    console.log('🔍 DEBUG: About to create rows for', files.length, 'files');
+                    console.log('🔍 DEBUG: About to create rows for', filtered.length, 'files');
                     
-                    if (Array.isArray(files)) {
-                        files.forEach((file, index) => {
+                    if (Array.isArray(filtered)) {
+                        filtered.forEach((file, index) => {
                         console.log(`🔍 DEBUG: Creating row ${index + 1} for file:`, file.name);
                         const row = filesTableBody.insertRow();
                         row.insertCell().textContent = file.name;
@@ -384,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     console.log('🔍 DEBUG: Added event listeners to buttons');
                 } else {
-                    console.error('Files response is not an array:', files);
+                    console.error('Files response is not an array:', filtered);
                 }
             } else {
                 console.log('filesTableBody element not found or not a table - files table might not be on this page');
@@ -396,6 +397,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         };
         window.fetchFiles();
+
+    // Date filter controls for My Files
+    const datePreset = document.getElementById('fileDatePreset');
+    const dateStart = document.getElementById('fileDateStart');
+    const dateEnd = document.getElementById('fileDateEnd');
+    const applyCustom = document.getElementById('applyCustomDate');
+
+    if (datePreset) {
+        datePreset.addEventListener('change', async () => {
+            const preset = datePreset.value;
+            if (preset === 'custom') {
+                dateStart.classList.remove('d-none');
+                dateEnd.classList.remove('d-none');
+                applyCustom.classList.remove('d-none');
+            } else {
+                dateStart.classList.add('d-none');
+                dateEnd.classList.add('d-none');
+                applyCustom.classList.add('d-none');
+                await window.fetchFiles();
+            }
+        });
+    }
+
+    if (applyCustom) {
+        applyCustom.addEventListener('click', async () => {
+            await window.fetchFiles();
+        });
+    }
+
         loadUserSubscription();
         const uploadForm = document.querySelector('form');
         if (uploadForm) {
@@ -1820,6 +1850,61 @@ function updateFilesStorageBreakdown(files) {
             </div>
         `;
     }).join('');
+}
+
+function filterFilesByDate(files) {
+    try {
+        const datePreset = document.getElementById('fileDatePreset');
+        const dateStart = document.getElementById('fileDateStart');
+        const dateEnd = document.getElementById('fileDateEnd');
+        if (!datePreset) return files;
+
+        const preset = datePreset.value || 'all';
+        if (preset === 'all') return files;
+
+        const now = new Date();
+        let startDate = null;
+        let endDate = null;
+
+        switch (preset) {
+            case '7d':
+                startDate = new Date(now);
+                startDate.setDate(startDate.getDate() - 7);
+                break;
+            case '30d':
+                startDate = new Date(now);
+                startDate.setDate(startDate.getDate() - 30);
+                break;
+            case '6m':
+                startDate = new Date(now);
+                startDate.setMonth(startDate.getMonth() - 6);
+                break;
+            case '1y':
+                startDate = new Date(now);
+                startDate.setFullYear(startDate.getFullYear() - 1);
+                break;
+            case 'custom':
+                if (dateStart && dateStart.value) {
+                    startDate = new Date(dateStart.value);
+                }
+                if (dateEnd && dateEnd.value) {
+                    endDate = new Date(dateEnd.value);
+                    // Include the entire end day
+                    endDate.setHours(23, 59, 59, 999);
+                }
+                break;
+        }
+
+        return files.filter(f => {
+            const uploaded = new Date(f.upload_date);
+            if (startDate && uploaded < startDate) return false;
+            if (endDate && uploaded > endDate) return false;
+            return true;
+        });
+    } catch (e) {
+        console.error('Date filtering error:', e);
+        return files;
+    }
 }
 
 function createAnalyticsCharts(files) {

@@ -630,7 +630,20 @@
                 <div class="stats-card">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="mb-0">My Files</h5>
-                        <div class="d-flex gap-2">
+                        <div class="d-flex gap-2 align-items-center flex-wrap">
+                            <!-- Date filter presets -->
+                            <select class="form-select" id="fileDatePreset" style="width: 180px;">
+                                <option value="all" selected>All time</option>
+                                <option value="7d">Last 7 days</option>
+                                <option value="30d">Last 30 days</option>
+                                <option value="6m">Last 6 months</option>
+                                <option value="1y">Last 1 year</option>
+                                <option value="custom">Custom range</option>
+                            </select>
+                            <!-- Custom range inputs (hidden until 'custom') -->
+                            <input type="date" class="form-control d-none" id="fileDateStart" />
+                            <input type="date" class="form-control d-none" id="fileDateEnd" />
+                            <button class="btn btn-outline-secondary d-none" id="applyCustomDate">Apply</button>
                             <input type="text" class="form-control" placeholder="Search files..." id="fileSearch" style="width: 200px;">
                             <button class="btn btn-outline-primary" data-section="upload">
                                 <i class="fas fa-plus me-1"></i>Upload
@@ -649,7 +662,7 @@
                                 </tr>
                             </thead>
                             <tbody id="filesTableBody">
-                                <!-- Files will be loaded here -->
+                        <!-- Files will be loaded here -->
                             </tbody>
                         </table>
                     </div>
