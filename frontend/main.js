@@ -430,10 +430,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Initialize Flatpickr for beautiful dropdown calendars
                 if (window.flatpickr) {
                     if (!dateStart._fp) {
-                        window.flatpickr(dateStart, { dateFormat: 'd/m/Y' });
+                        window.flatpickr(dateStart, {
+                            dateFormat: 'd/m/Y',
+                            appendTo: document.body,
+                            static: false
+                        });
                     }
                     if (!dateEnd._fp) {
-                        window.flatpickr(dateEnd, { dateFormat: 'd/m/Y' });
+                        window.flatpickr(dateEnd, {
+                            dateFormat: 'd/m/Y',
+                            appendTo: document.body,
+                            static: false
+                        });
                     }
                 }
             } else {
