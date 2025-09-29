@@ -11,7 +11,7 @@ This is a **forked contribution** where I'm exploring how far I can push the con
 ### Current Status:
 - ✅ **Major UI/UX Overhaul** - Modern SaaS-style dashboard with cloud-themed styling
 - ✅ **Functionality Enhancements** - Better authentication, file management, and validation
-- ⚠️ **Responsive Design** - Still being refined for all screen sizes
+- 🚫 **Mobile Responsiveness** - Desktop-only for now; mobile is not planned by maintainer (contributions welcome)
 - ⚠️ **Production Features** - Missing security hardening, performance optimization, and production deployment features
 - 🔄 **Ongoing Development** - Continuously adding new features and improvements
 
@@ -36,7 +36,7 @@ While this project may never become a full production service, it serves as a fo
 ### 🎨 **Modern UI/UX Design**
 - **Professional KellyCloud Theme** - Complete design system with color palette, typography, and spacing
 - **iCloud-Style Storage Visualization** - Segmented progress bars with file type breakdown (Documents, Photos, Videos, Others)
-- **Responsive Design** - Optimized for mobile and desktop experiences
+- **Desktop-First Layout** - Designed for desktop screens; on small screens a friendly overlay is shown; mobile work not planned (PRs welcome)
 - **Professional Components** - Equal height cards, consistent button styling, modern dropdowns
 
 ### 📁 **Advanced File Management**
@@ -84,12 +84,12 @@ While this project may never become a full production service, it serves as a fo
   - Weekly uploads heatmap calendar (replacing legacy mock)
   - Per‑type daily stacked bars beyond 7‑day window
 
-### 📱 Small‑Screen Responsiveness
+### 📱 Mobile/Small‑Screen Policy
 
-To keep the layout stable on smaller screens while the mobile UI is in progress:
-- For viewports below 992px, the main dashboard and sidebar are hidden and a friendly overlay is shown stating the dashboard is not available on small screens yet.
-- Prevents layout shifts and keeps interactions predictable until the mobile experience ships.
-- Accessibility: overlay uses semantic markup, high contrast, and is announced politely.
+This project intentionally targets desktop screens. The maintainer does not plan to build a mobile layout at this time.
+- For viewports below 992px, the app hides the dashboard/sidebar and shows a friendly overlay explaining that mobile is not supported yet.
+- This avoids broken layouts and unexpected interactions on phones.
+- Contributions to add a proper mobile/responsive experience are welcome.
 
 Key CSS hooks:
 - `.small-screen-message` overlay with `@media (max-width: 992px)` to toggle visibility.
