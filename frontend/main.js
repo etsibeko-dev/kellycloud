@@ -423,6 +423,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!dateEnd.value) dateEnd.valueAsDate = today;
                 dateStart.max = dateEnd.value;
                 dateEnd.min = dateStart.value;
+                // Initialize Flatpickr for beautiful dropdown calendars
+                if (window.flatpickr) {
+                    if (!dateStart._fp) {
+                        window.flatpickr(dateStart, { dateFormat: 'd/m/Y' });
+                    }
+                    if (!dateEnd._fp) {
+                        window.flatpickr(dateEnd, { dateFormat: 'd/m/Y' });
+                    }
+                }
             } else {
                 dateStart.classList.add('d-none');
                 dateEnd.classList.add('d-none');
