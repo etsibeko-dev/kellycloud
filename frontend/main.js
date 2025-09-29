@@ -329,7 +329,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 const files = await response.json();
-                const filtered = filterFilesByDate(files);
+                const filteredByDate = filterFilesByDate(files);
+                const filtered = filterFilesByQuery(filteredByDate);
                 const filesTableBody = document.querySelector('#filesTableBody');
                 console.log('🔍 DEBUG: filesTableBody found:', filesTableBody);
                 console.log('🔍 DEBUG: filesTableBody.insertRow exists:', filesTableBody && filesTableBody.insertRow);
@@ -405,6 +406,15 @@ document.addEventListener('DOMContentLoaded', () => {
         datePreset.addEventListener('change', async () => {
             await window.fetchFiles();
         });
+    }
+
+    // Search input handler with debounce
+    const fileSearch = document.getElementById('fileSearch');
+    if (fileSearch) {
+        const debounced = debounce(async () => {
+            await window.fetchFiles();
+        }, 200);
+        fileSearch.addEventListener('input', debounced);
     }
 
     // Custom range temporarily removed
@@ -509,6 +519,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize form validation
     initializeValidation();
 });
+
+// Debounce utility
+function debounce(fn, delay) {
+    let t = null;
+    return (...args) => {
+        clearTimeout(t);
+        t = setTimeout(() => fn.apply(null, args), delay);
+    };
+}
 
 // Validation functions
 function validateEmail(email) {
@@ -1879,6 +1898,23 @@ function filterFilesByDate(files) {
     }
 }
 
+function filterFilesByQuery(files) {
+    try {
+        const input = document.getElementById('fileSearch');
+        if (!input) return files;
+        const q = (input.value || '').trim().toLowerCase();
+        if (!q) return files;
+
+        return files.filter(f => {
+            const name = (f.name || '').toLowerCase();
+            const type = (f.file_type || '').toLowerCase();
+            return name.includes(q) || type.includes(q);
+        });
+    } catch (e) {
+        console.error('Search filtering error:', e);
+        return files;
+    }
+}
 function createAnalyticsCharts(files) {
     // Create storage usage over time chart
     createStorageChart(files);
