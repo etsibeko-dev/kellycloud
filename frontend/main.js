@@ -746,6 +746,16 @@ function initializeValidation() {
             }
             
             showPasswordStrength(this, strengthContainer);
+
+            // Live re-validate confirm password if user changes main password
+            const confirmField = document.getElementById('confirm_password');
+            if (confirmField && confirmField.value.length > 0) {
+                if (validateConfirmPassword(password, confirmField.value)) {
+                    showFieldSuccess(confirmField);
+                } else {
+                    showFieldError(confirmField, 'Passwords do not match');
+                }
+            }
         });
     }
     
@@ -768,6 +778,17 @@ function initializeValidation() {
                 if (existingError) {
                     existingError.remove();
                 }
+            }
+        });
+        // Also validate on blur to ensure feedback even without typing
+        confirmPasswordField.addEventListener('blur', function() {
+            const password = passwordField ? passwordField.value : '';
+            const confirmPassword = this.value;
+            if (!confirmPassword) return;
+            if (validateConfirmPassword(password, confirmPassword)) {
+                showFieldSuccess(this);
+            } else {
+                showFieldError(this, 'Passwords do not match');
             }
         });
     }
