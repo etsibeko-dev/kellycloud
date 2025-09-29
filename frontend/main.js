@@ -2261,8 +2261,15 @@ function createUploadsHeatmap(files) {
     });
     let max = 1;
     Object.values(byDay).forEach(v => { if (v > max) max = v; });
-    let lastMonth = '';
+    // Prepare month label schedule so labels appear 4 columns after month start,
+    // except the first month which appears at column 0.
+    const monthLabelAtColumn = {};
+    let scheduledInitialized = false;
+    let currentMonthForSchedule = '';
+    let lastStartCol = 0;
+
     for (let w = weeks - 1; w >= 0; w--) {
+        const colIndex = (weeks - 1) - w; // left→right column index
         const weekCol = document.createElement('div');
         weekCol.className = 'gh-week';
         for (let d = 0; d < 7; d++) {
@@ -2279,21 +2286,32 @@ function createUploadsHeatmap(files) {
         }
         grid.appendChild(weekCol);
 
-        // Month labels: show when month changes at the top of the column
-        const monthDate = new Date(start.getFullYear(), start.getMonth(), start.getDate() - (weeks - 1 - w) * 7);
+        // Determine month at this column
+        const monthDate = new Date(start.getFullYear(), start.getMonth(), start.getDate() - colIndex * 7);
         const monthName = monthDate.toLocaleString('en', { month: 'short' });
-        if (monthName !== lastMonth) {
-            const m = document.createElement('div');
-            m.textContent = monthName;
-            m.className = lastMonth ? 'gh-month-start' : 'gh-month'; // add left padding except for the very first
-            monthsRow.appendChild(m);
-            lastMonth = monthName;
-        } else {
-            const spacer = document.createElement('div');
-            spacer.textContent = '';
-            spacer.className = 'gh-month-spacer';
-            monthsRow.appendChild(spacer);
+
+        if (!scheduledInitialized) {
+            // First (leftmost) month label at column 0
+            monthLabelAtColumn[0] = monthName;
+            currentMonthForSchedule = monthName;
+            lastStartCol = 0;
+            scheduledInitialized = true;
+        } else if (monthName !== currentMonthForSchedule) {
+            // New month starts at this column; schedule its label 4 columns later (or at end)
+            const targetCol = Math.min(colIndex + 4, weeks - 1);
+            monthLabelAtColumn[targetCol] = monthName;
+            currentMonthForSchedule = monthName;
+            lastStartCol = colIndex;
         }
+
+        // Render months row cell for this column
+        const mcell = document.createElement('div');
+        if (monthLabelAtColumn[colIndex]) {
+            mcell.textContent = monthLabelAtColumn[colIndex];
+        } else {
+            mcell.textContent = '';
+        }
+        monthsRow.appendChild(mcell);
     }
 }
 
