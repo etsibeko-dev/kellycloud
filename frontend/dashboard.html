@@ -518,6 +518,16 @@
             font-size: 14px;
         }
 
+        /* Keep toolbar items aligned on a single line when space allows */
+        .date-filter {
+            gap: 12px !important;
+        }
+        @media (max-width: 992px) {
+            .date-filter {
+                flex-wrap: wrap !important;
+            }
+        }
+
         /* Flatpickr overrides to match KellyCloud light theme */
         .flatpickr-calendar {
             background: var(--kelly-white) !important;
@@ -765,7 +775,7 @@
                 <div class="stats-card">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="mb-0">My Files</h5>
-                        <div class="d-flex gap-2 align-items-center flex-wrap date-filter">
+                        <div class="d-flex gap-2 align-items-center flex-nowrap date-filter">
                             <!-- Date filter presets -->
                             <select class="form-select preset-input" id="fileDatePreset" style="width: 180px;">
                                 <option value="all" selected>All time</option>
