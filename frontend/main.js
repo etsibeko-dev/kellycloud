@@ -2278,118 +2278,18 @@ function createUploadsTrend(files) {
     }
 
     window.uploadsTrendChart = new Chart(ctx, {
+        type: 'bar',
         data: { labels, datasets },
-        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true }, x: { grid: { display: false } } } }
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true }, x: { grid: { display: false } } }
+        }
     });
 
     if (showMA) showMA.onchange = () => createUploadsTrend(files);
 }
-    const wrap = document.getElementById('uploadsHeatmap');
-    if (!wrap) return;
-    wrap.innerHTML = '';
-    // structure: months row, day labels col, and grid
-    const monthsRow = document.createElement('div');
-    monthsRow.className = 'gh-heatmap-months small text-muted';
-    const dayLabels = document.createElement('div');
-    dayLabels.className = 'gh-heatmap-days small text-muted';
-    const grid = document.createElement('div');
-    grid.className = 'gh-heatmap';
-    wrap.appendChild(monthsRow);
-    wrap.appendChild(dayLabels);
-    wrap.appendChild(grid);
-
-    // Day labels rail: place Mon row 2, Wed row 4, Fri row 6 (rows 1..7)
-    const labels = ['', 'Mon', '', 'Wed', '', 'Fri', ''];
-    for (let r = 0; r < 7; r++) {
-        const el = document.createElement('div');
-        el.textContent = labels[r];
-        el.style.lineHeight = '12px';
-        dayLabels.appendChild(el);
-    }
-
-    // GitHub-like 52 weeks columns, each column is a week (Sun..Sat)
-    const weeks = 52;
-    const today = new Date();
-    // Start from the last Sunday
-    const start = new Date(today);
-    start.setDate(start.getDate() - ((start.getDay() + 7) % 7));
-    // Map yyyy-mm-dd -> count
-    const byDay = {};
-    files.forEach(f => {
-        const key = (f.upload_date || '').slice(0,10);
-        if (key) byDay[key] = (byDay[key] || 0) + 1;
-    });
-    let max = 1;
-    Object.values(byDay).forEach(v => { if (v > max) max = v; });
-    // Prepare month headers
-    // A) capture month name per column
-    // B) legacy schedule (kept) but we will re-render with constant gaps after loop
-    const monthNameByCol = new Array(weeks).fill('');
-    // Prepare month label schedule so labels appear 4 columns after month start,
-    // except the first month which appears at column 0.
-    const monthLabelAtColumn = {};
-    let scheduledInitialized = false;
-    let currentMonthForSchedule = '';
-    let lastStartCol = 0;
-
-    for (let w = weeks - 1; w >= 0; w--) {
-        const colIndex = (weeks - 1) - w; // left→right column index
-        const weekCol = document.createElement('div');
-        weekCol.className = 'gh-week';
-        for (let d = 0; d < 7; d++) {
-            const cellDate = new Date(start);
-            cellDate.setDate(cellDate.getDate() - (weeks - 1 - w) * 7 + d);
-            const key = cellDate.toISOString().slice(0,10);
-            const c = byDay[key] || 0;
-            const ratio = c / max;
-            const lv = c === 0 ? 0 : ratio < 0.25 ? 1 : ratio < 0.5 ? 2 : ratio < 0.75 ? 3 : 4;
-            const cell = document.createElement('div');
-            cell.className = `gh-cell gh-lv${lv}`;
-            cell.title = `${c} upload${c===1?'':'s'} on ${cellDate.toDateString()}`;
-            weekCol.appendChild(cell);
-        }
-        grid.appendChild(weekCol);
-
-        // Determine month at this column
-        const monthDate = new Date(start.getFullYear(), start.getMonth(), start.getDate() - colIndex * 7);
-        const monthName = monthDate.toLocaleString('en', { month: 'short' });
-        monthNameByCol[colIndex] = monthName;
-
-        if (!scheduledInitialized) {
-            // First (leftmost) month label at column 0
-            monthLabelAtColumn[0] = monthName;
-            currentMonthForSchedule = monthName;
-            lastStartCol = 0;
-            scheduledInitialized = true;
-        } else if (monthName !== currentMonthForSchedule) {
-            // New month starts at this column; schedule its label 5 columns later (or at end)
-            const targetCol = Math.min(colIndex + 5, weeks - 1);
-            monthLabelAtColumn[targetCol] = monthName;
-            currentMonthForSchedule = monthName;
-            lastStartCol = colIndex;
-        }
-
-        // Render months row cell for this column
-        const mcell = document.createElement('div');
-        if (monthLabelAtColumn[colIndex]) {
-            mcell.textContent = monthLabelAtColumn[colIndex];
-        } else {
-            mcell.textContent = '';
-        }
-        monthsRow.appendChild(mcell);
-    }
-    // Re-render months row with constant 5-column spacing between labels
-    const FIXED_GAP = 5; // equal gap between adjacent month labels
-    const cells = monthsRow.children.length;
-    if (cells === weeks) {
-        monthsRow.innerHTML = '';
-        for (let col = 0; col < weeks; col++) {
-            const mcell = document.createElement('div');
-            mcell.textContent = (col % FIXED_GAP === 0) ? (monthNameByCol[col] || '') : '';
-            monthsRow.appendChild(mcell);
-        }
-    }
-}
+// Legacy heatmap implementation removed
 
 function createFileTypesChart(files) {
     const ctx = document.getElementById('fileTypesChart');
@@ -2399,7 +2299,7 @@ function createFileTypesChart(files) {
     if (window.fileTypesChartInstance) {
         window.fileTypesChartInstance.destroy();
     }
-
+    
     const mode = window.filePieMode || 'categories';
     if (mode === 'categories') {
         const toCategory = (t) => {
@@ -2417,7 +2317,7 @@ function createFileTypesChart(files) {
         const labels = Object.keys(bytesByCat);
         const data = labels.map(k => +(bytesByCat[k] / (1024*1024)).toFixed(2));
         const colors = ['#007aff','#ffcc00','#ff3b30','#8e8e93'];
-        window.fileTypesChartInstance = new Chart(ctx, {
+    window.fileTypesChartInstance = new Chart(ctx, {
             type: 'pie',
             data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0 }] },
             options: { responsive: true, maintainAspectRatio: false, aspectRatio: 1, plugins: { legend: { position: 'bottom' } } }
