@@ -2,7 +2,7 @@
 
 > Seamless, secure cloud — blazing‑fast uploads, effortless sharing, bank‑grade protection, 99.99% uptime, and real human support.
 
-> **Forked cloud storage platform** with major UI/UX and functionality improvements by [@etsibeko-dev](https://github.com/etsibeko-dev)
+> **Independent cloud storage platform** — Originally forked from [COSTA300/kellycloud](https://github.com/COSTA300/kellycloud) but now completely independent with major UI/UX and functionality improvements by [@etsibeko-dev](https://github.com/etsibeko-dev)
 
 ## 📦 Concept Status
 
