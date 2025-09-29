@@ -488,10 +488,14 @@
             padding-right: 12px !important; /* equal to left */
             line-height: 26px !important;
             box-sizing: border-box !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: textfield !important;
+            appearance: none !important;
         }
         /* Normalize native date icon spacing to avoid extra right gap */
         input[type="date"].form-control.date-input::-webkit-calendar-picker-indicator {
             margin: 0 !important;
+            display: none !important; /* remove reserved icon space; we use Flatpickr */
         }
 
         /* Inline right-aligned labels inside date inputs */
