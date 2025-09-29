@@ -1675,6 +1675,9 @@ async function loadAnalyticsSection() {
             if (filesResponse.ok) {
                 const files = await filesResponse.json();
                 createAnalyticsCharts(files);
+                // Populate Recent Activity and Storage Breakdown panels
+                updateRecentActivity(files);
+                updateFilesStorageBreakdown(files);
             }
         }
     } catch (error) {
