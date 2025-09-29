@@ -2280,15 +2280,18 @@ function createUploadsHeatmap(files) {
         grid.appendChild(weekCol);
 
         // Month labels: show when month changes at the top of the column
-        const monthName = new Date(start.getFullYear(), start.getMonth(), start.getDate() - (weeks - 1 - w) * 7).toLocaleString('en', { month: 'short' });
+        const monthDate = new Date(start.getFullYear(), start.getMonth(), start.getDate() - (weeks - 1 - w) * 7);
+        const monthName = monthDate.toLocaleString('en', { month: 'short' });
         if (monthName !== lastMonth) {
             const m = document.createElement('div');
             m.textContent = monthName;
+            m.className = lastMonth ? 'gh-month-start' : 'gh-month'; // add left padding except for the very first
             monthsRow.appendChild(m);
             lastMonth = monthName;
         } else {
             const spacer = document.createElement('div');
             spacer.textContent = '';
+            spacer.className = 'gh-month-spacer';
             monthsRow.appendChild(spacer);
         }
     }

@@ -14,6 +14,7 @@
     grid-auto-flow: column;
     grid-auto-columns: min-content;
     gap: 4px;
+    white-space: nowrap;
 }
 .gh-heatmap-days {
     grid-column: 1 / 2;
@@ -31,6 +32,17 @@
     grid-auto-columns: min-content;
     gap: 4px;
     overflow-x: auto;
+}
+
+/* Month label spacing: add visual separation of four cells between months */
+.gh-month-start {
+    padding-left: calc((12px + 4px) * 4);
+}
+.gh-month {
+    padding-left: 0;
+}
+.gh-month-spacer {
+    width: 0;
 }
 .gh-week {
     display: grid;
