@@ -61,21 +61,51 @@ While this project may never become a full production service, it serves as a fo
   - **Deleted**: Count of files with `is_deleted = true` (soft‑deleted).
   - **Active Days**: Number of distinct calendar days on which you performed an action (upload/download/delete).
 - **Storage Usage Over Time (chart)**:
-  - The daily series shows MB added per day derived from real file `upload_date` and `size`.
-  - A toggle lets you switch between **Line** and **Bar** views for the same daily data.
-  - A **3‑day moving average** overlay smooths volatility: for day D, it averages values for D−1, D, and D+1 (edge days use available neighbors).
-- **Storage Breakdown (Analytics)**: Computed from your real files by categorizing extensions into `Documents`, `Photos`, `Videos`, and `Others` and summing actual sizes.
-- **Recent Activity**: Latest uploads/downloads/deletions derived from real file events.
+  - Daily series shows MB added per day from real file `upload_date` and `size`.
+  - Line chart with optional **7‑day moving average** toggle (3‑day MA is always included in code for smoothing).
+  - Auto-refresh: analytics re-polls every 60s when the section is visible.
+- **Storage Composition (pie)**:
+  - Dropdown to switch between **Categories** (Documents, Photos, Videos, Others) and **Top 10 Types** by space.
+  - Uses actual uploaded files; e.g., a large `.AppImage` is grouped under Others.
+- **Uploads Over the Year**: 52‑week bar chart with optional **4‑week moving average** overlay.
+- **Uploads by Category (7 days)**: Stacked bars by file category for the last 7 days.
+- **Storage Breakdown (panel)**: Shows the top 5 file types by percentage with mini progress bars.
+- **Recent Activity**: Always shows five rows; placeholders fill if there are fewer events.
 
 ##### Current vs Planned Analytics Visuals
 - ✅ Implemented:
-  - Line/Bar toggle on Storage Usage Over Time
-  - 3‑day moving average overlay in Line mode
+  - Storage Usage Over Time with moving average (3‑day base, 7‑day toggle)
+  - Storage Composition pie with dropdown: Categories vs Top 10 Types
+  - Uploads Over the Year (52‑week) with 4‑week MA
+  - Uploads by Category (last 7 days) stacked bars
+  - Recent Activity fixed at five items; Storage Breakdown top five types
 - 🧭 Roadmap (planned):
-  - Stacked bars by file type per day (PDF, JPG, etc.)
   - Cumulative area chart (total used over time)
-  - 7‑day moving average overlay
-  - Weekly uploads heatmap calendar
+  - Weekly uploads heatmap calendar (replacing legacy mock)
+  - Per‑type daily stacked bars beyond 7‑day window
+
+### 📱 Small‑Screen Responsiveness
+
+To keep the layout stable on smaller screens while the mobile UI is in progress:
+- For viewports below 992px, the main dashboard and sidebar are hidden and a friendly overlay is shown stating the dashboard is not available on small screens yet.
+- Prevents layout shifts and keeps interactions predictable until the mobile experience ships.
+- Accessibility: overlay uses semantic markup, high contrast, and is announced politely.
+
+Key CSS hooks:
+- `.small-screen-message` overlay with `@media (max-width: 992px)` to toggle visibility.
+- High z-index on date picker (Flatpickr) to ensure it overlays without pushing content.
+
+### 🧾 Recent Changes (Changelog)
+
+- iCloud‑style storage bar with legend and detailed breakdown.
+- File categorization audited; large binaries (e.g., `.AppImage`) rolled into Others.
+- Real download tracking with original filenames via `Content-Disposition` (CORS exposed).
+- Soft delete; lists and analytics filter `is_deleted`.
+- Analytics auto‑refresh and new charts: Composition dropdown, Uploads by Category, Yearly Uploads trend.
+- Recent Activity always five rows; Storage Breakdown shows top five types by percent.
+- My Files toolbar: date presets only, unified control heights, improved spacing; Upload moved to Upload page.
+- Download/Delete buttons in KellyCloud style with sharp edges, equal widths, and spacing.
+- Removed redundant “File Categories” section; simplified chart controls; cache‑busting for `main.js`.
 
 ### 🔐 **Enhanced Security & Authentication**
 - **Token-based Authentication** - Secure login/logout with session management
