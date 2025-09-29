@@ -1,4 +1,4 @@
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions, status, throttling
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
@@ -49,6 +49,7 @@ class LogoutView(APIView):
 class FileListCreateView(generics.ListCreateAPIView):
     serializer_class = FileSerializer
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = [throttling.UserRateThrottle]
     
     def get_queryset(self):
         return File.objects.filter(owner=self.request.user, is_deleted=False)
@@ -60,6 +61,15 @@ class FileListCreateView(generics.ListCreateAPIView):
             # Get actual file size from uploaded file
             uploaded_file = self.request.FILES.get('file')
             if uploaded_file:
+                # Basic file validation for concept
+                allowed_exts = {'.pdf', '.csv', '.txt', '.md', '.jpeg', '.jpg', '.png', '.gif', '.mp4', '.mov', '.avi', '.mkv', '.appimage'}
+                name_lower = uploaded_file.name.lower()
+                _, ext = os.path.splitext(name_lower)
+                if ext not in allowed_exts:
+                    raise Exception("File type not allowed")
+                max_bytes = 1024 * 1024 * 1024  # 1 GB per file cap for demo
+                if uploaded_file.size > max_bytes:
+                    raise Exception("File exceeds max allowed size (1GB)")
                 estimated_size = uploaded_file.size
             else:
                 # Fallback for demo files without actual upload
@@ -99,6 +109,7 @@ class FileDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 class FileDownloadView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    throttle_classes = [throttling.UserRateThrottle]
     
     def get(self, request, pk):
         try:
