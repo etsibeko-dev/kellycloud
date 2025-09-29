@@ -1407,10 +1407,28 @@ function updateDashboardStats(subscriptionData) {
         storageUsedDisplay.textContent = usedDisplay;
     }
     
-    // Update current plan display
+    // Update current plan display and match card/icon color to plan
     const currentPlanDisplay = document.getElementById('currentPlanDisplay');
+    const currentPlanCard = document.getElementById('currentPlanCard');
+    const currentPlanIcon = document.getElementById('currentPlanIcon');
     if (currentPlanDisplay) {
-        currentPlanDisplay.textContent = subscriptionData.plan_type.charAt(0).toUpperCase() + subscriptionData.plan_type.slice(1);
+        const planName = subscriptionData.plan_type.charAt(0).toUpperCase() + subscriptionData.plan_type.slice(1);
+        currentPlanDisplay.textContent = planName;
+        if (currentPlanCard && currentPlanIcon) {
+            // reset
+            currentPlanCard.style.borderColor = '';
+            currentPlanIcon.style.backgroundColor = '';
+            // map plan -> color
+            const planColors = {
+                basic: getComputedStyle(document.documentElement).getPropertyValue('--kelly-primary').trim() || '#0078D4',
+                standard: getComputedStyle(document.documentElement).getPropertyValue('--kelly-accent-purple').trim() || '#8764B8',
+                premium: getComputedStyle(document.documentElement).getPropertyValue('--kelly-accent-orange').trim() || '#D83B01'
+            };
+            const plan = (subscriptionData.plan_type || 'basic').toLowerCase();
+            const color = planColors[plan] || planColors.basic;
+            currentPlanCard.style.border = `1px solid ${color}`;
+            currentPlanIcon.style.backgroundColor = color;
+        }
     }
     
     // Storage visualization is now handled by updateICloudStorageDisplay function
