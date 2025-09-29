@@ -271,7 +271,8 @@ p {
 .hero-section {
     background: linear-gradient(135deg, var(--kelly-primary) 0%, var(--kelly-primary-dark) 100%);
     color: var(--kelly-white);
-    padding: var(--kelly-space-20) 0;
+    padding: 9rem 0; /* make hero taller */
+    min-height: 60vh; /* ensure presence on larger screens */
     text-align: center;
     display: flex;
     align-items: center;
@@ -293,7 +294,7 @@ p {
 }
 
 .hero-title {
-    font-size: var(--kelly-font-size-4xl);
+    font-size: 3.25rem; /* larger headline */
     font-weight: 600;
     margin-bottom: var(--kelly-space-6);
     letter-spacing: -0.01em;
@@ -303,14 +304,14 @@ p {
 }
 
 .hero-subtitle {
-    font-size: var(--kelly-font-size-lg);
+    font-size: 1.25rem;
     margin-bottom: var(--kelly-space-8);
     color: rgba(255, 255, 255, 0.9);
-    max-width: 600px;
+    max-width: 800px;
     margin-left: auto;
     margin-right: auto;
     font-weight: 400;
-    line-height: 1.5;
+    line-height: 1.6;
     position: relative;
     z-index: 1;
 }
