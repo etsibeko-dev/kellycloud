@@ -422,22 +422,22 @@
         }
 
         /* Date filter styling */
-        .date-filter .date-input,
-        .date-filter .preset-input {
-            height: 38px;
-            background: var(--kelly-white);
-            border: 1px solid var(--kelly-gray-300);
-            color: var(--kelly-gray-800);
-            border-radius: var(--kelly-radius-sm);
-            padding: 6px 10px;
-            box-shadow: var(--kelly-shadow-1);
-            transition: var(--kelly-transition-fast);
+        .date-filter .form-control.date-input,
+        .date-filter .form-select.preset-input {
+            height: 38px !important;
+            background: var(--kelly-white) !important;
+            border: 1px solid var(--kelly-gray-300) !important;
+            color: var(--kelly-gray-800) !important;
+            border-radius: var(--kelly-radius-sm) !important;
+            padding: 6px 10px !important;
+            box-shadow: var(--kelly-shadow-1) !important;
+            transition: var(--kelly-transition-fast) !important;
         }
-        .date-filter .date-input:focus,
-        .date-filter .preset-input:focus {
-            border-color: var(--kelly-primary);
-            box-shadow: 0 0 0 3px rgba(0,122,255,0.15);
-            outline: none;
+        .date-filter .form-control.date-input:focus,
+        .date-filter .form-select.preset-input:focus {
+            border-color: var(--kelly-primary) !important;
+            box-shadow: 0 0 0 3px rgba(0,122,255,0.15) !important;
+            outline: none !important;
         }
         .date-filter .date-input::-webkit-calendar-picker-indicator {
             filter: invert(30%);
@@ -448,6 +448,17 @@
             color: var(--kelly-gray-600);
             margin-left: 2px;
             margin-bottom: 4px;
+        }
+        .date-filter #applyCustomDate {
+            height: 38px;
+            border-color: var(--kelly-gray-300);
+            color: var(--kelly-gray-800);
+            background: var(--kelly-white);
+        }
+        .date-filter #applyCustomDate:hover {
+            border-color: var(--kelly-primary);
+            color: var(--kelly-primary);
+            background: var(--kelly-primary-light);
         }
     </style>
 </head>
