@@ -29,10 +29,11 @@ This fork represents my exploration of modern web development practices, where I
 - `ARCHITECTURE.md` — frontend/back‑end shape and data flow
 - `ANALYTICS.md` — metrics and charts
 - `UX_NOTES.md` — rationale for key UX choices
+- `SECURITY.md` — security posture for the concept and hardening guidance
 
 ---
 
-**Original Project**: This is a fork of the original KellyCloud project by [COSTA300](https://github.com/COSTA300/kellycloud). Built with Django REST Framework and vanilla JavaScript, featuring user authentication, file upload, subscription management, and a clean, responsive design.
+**Original Project**: This is a fork of the original KellyCloud project by [COSTA300](https://github.com/COSTA300/kellycloud). Built with Django REST Framework and vanilla JavaScript, featuring user authentication, file upload, subscription management, and a clean design.
 
 ## ✨ Key Features & Improvements
 
@@ -96,7 +97,7 @@ This project intentionally targets desktop screens. The maintainer does not plan
 
 Key CSS hooks:
 - `.small-screen-message` overlay with `@media (max-width: 992px)` to toggle visibility.
-- High z-index on date picker (Flatpickr) to ensure it overlays without pushing content.
+- High z-index on date picker to ensure it overlays without pushing content.
 
 ### 🧾 Recent Changes (Changelog)
 
@@ -109,9 +110,9 @@ Key CSS hooks:
 - My Files toolbar: date presets only, unified control heights, improved spacing; Upload moved to Upload page.
 - Download/Delete buttons in KellyCloud style with sharp edges, equal widths, and spacing.
 - Removed redundant “File Categories” section; simplified chart controls; cache‑busting for `main.js`.
- - Branding polish: added SVG favicon; unified header spacing; gradient brand text next to logo; professional tab titles (`KellyCloud — Page`).
- - Landing hero CTA updated to “Get Started” (no free tier wording).
- - Password fields: visibility toggle moved inside inputs; confirm‑password now validates live and on blur.
+- Branding polish: added SVG favicon; unified header spacing; gradient brand text next to logo; professional tab titles (`KellyCloud — Page`).
+- Landing hero CTA updated to “Get Started” (no free tier wording).
+- Password fields: visibility toggle moved inside inputs; confirm‑password now validates live and on blur.
 
 ### 🔐 **Enhanced Security & Authentication**
 - **Token-based Authentication** - Secure login/logout with session management
@@ -196,40 +197,49 @@ Key CSS hooks:
 
 ```
 kellycloud/
-├── README.md                   # Project documentation
-├── .gitignore                  # Git ignore rules
-├── requirements.txt            # Python dependencies
-├── LICENSE                     # License file
-├── .env.example               # Environment template
+├── README.md
+├── SECURITY.md
+├── LICENSE
+├── requirements.txt
 ├── backend/
-│   ├── .venv/                 # Virtual environment
-│   ├── main/                  # Django project
-│   │   ├── apps/              # Django applications
-│   │   │   ├── api/           # API endpoints & models
-│   │   │   │   ├── models.py  # Subscription & UserSubscription models
-│   │   │   │   ├── views.py   # API views (auth, files, subscriptions)
-│   │   │   │   ├── serializers.py # Data serializers
-│   │   │   │   └── urls.py    # API URL patterns
-│   │   │   └── storage/       # File storage
-│   │   │       ├── models.py  # File model
-│   │   │       └── management/ # Custom commands
-│   │   ├── settings.py        # Django settings
-│   │   ├── urls.py           # Main URL configuration
-│   │   └── wsgi.py           # WSGI configuration
-│   ├── manage.py             # Django management
-│   ├── db.sqlite3            # SQLite database
-│   └── media/                # User uploaded files
+│   ├── requirements.txt
+│   └── main/
+│       ├── manage.py
+│       ├── main/
+│       │   ├── settings.py
+│       │   ├── urls.py
+│       │   ├── wsgi.py
+│       │   └── asgi.py
+│       └── apps/
+│           ├── api/
+│           │   ├── models.py
+│           │   ├── serializers.py
+│           │   ├── views.py
+│           │   ├── urls.py
+│           │   └── management/commands/
+│           ├── storage/
+│           │   ├── models.py
+│           │   └── management/commands/
+│           └── ...
 ├── frontend/
-│   ├── index.html            # Landing page
-│   ├── login.html            # Login page
-│   ├── register.html         # Registration page
-│   ├── pricing.html          # Pricing plans page
-│   ├── dashboard.html        # User dashboard
-│   ├── style.css             # Custom styling
-│   ├── main.js               # JavaScript functionality
-│   └── package.json          # Frontend dependencies
-└── docs/                     # Documentation
-    └── setup.md              # Setup guide
+│   ├── index.html
+│   ├── login.html
+│   ├── register.html
+│   ├── pricing.html
+│   ├── dashboard.html
+│   ├── style.css
+│   ├── main.js
+│   ├── main.ts
+│   ├── tsconfig.json
+│   ├── package.json
+│   └── assets/
+│       └── kellycloud-logo.svg
+├── CONCEPT.md
+├── ARCHITECTURE.md
+├── ANALYTICS.md
+├── UX_NOTES.md
+└── docs/
+    └── setup.md
 ```
 
 ## 🔧 Development
