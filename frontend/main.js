@@ -273,8 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-        // Lightweight notifications: poll files and detect new uploads
-        startNewFileNotifications();
+        // Notifications kept static for now (no live polling)
 
         const deleteFile = async (fileId) => {
             showLoadingIndicator(); // Show loading indicator
@@ -1300,84 +1299,7 @@ function initializeNavigation() {
     }
 }
 
-// --- Notifications: "New file uploaded" ---
-let __lastNotifiedUploadAt = null;
-function startNewFileNotifications() {
-    try {
-        const badge = document.getElementById('notificationsBadge');
-        const menu = document.getElementById('notificationsMenu');
-        if (!badge || !menu) return;
-        const token = localStorage.getItem('token');
-        if (!token) return;
-
-        // Track seen ids to avoid flooding
-        if (!window.__seenNotificationFileIds) window.__seenNotificationFileIds = new Set();
-        // Fetch once to prime last timestamp
-        const prime = async () => {
-            try {
-                const resp = await fetch('http://localhost:8000/api/files/', { headers: { 'Authorization': `Token ${token}` } });
-                if (!resp.ok) return;
-                const files = await resp.json();
-                const latest = files.reduce((max, f) => Math.max(max, new Date(f.upload_date).getTime()), 0);
-                __lastNotifiedUploadAt = latest || Date.now();
-                // Seed seen ids with most recent files to prevent initial spam
-                files.slice(-20).forEach(f => window.__seenNotificationFileIds.add(f.id));
-            } catch (e) { /* ignore */ }
-        };
-        prime();
-
-        if (window.__newFilePollId) clearInterval(window.__newFilePollId);
-        window.__newFilePollId = setInterval(async () => {
-            try {
-                const resp = await fetch('http://localhost:8000/api/files/', { headers: { 'Authorization': `Token ${token}` } });
-                if (!resp.ok) return;
-                const files = await resp.json();
-                const latestTime = files.reduce((max, f) => Math.max(max, new Date(f.upload_date).getTime()), 0);
-                if (__lastNotifiedUploadAt && latestTime > __lastNotifiedUploadAt) {
-                    // New upload detected
-                    let newFiles = files
-                        .filter(f => new Date(f.upload_date).getTime() > __lastNotifiedUploadAt && !window.__seenNotificationFileIds.has(f.id))
-                        .sort((a,b) => new Date(a.upload_date) - new Date(b.upload_date));
-
-                    if (newFiles.length > 0) {
-                        // Update badge count
-                        const count = parseInt(badge.textContent || '0', 10) + newFiles.length;
-                        badge.textContent = String(count);
-
-                        const MAX_RENDER = 5;
-                        const toRender = newFiles.slice(-MAX_RENDER); // render only latest few
-                        const overflow = newFiles.length - toRender.length;
-
-                        toRender.forEach(f => {
-                            const li = document.createElement('li');
-                            li.innerHTML = `<a class=\"dropdown-item\" href=\"#\">New file uploaded — ${f.name}</a>`;
-                            menu.insertBefore(li, menu.firstChild);
-                            window.__seenNotificationFileIds.add(f.id);
-                        });
-
-                        if (overflow > 0) {
-                            const li = document.createElement('li');
-                            li.innerHTML = `<a class=\"dropdown-item text-muted\" href=\"#\">+ ${overflow} more uploads</a>`;
-                            menu.insertBefore(li, menu.firstChild);
-                        }
-
-                        // Cap menu length
-                        const MAX_MENU_ITEMS = 15;
-                        while (menu.children.length > MAX_MENU_ITEMS) {
-                            menu.removeChild(menu.lastElementChild);
-                        }
-                    }
-
-                    __lastNotifiedUploadAt = latestTime;
-                }
-            } catch (e) {
-                // ignore transient errors
-            }
-        }, 20000); // poll every 20s
-    } catch (e) {
-        // no-op
-    }
-}
+// Notifications polling removed (kept static)
 
 function showSection(sectionName) {
     // Hide all sections
