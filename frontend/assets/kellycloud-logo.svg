@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="g" x1="8" y1="12" x2="56" y2="52" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#007AFF"/>
+      <stop offset="1" stop-color="#34C759"/>
+    </linearGradient>
+  </defs>
+  <path d="M22 50h22c9 0 14-6 14-12 0-6-4-11-10-12-2-8-9-14-18-14-9 0-17 7-18 16-6 1-10 6-10 12 0 7 6 10 12 10h8z" fill="url(#g)"/>
+  <text x="50%" y="58%" text-anchor="middle" font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial" font-size="18" font-weight="700" fill="#FFFFFF">KC</text>
+</svg>
+
