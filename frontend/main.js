@@ -2238,14 +2238,14 @@ function createUploadsHeatmap(files) {
     wrap.appendChild(dayLabels);
     wrap.appendChild(grid);
 
-    // Day labels (Mon, Wed, Fri like GitHub; but our rows start Sun(0) .. Sat(6))
-    const labels = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    [1,3,5].forEach(idx => {
+    // Day labels rail: 7 rows total; put Mon on row 2, Wed on row 4, Fri on row 6
+    const labels = ['','','Mon','','Wed','','Fri'];
+    for (let r = 0; r < 7; r++) {
         const el = document.createElement('div');
-        el.textContent = labels[idx];
+        el.textContent = labels[r];
         el.style.lineHeight = '12px';
         dayLabels.appendChild(el);
-    });
+    }
 
     // GitHub-like 52 weeks columns, each column is a week (Sun..Sat)
     const weeks = 52;
