@@ -196,6 +196,14 @@ body {
     color: var(--kelly-primary-hover) !important;
 }
 
+/* Brand gradient text to match logo (blue → green) */
+.brand-gradient {
+    background: linear-gradient(90deg, #007AFF, #34C759);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+}
+
 .navbar-nav {
     display: flex;
     align-items: center;
