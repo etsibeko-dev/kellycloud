@@ -1,5 +1,7 @@
 # ☁️ KellyCloud
 
+> Seamless, secure cloud — blazing‑fast uploads, effortless sharing, bank‑grade protection, 99.99% uptime, and real human support.
+
 > **Forked cloud storage platform** with major UI/UX and functionality improvements by [@etsibeko-dev](https://github.com/etsibeko-dev)
 
 ## ⚠️ Development Notice
