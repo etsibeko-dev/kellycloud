@@ -311,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 hideLoadingIndicator(); // Hide loading indicator
             }
         };
-        const fetchFiles = async () => {
+        window.fetchFiles = async () => {
             showLoadingIndicator(); // Show loading indicator
             try {
                 const response = await fetch('http://localhost:8000/api/files/', {
@@ -394,8 +394,8 @@ document.addEventListener('DOMContentLoaded', () => {
         } finally {
             hideLoadingIndicator(); // Hide loading indicator
         }
-    };
-        fetchFiles();
+        };
+        window.fetchFiles();
         loadUserSubscription();
         const uploadForm = document.querySelector('form');
         if (uploadForm) {

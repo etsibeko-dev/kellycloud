@@ -122,6 +122,8 @@ class FileDownloadView(APIView):
             # Optional: explicit content type fallback
             if 'Content-Type' not in response:
                 response['Content-Type'] = 'application/octet-stream'
+            # Expose Content-Disposition so frontend (different origin) can read filename
+            response['Access-Control-Expose-Headers'] = 'Content-Disposition'
             return response
             
         except File.DoesNotExist:
