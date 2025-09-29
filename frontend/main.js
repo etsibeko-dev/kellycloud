@@ -2238,8 +2238,8 @@ function createUploadsHeatmap(files) {
     wrap.appendChild(dayLabels);
     wrap.appendChild(grid);
 
-    // Day labels rail: 7 rows total; put Mon on row 2, Wed on row 4, Fri on row 6
-    const labels = ['','','Mon','','Wed','','Fri'];
+    // Day labels rail: push up one row → Mon row 1, Wed row 3, Fri row 5
+    const labels = ['Mon','','Wed','','Fri','',''];
     for (let r = 0; r < 7; r++) {
         const el = document.createElement('div');
         el.textContent = labels[r];
