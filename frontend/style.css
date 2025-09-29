@@ -843,6 +843,35 @@ footer {
     flex-shrink: 0;
 }
 
+/* Inline password field: place eye inside input so focus/validation wraps it */
+.password-field {
+    position: relative;
+}
+
+.password-field .form-control {
+    padding-right: 42px; /* space for eye button */
+}
+
+.password-toggle {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: #6b7280;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    cursor: pointer;
+}
+
+.password-toggle:hover i { color: #374151; }
+.password-toggle:focus { outline: none; }
+
 /* Ensure input groups have consistent width with regular inputs */
 .input-group {
     width: 100%;
