@@ -2122,24 +2122,23 @@ function createStorageChart(files) {
             borderRadius: 0
         });
     } else if (mode === 'stacked') {
-        // Stacked by file type per day
-        const typesSet = new Set();
-        Object.values(storageByTypePerDay).forEach(day => Object.keys(day).forEach(t => typesSet.add(t)));
-        const types = Array.from(typesSet).slice(0, 6);
-        const colors = ['#007aff','#34c759','#ff9500','#ff3b30','#af52de','#5ac8fa'];
-        types.forEach((t, idx) => {
+        // Stacked by high-level category per day (Documents, Photos, Videos, Others)
+        const toCategory = (t) => {
+            const x = (t || '').toLowerCase();
+            if (['jpg','jpeg','png','gif','bmp','tiff','heif','heic','webp','avif'].includes(x)) return 'Photos';
+            if (['mp4','mov','avi','wmv','flv','f4v','mkv','webm','m4v','3gp','ts'].includes(x)) return 'Videos';
+            if (['pdf','doc','docx','odt','rtf','wps','epub','mobi','xls','xlsx','ods','csv','tsv','ppt','pptx','odp','key','xml','json','yaml','md','tex'].includes(x)) return 'Documents';
+            return 'Others';
+        };
+        const categories = ['Documents','Photos','Videos','Others'];
+        const colors = ['#007aff','#ffcc00','#ff3b30','#8e8e93'];
+        categories.forEach((cat, idx) => {
             const data = last7Days.map(label => {
-                const bytes = (storageByTypePerDay[label] && storageByTypePerDay[label][t]) || 0;
+                const bucket = storageByTypePerDay[label] || {};
+                const bytes = Object.entries(bucket).reduce((sum, [type, b]) => sum + (toCategory(type) === cat ? b : 0), 0);
                 return +(bytes / (1024*1024)).toFixed(2);
             });
-            datasets.push({
-                type: 'bar',
-                label: t,
-                data,
-                backgroundColor: colors[idx % colors.length],
-                stack: 'types',
-                borderWidth: 0
-            });
+            datasets.push({ type: 'bar', label: cat, data, backgroundColor: colors[idx], stack: 'cats', borderWidth: 0 });
         });
     } else if (mode === 'area') {
         // Cumulative area chart
@@ -2239,50 +2238,69 @@ function createFileTypesChart(files) {
     if (window.fileTypesChartInstance) {
         window.fileTypesChartInstance.destroy();
     }
-    
-    // Calculate file types distribution
-    const typeCount = {};
-    files.forEach(file => {
-        const type = file.file_type || 'unknown';
-        typeCount[type] = (typeCount[type] || 0) + 1;
+
+    const topNSelect = document.getElementById('fileTypesTopN');
+    const N = parseInt((topNSelect && topNSelect.value) || '7', 10);
+
+    // Build size per type (MB)
+    const sizeByType = {};
+    files.forEach(f => {
+        const t = (f.file_type || 'unknown').toUpperCase();
+        sizeByType[t] = (sizeByType[t] || 0) + (f.file_size || 0);
     });
-    
-    const labels = Object.keys(typeCount);
-    const data = Object.values(typeCount);
-    const colors = [
-        '#007aff', '#34c759', '#ff9500', '#ff3b30', '#af52de',
-        '#ff2d92', '#5ac8fa', '#ffcc00', '#8e8e93', '#30d158'
-    ];
-    
+    const entries = Object.entries(sizeByType)
+        .map(([t, bytes]) => [t, +(bytes / (1024*1024)).toFixed(2)])
+        .sort((a,b) => b[1] - a[1]);
+    const top = entries.slice(0, N);
+    const others = entries.slice(N).reduce((s, [,mb]) => s + mb, 0);
+    const labels = top.map(([t]) => t).concat(others > 0 ? ['OTHERS'] : []);
+    const data = top.map(([,mb]) => mb).concat(others > 0 ? [+(others.toFixed(2))] : []);
+
+    // Pareto cumulative line
+    const total = data.reduce((s,v) => s+v, 0) || 1;
+    let cum = 0;
+    const cumulative = data.map(v => { cum += v; return +(100*cum/total).toFixed(1); });
+
     window.fileTypesChartInstance = new Chart(ctx, {
-        type: 'doughnut',
         data: {
-            labels: labels.map(label => label.toUpperCase()),
-            datasets: [{
-                data: data,
-                backgroundColor: colors.slice(0, labels.length),
-                borderWidth: 0,
-                cutout: '60%'
-            }]
-        },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                aspectRatio: 1,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            padding: 20,
-                            usePointStyle: true,
-                            font: {
-                                size: 12
-                            }
-                        }
-                    }
+            labels,
+            datasets: [
+                {
+                    type: 'bar',
+                    label: 'Size (MB)',
+                    data,
+                    backgroundColor: 'rgba(0,122,255,0.7)',
+                    borderWidth: 0
+                },
+                {
+                    type: 'line',
+                    label: 'Cumulative %',
+                    data: cumulative,
+                    yAxisID: 'y1',
+                    borderColor: '#34c759',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    tension: 0.2,
+                    pointRadius: 2
                 }
-            }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            aspectRatio: 1,
+            scales: {
+                y: { beginAtZero: true, title: { display: true, text: 'MB' } },
+                y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { callback: v => v + '%' } }
+            },
+            plugins: { legend: { position: 'bottom' } }
+        }
     });
+
+    if (topNSelect && !topNSelect._bound) {
+        topNSelect.addEventListener('change', () => createFileTypesChart(files));
+        topNSelect._bound = true;
+    }
 }
 
 function getTimeAgo(date) {
