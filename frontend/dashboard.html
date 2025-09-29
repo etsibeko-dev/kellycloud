@@ -473,9 +473,10 @@
 
         /* Tweak select specifically to visually match inputs/buttons */
         .date-filter .form-select.preset-input {
-            padding-top: 8px !important;
-            padding-bottom: 8px !important;
-            font-size: 0.95rem !important;
+            height: 42px !important;
+            padding: 8px 12px !important;
+            line-height: 26px !important; /* ensures visual height equals inputs/buttons */
+            box-sizing: border-box !important;
         }
 
         /* Flatpickr overrides to match KellyCloud light theme */
