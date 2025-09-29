@@ -415,6 +415,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 applyCustom.classList.remove('d-none');
                 if (dateStartLabel) dateStartLabel.classList.add('d-none');
                 if (dateEndLabel) dateEndLabel.classList.add('d-none');
+                const startInline = document.getElementById('fileDateStartInlineLabel');
+                const endInline = document.getElementById('fileDateEndInlineLabel');
+                if (startInline) startInline.classList.remove('d-none');
+                if (endInline) endInline.classList.remove('d-none');
                 // Set sensible defaults and bounds
                 const today = new Date();
                 const oneYearAgo = new Date();
@@ -438,6 +442,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 applyCustom.classList.add('d-none');
                 if (dateStartLabel) dateStartLabel.classList.add('d-none');
                 if (dateEndLabel) dateEndLabel.classList.add('d-none');
+                const startInline = document.getElementById('fileDateStartInlineLabel');
+                const endInline = document.getElementById('fileDateEndInlineLabel');
+                if (startInline) startInline.classList.add('d-none');
+                if (endInline) endInline.classList.add('d-none');
                 await window.fetchFiles();
             }
         });

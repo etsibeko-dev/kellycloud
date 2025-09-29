@@ -501,6 +501,12 @@
             pointer-events: none;
         }
 
+        .date-inline-label {
+            color: var(--kelly-gray-700);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
         /* Flatpickr overrides to match KellyCloud light theme */
         .flatpickr-calendar {
             background: var(--kelly-white) !important;
@@ -760,11 +766,13 @@
                             </select>
                             <!-- Custom range inputs (hidden until 'custom') -->
                             <div class="d-flex gap-2 align-items-center">
+                                <span class="date-inline-label d-none" id="fileDateStartInlineLabel">Start</span>
                                 <div class="d-flex flex-column position-relative date-inline-wrapper">
-                                    <input type="date" placeholder="Start" class="form-control date-input d-none" id="fileDateStart" />
+                                    <input type="date" class="form-control date-input d-none" id="fileDateStart" />
                                 </div>
+                                <span class="date-inline-label d-none" id="fileDateEndInlineLabel">End</span>
                                 <div class="d-flex flex-column position-relative date-inline-wrapper">
-                                    <input type="date" placeholder="End" class="form-control date-input d-none" id="fileDateEnd" />
+                                    <input type="date" class="form-control date-input d-none" id="fileDateEnd" />
                                 </div>
                             </div>
                             <button class="btn btn-outline-secondary d-none" id="applyCustomDate">Apply</button>
