@@ -2007,7 +2007,7 @@ function createAnalyticsCharts(files) {
     // Create storage usage over time chart
     createStorageChart(files);
     
-    // Create file types distribution chart
+    // Create file types category pie
     createFileTypesChart(files);
     // Create weekly uploads heatmap
     createUploadsHeatmap(files);
@@ -2239,68 +2239,31 @@ function createFileTypesChart(files) {
         window.fileTypesChartInstance.destroy();
     }
 
-    const topNSelect = document.getElementById('fileTypesTopN');
-    const N = parseInt((topNSelect && topNSelect.value) || '7', 10);
-
-    // Build size per type (MB)
-    const sizeByType = {};
+    // Aggregate size by category
+    const toCategory = (t) => {
+        const x = (t || '').toLowerCase();
+        if (['jpg','jpeg','png','gif','bmp','tiff','heif','heic','webp','avif'].includes(x)) return 'Photos';
+        if (['mp4','mov','avi','wmv','flv','f4v','mkv','webm','m4v','3gp','ts'].includes(x)) return 'Videos';
+        if (['pdf','doc','docx','odt','rtf','wps','epub','mobi','xls','xlsx','ods','csv','tsv','ppt','pptx','odp','key','xml','json','yaml','md','tex'].includes(x)) return 'Documents';
+        return 'Others';
+    };
+    const bytesByCat = { Documents: 0, Photos: 0, Videos: 0, Others: 0 };
     files.forEach(f => {
-        const t = (f.file_type || 'unknown').toUpperCase();
-        sizeByType[t] = (sizeByType[t] || 0) + (f.file_size || 0);
+        const cat = toCategory((f.file_type || 'unknown'));
+        bytesByCat[cat] += (f.file_size || 0);
     });
-    const entries = Object.entries(sizeByType)
-        .map(([t, bytes]) => [t, +(bytes / (1024*1024)).toFixed(2)])
-        .sort((a,b) => b[1] - a[1]);
-    const top = entries.slice(0, N);
-    const others = entries.slice(N).reduce((s, [,mb]) => s + mb, 0);
-    const labels = top.map(([t]) => t).concat(others > 0 ? ['OTHERS'] : []);
-    const data = top.map(([,mb]) => mb).concat(others > 0 ? [+(others.toFixed(2))] : []);
-
-    // Pareto cumulative line
-    const total = data.reduce((s,v) => s+v, 0) || 1;
-    let cum = 0;
-    const cumulative = data.map(v => { cum += v; return +(100*cum/total).toFixed(1); });
+    const labels = Object.keys(bytesByCat);
+    const data = labels.map(k => +(bytesByCat[k] / (1024*1024)).toFixed(2));
+    const colors = ['#007aff','#ffcc00','#ff3b30','#8e8e93'];
 
     window.fileTypesChartInstance = new Chart(ctx, {
+        type: 'pie',
         data: {
             labels,
-            datasets: [
-                {
-                    type: 'bar',
-                    label: 'Size (MB)',
-                    data,
-                    backgroundColor: 'rgba(0,122,255,0.7)',
-                    borderWidth: 0
-                },
-                {
-                    type: 'line',
-                    label: 'Cumulative %',
-                    data: cumulative,
-                    yAxisID: 'y1',
-                    borderColor: '#34c759',
-                    backgroundColor: 'transparent',
-                    borderWidth: 2,
-                    tension: 0.2,
-                    pointRadius: 2
-                }
-            ]
+            datasets: [{ data, backgroundColor: colors, borderWidth: 0 }]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            aspectRatio: 1,
-            scales: {
-                y: { beginAtZero: true, title: { display: true, text: 'MB' } },
-                y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { callback: v => v + '%' } }
-            },
-            plugins: { legend: { position: 'bottom' } }
-        }
+        options: { responsive: true, maintainAspectRatio: false, aspectRatio: 1, plugins: { legend: { position: 'bottom' } } }
     });
-
-    if (topNSelect && !topNSelect._bound) {
-        topNSelect.addEventListener('change', () => createFileTypesChart(files));
-        topNSelect._bound = true;
-    }
 }
 
 function getTimeAgo(date) {
