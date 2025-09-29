@@ -53,6 +53,30 @@ While this project may never become a full production service, it serves as a fo
 - **Interactive Charts** - Storage usage visualization with Chart.js
 - **User Activity Metrics** - Active days, file statistics, and usage patterns
 
+#### How Analytics Works
+- **Data source**: The frontend fetches your actual files from `GET /api/files/` and summary metrics from `GET /api/analytics/`. File downloads are streamed from `GET /api/files/<id>/download/` and increment `download_count` server‑side. Deletions are soft deletes via `DELETE /api/files/<id>/` and are reflected in analytics.
+- **Key metrics (cards)**:
+  - **Uploaded**: Count of non‑deleted files you have uploaded.
+  - **Downloaded**: Sum of `download_count` across your files.
+  - **Deleted**: Count of files with `is_deleted = true` (soft‑deleted).
+  - **Active Days**: Number of distinct calendar days on which you performed an action (upload/download/delete).
+- **Storage Usage Over Time (chart)**:
+  - The daily series shows MB added per day derived from real file `upload_date` and `size`.
+  - A toggle lets you switch between **Line** and **Bar** views for the same daily data.
+  - A **3‑day moving average** overlay smooths volatility: for day D, it averages values for D−1, D, and D+1 (edge days use available neighbors).
+- **Storage Breakdown (Analytics)**: Computed from your real files by categorizing extensions into `Documents`, `Photos`, `Videos`, and `Others` and summing actual sizes.
+- **Recent Activity**: Latest uploads/downloads/deletions derived from real file events.
+
+##### Current vs Planned Analytics Visuals
+- ✅ Implemented:
+  - Line/Bar toggle on Storage Usage Over Time
+  - 3‑day moving average overlay in Line mode
+- 🧭 Roadmap (planned):
+  - Stacked bars by file type per day (PDF, JPG, etc.)
+  - Cumulative area chart (total used over time)
+  - 7‑day moving average overlay
+  - Weekly uploads heatmap calendar
+
 ### 🔐 **Enhanced Security & Authentication**
 - **Token-based Authentication** - Secure login/logout with session management
 - **Input Validation** - Real-time email and password validation with visual feedback
