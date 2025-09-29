@@ -538,8 +538,7 @@ function validateEmail(email) {
 // Simplified: only MA toggle for storage chart, plus pie mode toggles
 document.addEventListener('DOMContentLoaded', () => {
     const ma7Toggle = document.getElementById('ma7Toggle');
-    const pieModeCategories = document.getElementById('pieModeCategories');
-    const pieModeTopFiles = document.getElementById('pieModeTopFiles');
+    const fileTypesModeSelect = document.getElementById('fileTypesModeSelect');
     if (ma7Toggle) {
         ma7Toggle.addEventListener('change', async () => {
             window.enable7DayMA = ma7Toggle.checked;
@@ -554,13 +553,9 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (e) { console.error(e); }
         });
     }
-    // Pie mode toggles
+    // Pie mode via select
     const togglePieMode = async (mode) => {
         window.filePieMode = mode; // 'categories' | 'topfiles'
-        if (pieModeCategories && pieModeTopFiles) {
-            pieModeCategories.classList.toggle('active', mode === 'categories');
-            pieModeTopFiles.classList.toggle('active', mode === 'topfiles');
-        }
         try {
             const token = localStorage.getItem('token');
             if (!token) return;
@@ -571,9 +566,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (e) { console.error(e); }
     };
-    if (pieModeCategories && pieModeTopFiles) {
-        pieModeCategories.addEventListener('click', () => togglePieMode('categories'));
-        pieModeTopFiles.addEventListener('click', () => togglePieMode('topfiles'));
+    if (fileTypesModeSelect) {
+        fileTypesModeSelect.addEventListener('change', (e) => togglePieMode(e.target.value));
     }
 
     // Lightweight auto-refresh for Analytics (poll every 60s when visible and on Analytics)
