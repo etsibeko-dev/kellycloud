@@ -4,11 +4,9 @@
 
 > **Forked cloud storage platform** with major UI/UX and functionality improvements by [@etsibeko-dev](https://github.com/etsibeko-dev)
 
-## ⚠️ Development Notice
+## 📦 Concept Status
 
-**🚧 This project is currently under active development and is NOT production-ready.**
-
-This is a **forked contribution** where I'm exploring how far I can push the concept of a modern cloud storage platform. As a contributor, I've made significant improvements to the UI, functionality, and overall user experience, but this project serves as a **proof of concept** and **learning exercise**.
+This repository is a finalized concept/prototype — not intended for production use. It demonstrates UI/UX patterns, simple analytics, and a clean structure that can be adapted elsewhere.
 
 ### Current Status:
 - ✅ **Major UI/UX Overhaul** - Modern SaaS-style dashboard with cloud-themed styling
@@ -26,8 +24,11 @@ This fork represents my exploration of modern web development practices, where I
 - **Concept Validation** - Testing ideas for what makes a great cloud storage experience
 - **Skill Development** - Pushing boundaries in both frontend and backend development
 
-### 🔮 Future Vision:
-While this project may never become a full production service, it serves as a foundation for understanding what it takes to build modern SaaS applications and exploring the possibilities of cloud storage platforms.
+### 🔎 Read More
+- `CONCEPT.md` — project goals and boundaries
+- `ARCHITECTURE.md` — frontend/back‑end shape and data flow
+- `ANALYTICS.md` — metrics and charts
+- `UX_NOTES.md` — rationale for key UX choices
 
 ---
 
