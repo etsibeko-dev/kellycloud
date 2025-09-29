@@ -2285,10 +2285,18 @@ function createFileTypesChart(files) {
             options: { responsive: true, maintainAspectRatio: false, aspectRatio: 1, plugins: { legend: { position: 'bottom' } } }
         });
     } else {
-        // Top 10 files by size (pie)
-        const sorted = [...files].sort((a,b) => (b.file_size||0) - (a.file_size||0)).slice(0, 10);
-        const labels = sorted.map(f => (f.name || 'Unnamed'));
-        const data = sorted.map(f => +(((f.file_size||0) / (1024*1024)).toFixed(2)));
+        // Top 10 file TYPES by total size (pie)
+        const bytesByType = {};
+        files.forEach(f => {
+            const t = (f.file_type || 'unknown').toUpperCase();
+            bytesByType[t] = (bytesByType[t] || 0) + (f.file_size || 0);
+        });
+        const top = Object.entries(bytesByType)
+            .map(([t, bytes]) => [t, +(bytes / (1024*1024)).toFixed(2)])
+            .sort((a,b) => b[1] - a[1])
+            .slice(0, 10);
+        const labels = top.map(([t]) => t);
+        const data = top.map(([,mb]) => mb);
         const colors = ['#007aff','#34c759','#ff9500','#ff3b30','#af52de','#5ac8fa','#ffcc00','#8e8e93','#30d158','#ff2d92'];
         window.fileTypesChartInstance = new Chart(ctx, {
             type: 'pie',
