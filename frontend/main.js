@@ -2032,8 +2032,8 @@ function createAnalyticsCharts(files) {
     
     // Create storage composition pie
     createFileTypesChart(files);
-    // Create weekly uploads heatmap
-    createUploadsHeatmap(files);
+    // Create yearly uploads trend chart
+    createUploadsTrend(files);
 }
 
 function createStorageChart(files) {
@@ -2224,6 +2224,66 @@ function createStorageChart(files) {
 }
 
 function createUploadsHeatmap(files) {
+    // Deprecated: kept no-op to avoid errors if referenced elsewhere
+    const el = document.getElementById('uploadsHeatmap');
+    if (el) el.innerHTML = '';
+}
+
+function createUploadsTrend(files) {
+    const canvas = document.getElementById('uploadsTrendChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (window.uploadsTrendChart) {
+        window.uploadsTrendChart.destroy();
+    }
+
+    const weeks = 52;
+    const today = new Date();
+    const start = new Date(today);
+    start.setDate(start.getDate() - ((start.getDay() + 7) % 7));
+    const labels = [];
+    const counts = new Array(weeks).fill(0);
+    const byDay = {};
+    files.forEach(f => {
+        const key = (f.upload_date || '').slice(0,10);
+        if (key) byDay[key] = (byDay[key] || 0) + 1;
+    });
+    for (let w = weeks - 1; w >= 0; w--) {
+        const weekStart = new Date(start);
+        weekStart.setDate(weekStart.getDate() - (weeks - 1 - w) * 7);
+        let c = 0;
+        for (let d = 0; d < 7; d++) {
+            const dte = new Date(weekStart);
+            dte.setDate(dte.getDate() + d);
+            const key = dte.toISOString().slice(0,10);
+            c += (byDay[key] || 0);
+        }
+        counts[(weeks - 1) - w] = c;
+        labels.push(weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+    }
+    const ma = counts.map((_, i) => {
+        const a = Math.max(0, i - 3);
+        const b = i;
+        let sum = 0, n = 0;
+        for (let k = a; k <= b; k++) { sum += counts[k]; n++; }
+        return +(sum / n).toFixed(2);
+    });
+
+    const showMA = document.getElementById('uploadsShowMA');
+    const datasets = [
+        { type: 'bar', label: 'Uploads (weekly)', data: counts, backgroundColor: 'rgba(0,122,255,0.6)', borderColor: '#007aff', borderWidth: 1, borderRadius: 0 }
+    ];
+    if (!showMA || showMA.checked) {
+        datasets.push({ type: 'line', label: '4‑week Avg', data: ma, borderColor: '#34c759', backgroundColor: 'transparent', borderWidth: 2, tension: 0.3, pointRadius: 0 });
+    }
+
+    window.uploadsTrendChart = new Chart(ctx, {
+        data: { labels, datasets },
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true }, x: { grid: { display: false } } } }
+    });
+
+    if (showMA) showMA.onchange = () => createUploadsTrend(files);
+}
     const wrap = document.getElementById('uploadsHeatmap');
     if (!wrap) return;
     wrap.innerHTML = '';
