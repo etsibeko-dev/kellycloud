@@ -2000,6 +2000,19 @@ function createAnalyticsCharts(files) {
     createUploadsByCategoryChart(files);
 }
 
+// Central palette based on spec
+const PALETTE = {
+    red: '#FF3B30',
+    orange: '#FF9500',
+    yellow: '#FFCC00',
+    green: '#34C759',
+    blue: '#007AFF',
+    purple: '#5856D6',
+    pink: '#FF2D55',
+    teal: '#5AC8FA',
+    gray: '#8E8E93'
+};
+
 function createStorageChart(files) {
     const ctx = document.getElementById('storageChart');
     if (!ctx) return;
@@ -2043,13 +2056,12 @@ function createStorageChart(files) {
     
     const mode = 'line';
     const datasets = [];
-    const rainbow = ['#007aff','#34c759','#ffcc00','#ff3b30','#af52de','#5ac8fa','#ff2d92'];
     {
         // Base line data
         datasets.push({
                 label: 'Daily Storage Added (MB)',
                 data: storageData,
-                borderColor: rainbow[0],
+                borderColor: PALETTE.blue,
                 backgroundColor: 'rgba(0,122,255,0.12)',
                 borderWidth: 3,
                 fill: true,
@@ -2070,7 +2082,7 @@ function createStorageChart(files) {
         datasets.push({
             label: '3‑day Avg (MB)',
             data: ma,
-            borderColor: rainbow[1],
+            borderColor: PALETTE.green,
             backgroundColor: 'transparent',
             borderDash: [6, 6],
             borderWidth: 2,
@@ -2090,7 +2102,7 @@ function createStorageChart(files) {
             datasets.push({
                 label: '7‑day Avg (MB)',
                 data: ma7,
-                borderColor: rainbow[4],
+                borderColor: PALETTE.purple,
                 backgroundColor: 'transparent',
                 borderDash: [4, 4],
                 borderWidth: 2,
@@ -2184,12 +2196,11 @@ function createUploadsTrend(files) {
     });
 
     const showMA = document.getElementById('uploadsShowMA');
-    const rainbow = ['#007aff','#34c759','#ffcc00','#ff3b30','#af52de','#5ac8fa','#ff2d92'];
     const datasets = [
-        { type: 'bar', label: 'Uploads (weekly)', data: counts, backgroundColor: 'rgba(0,122,255,0.6)', borderColor: rainbow[0], borderWidth: 1, borderRadius: 0 }
+        { type: 'bar', label: 'Uploads (weekly)', data: counts, backgroundColor: 'rgba(0,122,255,0.6)', borderColor: PALETTE.blue, borderWidth: 1, borderRadius: 0 }
     ];
     if (!showMA || showMA.checked) {
-        datasets.push({ type: 'line', label: '4‑week Avg', data: ma, borderColor: rainbow[1], backgroundColor: 'transparent', borderWidth: 2, tension: 0.3, pointRadius: 0 });
+        datasets.push({ type: 'line', label: '4‑week Avg', data: ma, borderColor: PALETTE.green, backgroundColor: 'transparent', borderWidth: 2, tension: 0.3, pointRadius: 0 });
     }
 
     window.uploadsTrendChart = new Chart(ctx, {
@@ -2217,7 +2228,7 @@ function createUploadsByCategoryChart(files) {
     const last7Days = [];
     const today = new Date();
     const categories = ['Documents','Photos','Videos','Others'];
-    const colorMap = { Documents: '#007aff', Photos: '#ffcc00', Videos: '#ff3b30', Others: '#af52de' };
+    const colorMap = { Documents: PALETTE.yellow, Photos: PALETTE.blue, Videos: PALETTE.orange, Others: PALETTE.gray };
     const toCategory = (t) => {
         const x = (t || '').toLowerCase();
         if (['jpg','jpeg','png','gif','bmp','tiff','heif','heic','webp','avif'].includes(x)) return 'Photos';
@@ -2290,7 +2301,7 @@ function createFileTypesChart(files) {
         });
         const labels = Object.keys(bytesByCat);
         const data = labels.map(k => +(bytesByCat[k] / (1024*1024)).toFixed(2));
-        const colors = ['#007aff','#ffcc00','#ff3b30','#af52de'];
+        const colors = [PALETTE.yellow, PALETTE.blue, PALETTE.orange, PALETTE.gray];
     window.fileTypesChartInstance = new Chart(ctx, {
             type: 'pie',
             data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0 }] },
@@ -2309,7 +2320,7 @@ function createFileTypesChart(files) {
             .slice(0, 10);
         const labels = top.map(([t]) => t);
         const data = top.map(([,mb]) => mb);
-        const colors = ['#007aff','#34c759','#ffcc00','#ff3b30','#af52de','#5ac8fa','#ff2d92','#30d158','#ff9f0a','#bf5af2'];
+        const colors = [PALETTE.blue, PALETTE.green, PALETTE.yellow, PALETTE.orange, PALETTE.purple, PALETTE.teal, PALETTE.pink, '#30D158', '#FF9F0A', '#BF5AF2'];
         window.fileTypesChartInstance = new Chart(ctx, {
             type: 'pie',
             data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0 }] },
