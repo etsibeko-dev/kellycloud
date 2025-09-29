@@ -575,6 +575,26 @@ document.addEventListener('DOMContentLoaded', () => {
         pieModeCategories.addEventListener('click', () => togglePieMode('categories'));
         pieModeTopFiles.addEventListener('click', () => togglePieMode('topfiles'));
     }
+
+    // Lightweight auto-refresh for Analytics (poll every 60s when visible and on Analytics)
+    function isOnAnalytics() {
+        const current = document.querySelector('.content-section.active');
+        return current && current.id === 'analytics-section';
+    }
+    function startAnalyticsAutoRefresh() {
+        if (window.analyticsAutoRefreshId) clearInterval(window.analyticsAutoRefreshId);
+        window.analyticsAutoRefreshId = setInterval(() => {
+            if (document.hidden) return;
+            if (!isOnAnalytics()) return;
+            try { loadAnalyticsSection(); } catch (e) { console.error(e); }
+        }, 60000); // 60s
+    }
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && isOnAnalytics()) {
+            try { loadAnalyticsSection(); } catch (e) { console.error(e); }
+        }
+    });
+    startAnalyticsAutoRefresh();
 });
 
 function validatePassword(password) {
