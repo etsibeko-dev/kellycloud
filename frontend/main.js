@@ -2297,8 +2297,8 @@ function createUploadsHeatmap(files) {
             lastStartCol = 0;
             scheduledInitialized = true;
         } else if (monthName !== currentMonthForSchedule) {
-            // New month starts at this column; schedule its label 4 columns later (or at end)
-            const targetCol = Math.min(colIndex + 4, weeks - 1);
+            // New month starts at this column; schedule its label 5 columns later (or at end)
+            const targetCol = Math.min(colIndex + 5, weeks - 1);
             monthLabelAtColumn[targetCol] = monthName;
             currentMonthForSchedule = monthName;
             lastStartCol = colIndex;
