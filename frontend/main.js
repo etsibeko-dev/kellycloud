@@ -2261,6 +2261,10 @@ function createUploadsHeatmap(files) {
     });
     let max = 1;
     Object.values(byDay).forEach(v => { if (v > max) max = v; });
+    // Prepare month headers
+    // A) capture month name per column
+    // B) legacy schedule (kept) but we will re-render with constant gaps after loop
+    const monthNameByCol = new Array(weeks).fill('');
     // Prepare month label schedule so labels appear 4 columns after month start,
     // except the first month which appears at column 0.
     const monthLabelAtColumn = {};
@@ -2289,6 +2293,7 @@ function createUploadsHeatmap(files) {
         // Determine month at this column
         const monthDate = new Date(start.getFullYear(), start.getMonth(), start.getDate() - colIndex * 7);
         const monthName = monthDate.toLocaleString('en', { month: 'short' });
+        monthNameByCol[colIndex] = monthName;
 
         if (!scheduledInitialized) {
             // First (leftmost) month label at column 0
@@ -2312,6 +2317,17 @@ function createUploadsHeatmap(files) {
             mcell.textContent = '';
         }
         monthsRow.appendChild(mcell);
+    }
+    // Re-render months row with constant 5-column spacing between labels
+    const FIXED_GAP = 5; // equal gap between adjacent month labels
+    const cells = monthsRow.children.length;
+    if (cells === weeks) {
+        monthsRow.innerHTML = '';
+        for (let col = 0; col < weeks; col++) {
+            const mcell = document.createElement('div');
+            mcell.textContent = (col % FIXED_GAP === 0) ? (monthNameByCol[col] || '') : '';
+            monthsRow.appendChild(mcell);
+        }
     }
 }
 
