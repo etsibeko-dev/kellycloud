@@ -41,10 +41,12 @@ While this project may never become a full production service, it serves as a fo
 
 ### 📁 **Advanced File Management**
 - **Multi-file Upload** - Real file storage with proper validation
-- **Download System** - File downloads with download count tracking
+- **Download System** - File downloads with download count tracking and correct filenames
 - **Soft Deletion** - Files marked as deleted but preserved for analytics and recovery
 - **File Categorization** - Automatic categorization by file type with color coding
 - **Real-time Data Display** - Actual file sizes, upload dates, and metadata
+- **Table Search** - Filter by filename or type (debounced input)
+- **Date Presets** - Quick filters: All time, 7 days, 30 days, 6 months, 1 year
 
 ### 📊 **Analytics & Insights**
 - **Real-time Analytics** - Upload, download, and deletion tracking
@@ -65,7 +67,7 @@ While this project may never become a full production service, it serves as a fo
 
 ### 📊 **Dashboard Sections**
 - **Overview** - iCloud-style storage visualization with file type breakdown
-- **My Files** - Complete file management with upload/download/delete functionality
+- **My Files** - File management with search, date presets, download/delete (Upload moved to Upload section)
 - **Analytics** - Real-time charts and user activity statistics
 - **Plans** - Subscription management and upgrade options
 - **Profile** - Account settings and user preferences
@@ -187,6 +189,11 @@ python3 manage.py runserver 0.0.0.0:8000
 cd frontend
 python3 -m http.server 3000
 ```
+
+### Recent UI Updates
+- **Buttons**: Download/Delete now match KellyCloud colors with sharp edges
+- **My Files Toolbar**: Search moved left; Upload button removed (Upload has its own section)
+- **Analytics Panel**: Recent Activity and Storage Breakdown populate from real data
 
 ### Database Management
 ```bash
