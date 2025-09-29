@@ -535,26 +535,14 @@ function validateEmail(email) {
     return emailRegex.test(email);
 }
 
-// Chart mode toggle handlers
+// Simplified: only MA toggle for storage chart, plus pie mode toggles
 document.addEventListener('DOMContentLoaded', () => {
-    const btnLine = document.getElementById('storageChartModeLine');
-    const btnBar = document.getElementById('storageChartModeBar');
-    const btnStacked = document.getElementById('storageChartModeStacked');
-    const btnArea = document.getElementById('storageChartModeArea');
     const ma7Toggle = document.getElementById('ma7Toggle');
     const pieModeCategories = document.getElementById('pieModeCategories');
     const pieModeTopFiles = document.getElementById('pieModeTopFiles');
-    if (btnLine && btnBar) {
-        const setActive = (mode) => {
-            btnLine.classList.toggle('active', mode === 'line');
-            btnBar.classList.toggle('active', mode === 'bar');
-            if (btnStacked) btnStacked.classList.toggle('active', mode === 'stacked');
-            if (btnArea) btnArea.classList.toggle('active', mode === 'area');
-        };
-        btnLine.addEventListener('click', async () => {
-            window.storageChartMode = 'line';
-            setActive('line');
-            // Rebuild analytics charts with current data
+    if (ma7Toggle) {
+        ma7Toggle.addEventListener('change', async () => {
+            window.enable7DayMA = ma7Toggle.checked;
             try {
                 const token = localStorage.getItem('token');
                 if (!token) return;
@@ -565,63 +553,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (e) { console.error(e); }
         });
-        btnBar.addEventListener('click', async () => {
-            window.storageChartMode = 'bar';
-            setActive('bar');
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) return;
-                const resp = await fetch('http://localhost:8000/api/files/', { headers: { 'Authorization': `Token ${token}` } });
-                if (resp.ok) {
-                    const files = await resp.json();
-                    createStorageChart(files);
-                }
-            } catch (e) { console.error(e); }
-        });
-        if (btnStacked) {
-            btnStacked.addEventListener('click', async () => {
-                window.storageChartMode = 'stacked';
-                setActive('stacked');
-                try {
-                    const token = localStorage.getItem('token');
-                    if (!token) return;
-                    const resp = await fetch('http://localhost:8000/api/files/', { headers: { 'Authorization': `Token ${token}` } });
-                    if (resp.ok) {
-                        const files = await resp.json();
-                        createStorageChart(files);
-                    }
-                } catch (e) { console.error(e); }
-            });
-        }
-        if (btnArea) {
-            btnArea.addEventListener('click', async () => {
-                window.storageChartMode = 'area';
-                setActive('area');
-                try {
-                    const token = localStorage.getItem('token');
-                    if (!token) return;
-                    const resp = await fetch('http://localhost:8000/api/files/', { headers: { 'Authorization': `Token ${token}` } });
-                    if (resp.ok) {
-                        const files = await resp.json();
-                        createStorageChart(files);
-                    }
-                } catch (e) { console.error(e); }
-            });
-        }
-        if (ma7Toggle) {
-            ma7Toggle.addEventListener('change', async () => {
-                window.enable7DayMA = ma7Toggle.checked;
-                try {
-                    const token = localStorage.getItem('token');
-                    if (!token) return;
-                    const resp = await fetch('http://localhost:8000/api/files/', { headers: { 'Authorization': `Token ${token}` } });
-                    if (resp.ok) {
-                        const files = await resp.json();
-                        createStorageChart(files);
-                    }
-                } catch (e) { console.error(e); }
-            });
-        }
     }
     // Pie mode toggles
     const togglePieMode = async (mode) => {
@@ -2034,6 +1965,8 @@ function createAnalyticsCharts(files) {
     createFileTypesChart(files);
     // Create yearly uploads trend chart
     createUploadsTrend(files);
+    // Create uploads by category stacked bars
+    createUploadsByCategoryChart(files);
 }
 
 function createStorageChart(files) {
@@ -2077,9 +2010,9 @@ function createStorageChart(files) {
         storageByTypePerDay[label] = bucket;
     }
     
-    const mode = (window.storageChartMode || 'line');
+    const mode = 'line';
     const datasets = [];
-    if (mode === 'line') {
+    {
         // Base line data
         datasets.push({
                 label: 'Daily Storage Added (MB)',
@@ -2134,56 +2067,10 @@ function createStorageChart(files) {
                 pointRadius: 0
             });
         }
-    } else if (mode === 'bar') {
-        // Bar mode
-        datasets.push({
-            label: 'Daily Storage Added (MB)',
-            data: storageData,
-            backgroundColor: 'rgba(0, 122, 255, 0.7)',
-            borderColor: '#007aff',
-            borderWidth: 1,
-            borderRadius: 0
-        });
-    } else if (mode === 'stacked') {
-        // Stacked by high-level category per day (Documents, Photos, Videos, Others)
-        const toCategory = (t) => {
-            const x = (t || '').toLowerCase();
-            if (['jpg','jpeg','png','gif','bmp','tiff','heif','heic','webp','avif'].includes(x)) return 'Photos';
-            if (['mp4','mov','avi','wmv','flv','f4v','mkv','webm','m4v','3gp','ts'].includes(x)) return 'Videos';
-            if (['pdf','doc','docx','odt','rtf','wps','epub','mobi','xls','xlsx','ods','csv','tsv','ppt','pptx','odp','key','xml','json','yaml','md','tex'].includes(x)) return 'Documents';
-            return 'Others';
-        };
-        const categories = ['Documents','Photos','Videos','Others'];
-        const colors = ['#007aff','#ffcc00','#ff3b30','#8e8e93'];
-        categories.forEach((cat, idx) => {
-            const data = last7Days.map(label => {
-                const bucket = storageByTypePerDay[label] || {};
-                const bytes = Object.entries(bucket).reduce((sum, [type, b]) => sum + (toCategory(type) === cat ? b : 0), 0);
-                return +(bytes / (1024*1024)).toFixed(2);
-            });
-            datasets.push({ type: 'bar', label: cat, data, backgroundColor: colors[idx], stack: 'cats', borderWidth: 0 });
-        });
-    } else if (mode === 'area') {
-        // Cumulative area chart
-        const cumulative = storageData.reduce((arr, v) => {
-            const prev = arr.length ? arr[arr.length-1] : 0;
-            arr.push(+(prev + v).toFixed(2));
-            return arr;
-        }, []);
-        datasets.push({
-            label: 'Cumulative Storage (MB)',
-            data: cumulative,
-            borderColor: '#007aff',
-            backgroundColor: 'rgba(0, 122, 255, 0.25)',
-            borderWidth: 2,
-            fill: true,
-            tension: 0.3,
-            pointRadius: 0
-        });
     }
 
     window.storageChartInstance = new Chart(ctx, {
-        type: (mode === 'bar' || mode === 'stacked') ? 'bar' : 'line',
+        type: 'line',
         data: {
             labels: last7Days,
             datasets
@@ -2215,12 +2102,7 @@ function createStorageChart(files) {
                 }
             }
     });
-    // Enable stacked scales dynamically
-    if (mode === 'stacked' && window.storageChartInstance && window.storageChartInstance.options) {
-        window.storageChartInstance.options.scales.x.stacked = true;
-        window.storageChartInstance.options.scales.y.stacked = true;
-        window.storageChartInstance.update();
-    }
+    // No stacked toggle here; dedicated stacked chart lives in uploadsByCategoryChart
 }
 
 function createUploadsHeatmap(files) {
@@ -2233,7 +2115,7 @@ function createUploadsTrend(files) {
     const canvas = document.getElementById('uploadsTrendChart');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    if (window.uploadsTrendChart) {
+    if (window.uploadsTrendChart && typeof window.uploadsTrendChart.destroy === 'function') {
         window.uploadsTrendChart.destroy();
     }
 
@@ -2290,6 +2172,65 @@ function createUploadsTrend(files) {
     if (showMA) showMA.onchange = () => createUploadsTrend(files);
 }
 // Legacy heatmap implementation removed
+
+function createUploadsByCategoryChart(files) {
+    const canvas = document.getElementById('uploadsByCategoryChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (window.uploadsByCategoryChart && typeof window.uploadsByCategoryChart.destroy === 'function') {
+        window.uploadsByCategoryChart.destroy();
+    }
+
+    const last7Days = [];
+    const today = new Date();
+    const categories = ['Documents','Photos','Videos','Others'];
+    const colorMap = { Documents: '#007aff', Photos: '#ffcc00', Videos: '#ff3b30', Others: '#8e8e93' };
+    const toCategory = (t) => {
+        const x = (t || '').toLowerCase();
+        if (['jpg','jpeg','png','gif','bmp','tiff','heif','heic','webp','avif'].includes(x)) return 'Photos';
+        if (['mp4','mov','avi','wmv','flv','f4v','mkv','webm','m4v','3gp','ts'].includes(x)) return 'Videos';
+        if (['pdf','doc','docx','odt','rtf','wps','epub','mobi','xls','xlsx','ods','csv','tsv','ppt','pptx','odp','key','xml','json','yaml','md','tex'].includes(x)) return 'Documents';
+        return 'Others';
+    };
+
+    const dataByDayCat = {};
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        const label = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        last7Days.push(label);
+        dataByDayCat[label] = { Documents: 0, Photos: 0, Videos: 0, Others: 0 };
+        const dayFiles = files.filter(f => {
+            const fd = new Date(f.upload_date);
+            const fOnly = new Date(fd.getFullYear(), fd.getMonth(), fd.getDate());
+            const tOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            return fOnly.getTime() === tOnly.getTime();
+        });
+        dayFiles.forEach(f => {
+            const cat = toCategory(f.file_type);
+            dataByDayCat[label][cat] += +(+(f.file_size || 0) / (1024*1024)).toFixed(2);
+        });
+    }
+
+    const datasets = categories.map(cat => ({
+        label: cat,
+        data: last7Days.map(lbl => dataByDayCat[lbl][cat]),
+        backgroundColor: colorMap[cat],
+        borderWidth: 0,
+        stack: 'usage'
+    }));
+
+    window.uploadsByCategoryChart = new Chart(ctx, {
+        type: 'bar',
+        data: { labels: last7Days, datasets },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true } },
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+}
 
 function createFileTypesChart(files) {
     const ctx = document.getElementById('fileTypesChart');
