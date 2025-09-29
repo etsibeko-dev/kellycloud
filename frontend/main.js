@@ -273,6 +273,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
+        // Lightweight notifications: poll files and detect new uploads
+        startNewFileNotifications();
+
         const deleteFile = async (fileId) => {
             showLoadingIndicator(); // Show loading indicator
             try {
@@ -1294,6 +1297,60 @@ function initializeNavigation() {
     const profileForm = document.getElementById('profileForm');
     if (profileForm) {
         profileForm.addEventListener('submit', updateProfile);
+    }
+}
+
+// --- Notifications: "New file uploaded" ---
+let __lastNotifiedUploadAt = null;
+function startNewFileNotifications() {
+    try {
+        const badge = document.getElementById('notificationsBadge');
+        const menu = document.getElementById('notificationsMenu');
+        if (!badge || !menu) return;
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        // Fetch once to prime last timestamp
+        const prime = async () => {
+            try {
+                const resp = await fetch('http://localhost:8000/api/files/', { headers: { 'Authorization': `Token ${token}` } });
+                if (!resp.ok) return;
+                const files = await resp.json();
+                const latest = files.reduce((max, f) => Math.max(max, new Date(f.upload_date).getTime()), 0);
+                __lastNotifiedUploadAt = latest || Date.now();
+            } catch (e) { /* ignore */ }
+        };
+        prime();
+
+        if (window.__newFilePollId) clearInterval(window.__newFilePollId);
+        window.__newFilePollId = setInterval(async () => {
+            try {
+                const resp = await fetch('http://localhost:8000/api/files/', { headers: { 'Authorization': `Token ${token}` } });
+                if (!resp.ok) return;
+                const files = await resp.json();
+                const latestTime = files.reduce((max, f) => Math.max(max, new Date(f.upload_date).getTime()), 0);
+                if (__lastNotifiedUploadAt && latestTime > __lastNotifiedUploadAt) {
+                    // New upload detected
+                    const newFiles = files
+                        .filter(f => new Date(f.upload_date).getTime() > __lastNotifiedUploadAt)
+                        .sort((a,b) => new Date(a.upload_date) - new Date(b.upload_date));
+                    // Update badge
+                    const count = parseInt(badge.textContent || '0', 10) + newFiles.length;
+                    badge.textContent = String(count);
+                    // Prepend menu items for each new file
+                    newFiles.forEach(f => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<a class="dropdown-item" href="#">New file uploaded — ${f.name}</a>`;
+                        menu.insertBefore(li, menu.firstChild);
+                    });
+                    __lastNotifiedUploadAt = latestTime;
+                }
+            } catch (e) {
+                // ignore transient errors
+            }
+        }, 20000); // poll every 20s
+    } catch (e) {
+        // no-op
     }
 }
 
