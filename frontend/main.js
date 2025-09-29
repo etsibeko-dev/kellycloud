@@ -1822,10 +1822,9 @@ function updateRecentActivity(files) {
     // Sort files by upload date (most recent first)
     const sortedFiles = files.sort((a, b) => new Date(b.upload_date) - new Date(a.upload_date));
     
-    // Show last 5 activities
+    // Always render 5 rows: newest uploads first, then dim placeholders if fewer than 5
     const recentFiles = sortedFiles.slice(0, 5);
-    
-    recentActivityList.innerHTML = recentFiles.map(file => {
+    const rows = recentFiles.map(file => {
         const timeAgo = getTimeAgo(new Date(file.upload_date));
         return `
             <div class="d-flex align-items-center justify-content-between py-2 border-bottom">
@@ -1841,7 +1840,25 @@ function updateRecentActivity(files) {
                 <small class="text-muted">${timeAgo}</small>
             </div>
         `;
-    }).join('');
+    });
+    const placeholdersNeeded = Math.max(0, 5 - recentFiles.length);
+    for (let i = 0; i < placeholdersNeeded; i++) {
+        rows.push(`
+            <div class="d-flex align-items-center justify-content-between py-2 border-bottom text-muted" style="opacity:0.6;">
+                <div class="d-flex align-items-center">
+                    <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                        <i class="fas fa-minus text-white" style="font-size:12px;"></i>
+                    </div>
+                    <div>
+                        <div class="fw-medium">No activity</div>
+                        <small class="text-muted">—</small>
+                    </div>
+                </div>
+                <small class="text-muted">—</small>
+            </div>
+        `);
+    }
+    recentActivityList.innerHTML = rows.join('');
 }
 
 function updateFilesStorageBreakdown(files) {
@@ -2182,9 +2199,9 @@ function createUploadsTrend(files) {
     window.uploadsTrendChart = new Chart(ctx, {
         type: 'bar',
         data: { labels, datasets },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
             scales: { y: { beginAtZero: true }, x: { grid: { display: false } } }
         }
     });
@@ -2248,7 +2265,7 @@ function createUploadsByCategoryChart(files) {
             maintainAspectRatio: false,
             scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true } },
             plugins: { legend: { position: 'bottom' } }
-        }
+            }
     });
 }
 
