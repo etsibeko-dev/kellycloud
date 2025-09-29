@@ -1751,7 +1751,9 @@ function updateRecentActivity(files) {
 }
 
 function updateFilesStorageBreakdown(files) {
-    const storageBreakdown = document.getElementById('storageBreakdown');
+    // Prefer analytics panel container if present; otherwise fall back to dashboard breakdown
+    const storageBreakdown = document.getElementById('analyticsStorageBreakdown')
+        || document.getElementById('storageBreakdown');
     if (!storageBreakdown) return;
     
     if (files.length === 0) {
