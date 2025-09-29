@@ -539,10 +539,15 @@ function validateEmail(email) {
 document.addEventListener('DOMContentLoaded', () => {
     const btnLine = document.getElementById('storageChartModeLine');
     const btnBar = document.getElementById('storageChartModeBar');
+    const btnStacked = document.getElementById('storageChartModeStacked');
+    const btnArea = document.getElementById('storageChartModeArea');
+    const ma7Toggle = document.getElementById('ma7Toggle');
     if (btnLine && btnBar) {
         const setActive = (mode) => {
             btnLine.classList.toggle('active', mode === 'line');
             btnBar.classList.toggle('active', mode === 'bar');
+            if (btnStacked) btnStacked.classList.toggle('active', mode === 'stacked');
+            if (btnArea) btnArea.classList.toggle('active', mode === 'area');
         };
         btnLine.addEventListener('click', async () => {
             window.storageChartMode = 'line';
@@ -571,6 +576,50 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (e) { console.error(e); }
         });
+        if (btnStacked) {
+            btnStacked.addEventListener('click', async () => {
+                window.storageChartMode = 'stacked';
+                setActive('stacked');
+                try {
+                    const token = localStorage.getItem('token');
+                    if (!token) return;
+                    const resp = await fetch('http://localhost:8000/api/files/', { headers: { 'Authorization': `Token ${token}` } });
+                    if (resp.ok) {
+                        const files = await resp.json();
+                        createStorageChart(files);
+                    }
+                } catch (e) { console.error(e); }
+            });
+        }
+        if (btnArea) {
+            btnArea.addEventListener('click', async () => {
+                window.storageChartMode = 'area';
+                setActive('area');
+                try {
+                    const token = localStorage.getItem('token');
+                    if (!token) return;
+                    const resp = await fetch('http://localhost:8000/api/files/', { headers: { 'Authorization': `Token ${token}` } });
+                    if (resp.ok) {
+                        const files = await resp.json();
+                        createStorageChart(files);
+                    }
+                } catch (e) { console.error(e); }
+            });
+        }
+        if (ma7Toggle) {
+            ma7Toggle.addEventListener('change', async () => {
+                window.enable7DayMA = ma7Toggle.checked;
+                try {
+                    const token = localStorage.getItem('token');
+                    if (!token) return;
+                    const resp = await fetch('http://localhost:8000/api/files/', { headers: { 'Authorization': `Token ${token}` } });
+                    if (resp.ok) {
+                        const files = await resp.json();
+                        createStorageChart(files);
+                    }
+                } catch (e) { console.error(e); }
+            });
+        }
     }
 });
 
@@ -1960,6 +2009,8 @@ function createAnalyticsCharts(files) {
     
     // Create file types distribution chart
     createFileTypesChart(files);
+    // Create weekly uploads heatmap
+    createUploadsHeatmap(files);
 }
 
 function createStorageChart(files) {
@@ -1974,12 +2025,14 @@ function createStorageChart(files) {
     // Generate daily storage usage data (last 7 days)
     const last7Days = [];
     const storageData = [];
+    const storageByTypePerDay = {};
     const today = new Date();
     
     for (let i = 6; i >= 0; i--) {
         const date = new Date(today);
         date.setDate(date.getDate() - i);
-        last7Days.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+        const label = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        last7Days.push(label);
         
         // Calculate storage used on this specific day only
         const dayFiles = files.filter(file => {
@@ -1991,6 +2044,14 @@ function createStorageChart(files) {
         
         const dayStorage = dayFiles.reduce((total, file) => total + (file.file_size || 0), 0);
         storageData.push(dayStorage / (1024 * 1024)); // Convert to MB
+
+        // Build per-type buckets for stacked mode
+        const bucket = {};
+        dayFiles.forEach(f => {
+            const t = (f.file_type || 'unknown').toUpperCase();
+            bucket[t] = (bucket[t] || 0) + (f.file_size || 0);
+        });
+        storageByTypePerDay[label] = bucket;
     }
     
     const mode = (window.storageChartMode || 'line');
@@ -1998,17 +2059,17 @@ function createStorageChart(files) {
     if (mode === 'line') {
         // Base line data
         datasets.push({
-            label: 'Daily Storage Added (MB)',
-            data: storageData,
-            borderColor: '#007aff',
-            backgroundColor: 'rgba(0, 122, 255, 0.1)',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.4,
-            pointBackgroundColor: '#007aff',
-            pointBorderColor: '#ffffff',
-            pointBorderWidth: 2,
-            pointRadius: 6
+                label: 'Daily Storage Added (MB)',
+                data: storageData,
+                borderColor: '#007aff',
+                backgroundColor: 'rgba(0, 122, 255, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#007aff',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 6
         });
         // 3-day moving average overlay
         const ma = storageData.map((_, idx, arr) => {
@@ -2029,7 +2090,28 @@ function createStorageChart(files) {
             tension: 0.2,
             pointRadius: 0
         });
-    } else {
+        // Optional 7-day moving average
+        if (window.enable7DayMA) {
+            const ma7 = storageData.map((_, idx, arr) => {
+                const a = Math.max(0, idx - 3);
+                const b = Math.min(arr.length - 1, idx + 3);
+                let sum = 0, count = 0;
+                for (let i = a; i <= b; i++) { sum += arr[i]; count++; }
+                return +(sum / count).toFixed(2);
+            });
+            datasets.push({
+                label: '7‑day Avg (MB)',
+                data: ma7,
+                borderColor: '#af52de',
+                backgroundColor: 'transparent',
+                borderDash: [4, 4],
+                borderWidth: 2,
+                fill: false,
+                tension: 0.2,
+                pointRadius: 0
+            });
+        }
+    } else if (mode === 'bar') {
         // Bar mode
         datasets.push({
             label: 'Daily Storage Added (MB)',
@@ -2039,10 +2121,47 @@ function createStorageChart(files) {
             borderWidth: 1,
             borderRadius: 0
         });
+    } else if (mode === 'stacked') {
+        // Stacked by file type per day
+        const typesSet = new Set();
+        Object.values(storageByTypePerDay).forEach(day => Object.keys(day).forEach(t => typesSet.add(t)));
+        const types = Array.from(typesSet).slice(0, 6);
+        const colors = ['#007aff','#34c759','#ff9500','#ff3b30','#af52de','#5ac8fa'];
+        types.forEach((t, idx) => {
+            const data = last7Days.map(label => {
+                const bytes = (storageByTypePerDay[label] && storageByTypePerDay[label][t]) || 0;
+                return +(bytes / (1024*1024)).toFixed(2);
+            });
+            datasets.push({
+                type: 'bar',
+                label: t,
+                data,
+                backgroundColor: colors[idx % colors.length],
+                stack: 'types',
+                borderWidth: 0
+            });
+        });
+    } else if (mode === 'area') {
+        // Cumulative area chart
+        const cumulative = storageData.reduce((arr, v) => {
+            const prev = arr.length ? arr[arr.length-1] : 0;
+            arr.push(+(prev + v).toFixed(2));
+            return arr;
+        }, []);
+        datasets.push({
+            label: 'Cumulative Storage (MB)',
+            data: cumulative,
+            borderColor: '#007aff',
+            backgroundColor: 'rgba(0, 122, 255, 0.25)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0
+        });
     }
 
     window.storageChartInstance = new Chart(ctx, {
-        type: mode === 'bar' ? 'bar' : 'line',
+        type: (mode === 'bar' || mode === 'stacked') ? 'bar' : 'line',
         data: {
             labels: last7Days,
             datasets
@@ -2052,7 +2171,7 @@ function createStorageChart(files) {
                 maintainAspectRatio: false,
                 aspectRatio: 2,
                 plugins: {
-                    legend: { display: mode === 'line' }
+                    legend: { display: true }
                 },
                 scales: {
                     y: {
@@ -2073,6 +2192,42 @@ function createStorageChart(files) {
                     }
                 }
             }
+    });
+    // Enable stacked scales dynamically
+    if (mode === 'stacked' && window.storageChartInstance && window.storageChartInstance.options) {
+        window.storageChartInstance.options.scales.x.stacked = true;
+        window.storageChartInstance.options.scales.y.stacked = true;
+        window.storageChartInstance.update();
+    }
+}
+
+function createUploadsHeatmap(files) {
+    const container = document.getElementById('uploadsHeatmap');
+    if (!container) return;
+    container.innerHTML = '';
+    // last 7 weeks (49 days)
+    const days = 49;
+    const today = new Date();
+    const counts = [];
+    for (let i = days - 1; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        const key = d.toISOString().slice(0,10);
+        const c = files.filter(f => (f.upload_date || '').slice(0,10) === key).length;
+        counts.push(c);
+    }
+    const max = Math.max(1, ...counts);
+    counts.forEach(c => {
+        const cell = document.createElement('div');
+        const intensity = c / max; // 0..1
+        const base = [0, 122, 255];
+        const alpha = (0.12 + 0.68 * intensity).toFixed(2);
+        cell.style.width = '10px';
+        cell.style.height = '10px';
+        cell.style.borderRadius = '2px';
+        cell.style.background = `rgba(${base[0]}, ${base[1]}, ${base[2]}, ${alpha})`;
+        cell.title = `${c} upload${c===1?'':'s'}`;
+        container.appendChild(cell);
     });
 }
 
