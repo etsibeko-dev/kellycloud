@@ -2043,13 +2043,14 @@ function createStorageChart(files) {
     
     const mode = 'line';
     const datasets = [];
+    const rainbow = ['#007aff','#34c759','#ffcc00','#ff3b30','#af52de','#5ac8fa','#ff2d92'];
     {
         // Base line data
         datasets.push({
                 label: 'Daily Storage Added (MB)',
                 data: storageData,
-                borderColor: '#007aff',
-                backgroundColor: 'rgba(0, 122, 255, 0.1)',
+                borderColor: rainbow[0],
+                backgroundColor: 'rgba(0,122,255,0.12)',
                 borderWidth: 3,
                 fill: true,
                 tension: 0.4,
@@ -2069,7 +2070,7 @@ function createStorageChart(files) {
         datasets.push({
             label: '3‑day Avg (MB)',
             data: ma,
-            borderColor: '#34c759',
+            borderColor: rainbow[1],
             backgroundColor: 'transparent',
             borderDash: [6, 6],
             borderWidth: 2,
@@ -2089,7 +2090,7 @@ function createStorageChart(files) {
             datasets.push({
                 label: '7‑day Avg (MB)',
                 data: ma7,
-                borderColor: '#af52de',
+                borderColor: rainbow[4],
                 backgroundColor: 'transparent',
                 borderDash: [4, 4],
                 borderWidth: 2,
@@ -2183,11 +2184,12 @@ function createUploadsTrend(files) {
     });
 
     const showMA = document.getElementById('uploadsShowMA');
+    const rainbow = ['#007aff','#34c759','#ffcc00','#ff3b30','#af52de','#5ac8fa','#ff2d92'];
     const datasets = [
-        { type: 'bar', label: 'Uploads (weekly)', data: counts, backgroundColor: 'rgba(0,122,255,0.6)', borderColor: '#007aff', borderWidth: 1, borderRadius: 0 }
+        { type: 'bar', label: 'Uploads (weekly)', data: counts, backgroundColor: 'rgba(0,122,255,0.6)', borderColor: rainbow[0], borderWidth: 1, borderRadius: 0 }
     ];
     if (!showMA || showMA.checked) {
-        datasets.push({ type: 'line', label: '4‑week Avg', data: ma, borderColor: '#34c759', backgroundColor: 'transparent', borderWidth: 2, tension: 0.3, pointRadius: 0 });
+        datasets.push({ type: 'line', label: '4‑week Avg', data: ma, borderColor: rainbow[1], backgroundColor: 'transparent', borderWidth: 2, tension: 0.3, pointRadius: 0 });
     }
 
     window.uploadsTrendChart = new Chart(ctx, {
@@ -2215,7 +2217,7 @@ function createUploadsByCategoryChart(files) {
     const last7Days = [];
     const today = new Date();
     const categories = ['Documents','Photos','Videos','Others'];
-    const colorMap = { Documents: '#007aff', Photos: '#ffcc00', Videos: '#ff3b30', Others: '#8e8e93' };
+    const colorMap = { Documents: '#007aff', Photos: '#ffcc00', Videos: '#ff3b30', Others: '#af52de' };
     const toCategory = (t) => {
         const x = (t || '').toLowerCase();
         if (['jpg','jpeg','png','gif','bmp','tiff','heif','heic','webp','avif'].includes(x)) return 'Photos';
@@ -2288,7 +2290,7 @@ function createFileTypesChart(files) {
         });
         const labels = Object.keys(bytesByCat);
         const data = labels.map(k => +(bytesByCat[k] / (1024*1024)).toFixed(2));
-        const colors = ['#007aff','#ffcc00','#ff3b30','#8e8e93'];
+        const colors = ['#007aff','#ffcc00','#ff3b30','#af52de'];
     window.fileTypesChartInstance = new Chart(ctx, {
             type: 'pie',
             data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0 }] },
@@ -2307,7 +2309,7 @@ function createFileTypesChart(files) {
             .slice(0, 10);
         const labels = top.map(([t]) => t);
         const data = top.map(([,mb]) => mb);
-        const colors = ['#007aff','#34c759','#ff9500','#ff3b30','#af52de','#5ac8fa','#ffcc00','#8e8e93','#30d158','#ff2d92'];
+        const colors = ['#007aff','#34c759','#ffcc00','#ff3b30','#af52de','#5ac8fa','#ff2d92','#30d158','#ff9f0a','#bf5af2'];
         window.fileTypesChartInstance = new Chart(ctx, {
             type: 'pie',
             data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0 }] },
