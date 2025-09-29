@@ -2003,7 +2003,7 @@ function createAnalyticsCharts(files) {
 // Central palette based on spec
 const PALETTE = {
     red: '#FF3B30',
-    orange: '#FF9500',
+    orange: '#FF7A00',
     yellow: '#FFCC00',
     green: '#34C759',
     blue: '#007AFF',
